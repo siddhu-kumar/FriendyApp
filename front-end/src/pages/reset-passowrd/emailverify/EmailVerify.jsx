@@ -1,0 +1,49 @@
+import React, { useState } from 'react'
+import style from './emailverify.module.css'
+import { emailVerify } from '../../../services/reset-password'
+import { useNavigate } from 'react-router-dom'
+
+function EmailVerify() {
+    const navigate = useNavigate()
+    const [user,setEmail] = useState({
+        email:''
+    })
+
+    const handleChange = async (e) => {
+        const {name,value} = e.target;
+        setEmail({...user,[name]:value})
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        console.log('handle')
+        console.log(user)
+        emailVerify(user).then((data)=> {
+            console.log(data)
+            localStorage.setItem('email',user.email)
+            navigate('/otp-verify');
+        })
+        .catch((error)=> {
+            console.log(error)
+        }) 
+        
+    }
+  return (
+    <div className={style.Email}>
+        <span>Verify Your Email</span>
+        <form onSubmit={handleSubmit} >
+            <label htmlFor="text">Enter Email</label>
+            <input 
+                type="text" 
+                placeholder='someone@gmail.com' 
+                name='email' 
+                value={user.email} 
+                onChange={handleChange} 
+            />
+            <button type='submit'>Submit</button>
+        </form>
+    </div>
+  )
+}
+
+export default EmailVerify

@@ -1,0 +1,49 @@
+.Home {
+    height: 93vh;
+    width: 100%;
+    margin: auto;
+}
+
+.usersHead {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 1vh 0;
+    height: 4vh;
+    position: sticky;
+    top: 7vh;
+    z-index: 1;
+    border: 2px solid wheat;
+    border-width: 2px 0 ;
+    background-color: black;
+    margin-bottom: 3vh;
+}
+
+.usersEntries {
+    display: flex;
+    align-items: center;
+}
+
+.user {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 1vh;
+    height: 4vh;
+}
+
+.userInfo {
+    width: 30vh;
+    overflow: hidden;
+}
+.address {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+.nums {
+    width: 5vh;
+    padding-left: 3vh;
+}

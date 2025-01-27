@@ -1,0 +1,80 @@
+.Profile {
+    height: 93vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.ProfileHead {
+    margin-bottom: 3vh;
+    font-size: 3vh;
+    color: purple;
+}
+
+.userInfo {
+    height: 5vh;
+    width: 35vh;
+    border: 1px solid;
+    margin: 1vh 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ProfileBtn {
+    background-color: purple;
+    font-size: larger;
+    color: wheat;
+    border: none;
+    align-items: center;
+    width: 35.2vh;
+    border-radius: 2vh;
+    cursor: pointer;
+    margin-top: 2vh;
+}
+
+.logout {
+    position: absolute;
+    right: 2vh;
+    top: 9vh;
+    text-decoration: none;
+    color: wheat;
+    background: none;
+    /* border: 1px solid wheat; */
+    cursor: pointer;
+    font-size: 2vh;
+}
+
+.register {
+    position: absolute;
+    left: 2vh;
+    top: 9vh;
+    text-decoration: none;
+    color: wheat;
+    background: none;
+    /* border: 1px solid wheat; */
+    cursor: pointer;
+    font-size: 2vh;
+}
+
+.EditProfile {
+    display: flex;
+    flex-direction: column;
+    width: 35vh;
+}
+
+.EditProfile input {
+    height: 3vh;
+    color: purple;
+    padding: 4px 6px;
+    margin: 4px 0px;
+    font-size: 2vh;
+    border: 1px solid gray;
+    outline: none;
+}
+
+.EditProfile input::placeholder {
+    color: gray;
+}

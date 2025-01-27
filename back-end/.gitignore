@@ -1,0 +1,6 @@
+node_modules/
+products/
+logger/
+
+products.json
+package-lock.json
