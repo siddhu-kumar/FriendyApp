@@ -40,11 +40,8 @@
 }
 
 .button {
-    /* width: 30vh; */
-    background-color: black;
-    color: blue;
-    border: none;
-    text-align: center;
+
+    width: 50px;
 }
 .address {
     display: flex;

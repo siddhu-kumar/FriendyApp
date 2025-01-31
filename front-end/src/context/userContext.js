@@ -7,18 +7,20 @@ export const UserContext = createContext(null)
 const DataProvider =  ({children}) => {
     const [auth,setAuth] = useState(isLoggedIn);
     const [userDetails,setUserDetails] = useState(getUserData)
-    // const [userList, setUserList] = useState('');
-    // useEffect(()=> {
-    //     const fetchData = async () => {
-    //         const user = await getAllUser()
-    //         setUserList(user)
-    //     }
-    //     fetchData()
-    // },[])
-   
+    const [userList, setUserList] = useState('');
+    useEffect(()=> {
+        getAllUser().then(data=> {
+            setUserList(data)
+        }).catch(error => {
+            console.log(error)
+        })
+    },[])
+    
+
+   useEffect(()=> {},[userList])
     // console.log(userDetails.token)
     return (
-        <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails}}>
+        <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails, userList, setUserList}}>
             {children}
         </UserContext.Provider>
     )

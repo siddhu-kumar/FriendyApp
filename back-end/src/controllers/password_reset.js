@@ -36,19 +36,28 @@ const generagteOTP = async (useremail) => {
 }
 
 export const validateOTP = async (req,res) => {
+    try {
+
     const {otp} = req.body
     console.log(otp)
     const validate = await Resetpwd.findOne({otp})
+    console.log('validate',validate)
     if (!validate) {
         res.status(400).json({ 'message': 'Invalid OTP' })
+        return;
     }
 
     const isValid = totp.check(otp, validate.sskey)
+    console.log('isVAlid', isValid)
     if(!isValid){
         console.log(isValid)
-        res.status(400).json({message:'invalid otp'})
+        res.status(400).json({message:'OTP expired, retry'})
+        return;
     }
     res.status(200).json({ 'message': 'OTP Validated.' })
+    } catch (err) {
+        res.status(401).json({message:'Regenerate OTP'})
+    }
 }
 
 export const resetPassword = async (req, res) => {
@@ -78,6 +87,7 @@ const sendEmail = async (email, otp) => {
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP</h5>
+                        <a href="http://192.168.1.23:3000/otp-verify">FriendyApp</a>
                         <h3 style="color: black;">${otp}</h3>
                     </body>
                 </html>`

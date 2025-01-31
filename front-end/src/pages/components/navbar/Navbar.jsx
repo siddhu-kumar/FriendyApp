@@ -22,6 +22,12 @@ const Navbar = () => {
           <div className={style.items}>
             <NavLink to="/chats">Chats</NavLink>
           </div>
+          <div className={style.items}>
+            <NavLink to="/received_request">Received Request</NavLink>
+          </div>
+          <div className={style.items}>
+            <NavLink to="/pending_request">Sent Request</NavLink>
+          </div>
 
           <div className={style.items}>
             <NavLink to="/profile">{userDetails.name}</NavLink>

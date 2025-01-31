@@ -5,23 +5,23 @@ import { useNavigate } from 'react-router-dom'
 
 function EmailVerify() {
     const navigate = useNavigate()
-    const [user,setEmail] = useState({
+    const [email,setEmail] = useState({
         email:''
     })
 
     const handleChange = async (e) => {
         const {name,value} = e.target;
-        setEmail({...user,[name]:value})
+        setEmail({...email,[name]:value})
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
         console.log('handle')
-        console.log(user)
-        emailVerify(user).then((data)=> {
-            console.log(data)
-            localStorage.setItem('email',user.email)
+        console.log(email)
+        emailVerify(email).then((data)=> {
             navigate('/otp-verify');
+            console.log(data)
+            // localStorage.setItem('email',user.email)
         })
         .catch((error)=> {
             console.log(error)
@@ -37,7 +37,7 @@ function EmailVerify() {
                 type="text" 
                 placeholder='someone@gmail.com' 
                 name='email' 
-                value={user.email} 
+                value={email.email} 
                 onChange={handleChange} 
             />
             <button type='submit'>Submit</button>

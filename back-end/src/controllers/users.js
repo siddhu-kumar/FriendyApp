@@ -1,4 +1,4 @@
-import { User } from "../models/models.js"
+import { RequestSchema, User } from "../models/models.js"
 import { v4 as uuidv4 } from "uuid"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
@@ -14,14 +14,18 @@ export const getAllUser = async (req, res) => {
     const friendId = [id]
     try {
         const friendList = await User.findOne({id:id})
+        const requestList = await RequestSchema.find({userId:id})
         for(let element of friendList.friends){
             friendId.push(element.friendId)
         }
-        console.log(friendId)
+        // console.log(requestList)
+        for(let element of requestList) {
+            friendId.push(element.friendId)
+        }
         const data = await User.find({id:{$nin:friendId}})
-        // console.log(data)
         res.status(200).send(data)
     } catch (err) {
+        console.log(err)
         res.send(err.message)
     }
 }

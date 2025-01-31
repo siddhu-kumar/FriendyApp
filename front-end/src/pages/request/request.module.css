@@ -40,10 +40,7 @@
 }
 
 .button {
-    /* width: 30vh; */
-    background-color: black;
-    color: blue;
-    border: none;
+    width: 60px;
     text-align: center;
 }
 .address {

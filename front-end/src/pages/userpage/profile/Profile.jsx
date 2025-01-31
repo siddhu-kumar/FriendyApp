@@ -6,7 +6,7 @@ import { UserContext } from '../../../context/userContext'
 import { editProfile } from '../../../services/user-service'
 const Profile = () => {
   const navigate = useNavigate();
-  const { setAuth, userDetails } = useContext(UserContext)
+  const { setAuth, userDetails, setUserDetails, setUserList } = useContext(UserContext)
   const [btn, setBtn] = useState(true);
 
   const [user, setUser] = useState(userDetails)
@@ -30,11 +30,20 @@ const Profile = () => {
     setUser({ ...user, [name]: value });
   }
 
+  const handleLogout = (e) => {
+    e.preventDefault();
+    doLogout(); 
+    setUserList('');
+    setUserDetails('');
+    setAuth(isLoggedIn); 
+    navigate('/login');
+  }
+
 
   return (
     <div className={style.Profile}>
       <div className={style.ProfileHead}>{btn ? 'Profile' : 'Edit Profile'}</div>
-      <button className={style.logout} onClick={() => { doLogout(); setAuth(isLoggedIn); navigate('/login') }}>Log Out</button>
+      <button className={style.logout} onClick={handleLogout}>Log Out</button>
       {
         btn ? <>
           <div className={style.userInfo}>{user.name}</div>

@@ -1,7 +1,99 @@
-import { User, Chat } from "../models/models.js";
+import { User, Chat, RequestSchema } from "../models/models.js";
 import { generateRoomId } from "./chat.js";
 import { namespace } from "../index.js";
 import { Room } from "../class/Room.js";
+
+export const getPendingRequest = async (req,res) => {
+    const userId = req.userId;
+    // console.log('enter')
+    // console.log(userId)
+    try {
+        const pendingRequest =  await RequestSchema.find({userId:userId});
+        // console.log(pendingRequest)
+        res.status(200).json(pendingRequest)
+    } catch(err) {
+        console.log(err) 
+        res.status(400).json({message:'Request could not completed'})
+    }
+}
+
+export const getReceivedRequest = async(req,res) => {
+    const userId = req.userId
+    try {
+        const receivedRequest = await RequestSchema.find({friendId:userId})
+        console.log(receivedRequest)
+        res.status(200).json(receivedRequest)
+    } catch(err) {
+        console.log(err) 
+        res.status(400).json({message:'Request could not completed'})
+    }
+}
+
+export const deletePendingRequest = async (req,res) => {
+    const userId = req.userId
+    const {friendId} = req.body
+    console.log('rr',req.body)
+    try {
+        // const user = await RequestSchema.findOne({userId:requestId})
+        const deletePendingRequest = await RequestSchema.findOneAndDelete({friendId:friendId})
+        console.log('11', deletePendingRequest)
+        res.status(200).json({message:`Request has been deleted.`})
+    } catch(err) {
+        console.log(err)
+        res.status(404).json({message:'Request could not completed'})
+    }
+}
+
+export const acceptRequest = async(req,res) => {
+    const userId = req.userId;
+    const {requestId} = req.body;
+    console.log(userId, requestId)
+    try {
+        const userData = await User.findOne({id:userId})
+        const friendData = await User.findOne({id:requestId})
+        const roomId = generateRoomId(userData.id, friendData.id)
+        const chat = new Chat({roomId: roomId})
+        const chatData = await chat.save()
+        const request = await RequestSchema.findOneAndDelete({userId:requestId})
+        console.log(request)
+        const f = friendData.friends.push({friendId:userData.id,chatId:chatData.roomId})
+        const u = userData.friends.push({friendId:friendData.id,chatId:chatData.roomId})
+        const updateuser = await userData.save()
+        const updatefriend = await friendData.save()
+        // console.log(updateuser,updatefriend)
+        const friend = await User.findOne({ "friends.friendId": userId }, { "friends.$": 1 });
+        console.log(namespace[userData.id])
+        
+        namespace[userData.id].addRoom(new Room(roomId,userId,userData.endpoint,friendData.id,friendData.name,friendData.endpoint))
+        
+        res.status(201).json({message:'friend added'})
+    } catch (err) {
+        console.log(err) 
+        res.status(400).json({message:'request not completed'})
+    }
+}
+
+export const createRequest = async (req, res) => {
+    console.log('// create new friend')
+    const {email} = req.body;
+    const userId = req.userId;
+    try {
+        const userData = await User.findOne({ id: userId })
+        const friendData = await User.findOne({email:email})
+    
+        console.log(userId,friendData)
+        const request = new RequestSchema({userId:userId,name:userData.name,friendId:friendData.id,friendName:friendData.name})
+        console.log('Request made')
+        const r = await request.save();
+        console.log(request, r)
+        res.status(200).json({message:`Request has been sent to`})
+ 
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: 'Error on saving data' })
+    }
+}
+
 // create new friend
 export const createFriend = async (req, res) => {
     console.log('// create new friend')
@@ -20,7 +112,7 @@ export const createFriend = async (req, res) => {
         const updatefriend = await friendData.save()
         // console.log(updateuser,updatefriend)
         const friend = await User.findOne({ "friends.friendId": userId }, { "friends.$": 1 });
-        console.log(namespace[userData.id])
+        console.log('f',friend)
         
         namespace[userData.id].addRoom(new Room(roomId,userId,userData.endpoint,friendData.id,friendData.name,friendData.endpoint))
         

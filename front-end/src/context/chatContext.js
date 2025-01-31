@@ -17,12 +17,12 @@ const ChatProvider = ({children}) => {
       const [ endPoint, setEndPoint ] = useState('')
       const [friendList, setFriendList] = useState('')
       useEffect(()=> {
-        const socket = io('http://192.168.1.23:8000',authHeader)
+        const socket = io('http://192.168.1.7:8000',authHeader)
         // console.log(authHeader)
     
         socket.on('endPoint',(endPoint)=> {
           setEndPoint(endPoint)
-          namespace[endPoint] = io(`http://192.168.1.23:8000/${endPoint}`)
+          namespace[endPoint] = io(`http://192.168.1.7:8000/${endPoint}`)
           console.log(endPoint)
           namespace[endPoint].on('getFriendList',(friendList, callback)=> {
             console.log('friendlist',friendList)
@@ -34,7 +34,7 @@ const ChatProvider = ({children}) => {
    
     // console.log(userDetails.token)
     return (
-        <ChatContext.Provider value={{namespace,endPoint,friendList}}>
+        <ChatContext.Provider value={{namespace,setNamespace,endPoint,friendList}}>
             {children}
         </ChatContext.Provider>
     )

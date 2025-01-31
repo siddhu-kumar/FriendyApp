@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose, { mongo } from "mongoose"
 import uniqueValidator from "mongoose-unique-validator"
 
 const resetPassword = new mongoose.Schema({
@@ -9,6 +9,21 @@ const resetPassword = new mongoose.Schema({
     otp: {
         type: String,
         required: true
+    }
+})
+
+const requestSchema = new mongoose.Schema({
+    userId: {
+        type:String,
+    },
+    name: {
+        type:String
+    },
+    friendId: {
+        type: String,
+    },
+    friendName: {
+        type: String
     }
 })
 
@@ -80,3 +95,4 @@ const userSchemas = new mongoose.Schema({
 export const chatSchema = chatSchemas
 export const userSchema = userSchemas
 export const resetPasswordSchema = resetPassword
+export const requestSchemas = requestSchema

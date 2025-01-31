@@ -14,6 +14,8 @@ import EmailVerify from './pages/reset-passowrd/emailverify/EmailVerify';
 import OTPVerify from './pages/reset-passowrd/otpverify/OTPVerify';
 import Password from './pages/reset-passowrd/newpassword/Password';
 import Chat from './pages/chat/Chat.jsx';
+import Request from './pages/request/Request.jsx';
+import Pending from './pages/pending/Pending.jsx';
 
 function App() {
   
@@ -28,7 +30,8 @@ function App() {
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
           <Route path="/reset-password" element={<Password />} />
-
+          <Route path="/received_request" element={<Request />} />
+          <Route path="/pending_request" element={<Pending />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
