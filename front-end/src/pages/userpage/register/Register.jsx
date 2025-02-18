@@ -5,8 +5,9 @@ import { createUser } from '../../../services/user-service'
 import { doLogin, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
 import { validation } from '../../../auth/validation'
+import { emailValidate } from '../../../services/user-service'
 const Register = () => {
-  const {setAuth, setUserDetails} = useContext(UserContext)
+  const {setAuth, setUserDetails, setReg} = useContext(UserContext)
   const navigate = useNavigate()
   const [userInput, setUserInput] = useState({
     name:"",
@@ -25,23 +26,16 @@ const Register = () => {
     const isValidated = validation(userInput)
 
     if (isValidated.length === 0) {
-      createUser(userInput)
-      .then((data)=> {
-        doLogin(data)
-        console.log('Successfully registered')
-        setTimeout(()=> {
-          setAuth(isLoggedIn)
-          setUserDetails(getUserData)
-          navigate('/')
-        },1000)
-      }).catch((err)=> {
-        console.log(err.response.data.message)
+      setUserDetails(userInput);
+      emailValidate({email:userInput.email}).then(data => {
+        console.log(data);
       })
+      navigate('/otp-verify',{ state:{reg:true}})
     } else {
-        isValidated.forEach(element => {
-          alert(element)
-        });
-        return;
+      isValidated.forEach(element => {
+        alert(element)
+      });
+      return;
     }
     
   }
@@ -86,7 +80,7 @@ const Register = () => {
             required
           />
           <button className={style.RegisterBtn} type='submit'>Register</button>
-          <span>Already have an account? <Link to="/login">Login here</Link> !</span> 
+          <span>Already have an account? <Link to="/login">Log-In here</Link> !</span> 
          </form>
       </div>
     </div>

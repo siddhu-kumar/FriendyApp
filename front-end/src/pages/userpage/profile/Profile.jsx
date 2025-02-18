@@ -14,12 +14,16 @@ const Profile = () => {
   const handleClick = () => {
     setBtn(!btn)
     if (!btn) {
-      editProfile(user).then(data => {
-        setUser({ ...user, ...data })
-        editStorage(user)
-      }).catch(err => {
-        console.log(err)
-      });
+      if(user === userDetails) {
+        // console.log('nothing changed')
+      } else {
+        editProfile(user).then(data => {
+          setUser({ ...user, ...data })
+          editStorage(user)
+        }).catch(err => {
+          console.log(err)
+        });
+      }
     }
   }
 
@@ -43,6 +47,10 @@ const Profile = () => {
   return (
     <div className={style.Profile}>
       <div className={style.ProfileHead}>{btn ? 'Profile' : 'Edit Profile'}</div>
+      <div className={style.ProfilePicture}>
+        <img src="./logo192.png" alt="" />
+        {!btn?<button className={style.ImgBtn}>change</button>:""}
+      </div>
       <button className={style.logout} onClick={handleLogout}>Log Out</button>
       {
         btn ? <>

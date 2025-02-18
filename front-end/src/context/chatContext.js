@@ -16,13 +16,15 @@ const ChatProvider = ({children}) => {
       const [namespace,setNamespace] = useState([])
       const [ endPoint, setEndPoint ] = useState('')
       const [friendList, setFriendList] = useState('')
+      const [BASE_URL,setBASE_URL] = useState(process.env.REACT_APP_BACKEND_HOST);
+
       useEffect(()=> {
-        const socket = io('http://192.168.1.7:8000',authHeader)
+        const socket = io(BASE_URL,authHeader)
         // console.log(authHeader)
     
         socket.on('endPoint',(endPoint)=> {
           setEndPoint(endPoint)
-          namespace[endPoint] = io(`http://192.168.1.7:8000/${endPoint}`)
+          namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
           console.log(endPoint)
           namespace[endPoint].on('getFriendList',(friendList, callback)=> {
             console.log('friendlist',friendList)

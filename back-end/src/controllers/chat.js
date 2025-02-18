@@ -18,7 +18,6 @@ export const generateEndpoint = async (inputString) => {
 }
 
 export const getEndpoint = async (token) => {
-    token = token.split(" ")[1]
     const id = authToken(token);
     const namespace = {}
     const user = await User.findOne({id:id})

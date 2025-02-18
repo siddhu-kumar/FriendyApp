@@ -1,4 +1,4 @@
-import React, { useContext, } from 'react'
+import React, { useContext, useEffect, } from 'react'
 import style from './home.module.css'
 import { createRequest } from '../../../services/user-service';
 // import { createFriend } from '../../../services/friends-service';
@@ -6,6 +6,9 @@ import { UserContext } from '../../../context/userContext';
 const Home = () => {
   const { userList, setUserList } = useContext(UserContext)
 
+  useEffect(()=> {
+
+  },[])
   const addFriend = (data) => {
     const updatedList = userList.filter(element => element.email !== data.email)
     setUserList(updatedList)

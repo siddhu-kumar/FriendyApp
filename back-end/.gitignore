@@ -1,6 +1,12 @@
 node_modules/
 products/
 logger/
+config/
+models/
+test.js
+./test/
 
 products.json
 package-lock.json
+filestructure.js
+.env

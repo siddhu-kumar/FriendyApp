@@ -10,5 +10,6 @@ export const verifyOTP = (data) => {
 }
 
 export const resetPassword = (data) => {
+    console.log(data)
     return myAxios.post('/reset-password',data).then(res=>res.data)
 }

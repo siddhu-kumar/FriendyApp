@@ -14,7 +14,7 @@ export const ShowFriend = () => {
       friendList.forEach(element => {
         console.log(element.name)
       });
-    console.log('hii')
+    console.log('hii',friendList)
   }, [friendList])
 
   const handleClick = (event, friendData) => {
@@ -46,7 +46,7 @@ export const ShowFriend = () => {
           <li onClick={(e) => handleClick(e, data)} key={index} className={style.frnd_class}>
             <img className={style.frnd_profile_img}  alt="" />
             <span className={style.frnd_name}>{data.username}</span>
-            <span className={style.recent_msg_time}></span>
+            <span className={style.recent_msg_time}>{}</span>
             <span className={style.frnd_recent_msg}></span>
           </li>
 

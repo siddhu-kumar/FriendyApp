@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import style from './login.module.css'
-import { Link } from 'react-router-dom'
+import { Link, Redirect, Route } from 'react-router-dom'
 import { loginUser } from '../../../services/user-service'
 import { doLogin, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
@@ -31,7 +31,8 @@ const Login = () => {
       setTimeout(()=> {
         setAuth(isLoggedIn)
         setUserDetails(getUserData)
-        navigate('/')
+        // navigate('/')
+        window.location.href = "/"
       },1000)
     })
     .catch(err=> {
@@ -54,7 +55,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <label htmlFor="password">User Passsword</label>
+          <label htmlFor="password">User Password</label>
           <input type="text"
             placeholder='Password'
             name='user_password'
@@ -62,9 +63,9 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <Link to="/email-verify">forget passowrd</Link>
+          <Link to="/email-verify">forget password</Link>
           <button className={style.LoginBtn} type='submit'>Login</button>
-          <span>Don't have an account? <Link to="/register">SignIn here</Link> !</span>
+          <span>Don't have an account? <Link to="/register">Sign-Up here</Link> !</span>
         </form>
       </div>
     </div>

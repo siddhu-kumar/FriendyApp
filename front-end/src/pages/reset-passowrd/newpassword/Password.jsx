@@ -21,6 +21,7 @@ function Password() {
         console.log(password)
         resetPassword(password).then((data) => {
             console.log(data)
+            localStorage.removeItem('email');
             navigate('/login')
         })
         .catch((error) => {

@@ -13,7 +13,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
     // namespace[endPoint].off('listenMessage');
     namespace[endPoint].on('listenMessage', (messageObj, callback) => {
-        // console.log(messageObj)
+        console.log(messageObj)
         setChatHistory([...chatHistory, messageObj])
         callback({ message: 'received' })
     })

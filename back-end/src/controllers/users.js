@@ -5,6 +5,9 @@ import bcrypt from "bcrypt"
 import { generateEndpoint } from "./chat.js"
 import { namespace } from "../index.js"
 import { Namespace } from "../class/Namespace.js"
+import { status } from "../utils/error.js"
+
+const secret_key = process.env.AUTH_SECRET_KEY;
 
 // get all user
 export const getAllUser = async (req, res) => {
@@ -23,7 +26,7 @@ export const getAllUser = async (req, res) => {
             friendId.push(element.friendId)
         }
         const data = await User.find({id:{$nin:friendId}})
-        res.status(200).send(data)
+        res.status(status.OK).send(data)
     } catch (err) {
         console.log(err)
         res.send(err.message)
@@ -60,9 +63,9 @@ export const createUser = async (req, res) => {
         const saveUser = await newUser.save();
         namespace[id] = new Namespace(id,name,endPoint)
 
-        const token = jwt.sign({ userId: id }, 'hello-world', { expiresIn: '100h' })
+        const token = jwt.sign({ userId: id }, secret_key, { expiresIn: '100h' })
         const data = {name, email, contact }
-        res.status(201).json({ data, token });
+        res.status(status.CREATED).json({ data, token });
     } catch (error) {
         console.log('this is err', error)
         // if(Object.keys(error.errors)[0] === 'contact') {
@@ -92,11 +95,12 @@ export const loginUser = async (req, res) => {
         }
         const passwordMatch = await bcrypt.compare(user_password, userData.password);
         if (!passwordMatch) {
+            console.log('Login failed!')
             return res.status(401).json({ error: 'Authentication failed!' })
         }
         const { _id, password, friends, ...data } = userData.toObject()
         console.log(data)
-        const token = jwt.sign({ userId: userData.id }, 'hello-world', { expiresIn: '24h' })
+        const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: '24h' })
         namespace[userData.id] = new Namespace(userData.id,userData.name,userData.endpoint)
         console.log(namespace)
         res.status(200).json({ data, token })

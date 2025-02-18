@@ -18,10 +18,10 @@ function EmailVerify() {
         e.preventDefault()
         console.log('handle')
         console.log(email)
+        localStorage.setItem('email',email.email)
         emailVerify(email).then((data)=> {
-            navigate('/otp-verify');
+            navigate('/otp-verify', {state:{reg:false}});
             console.log(data)
-            // localStorage.setItem('email',user.email)
         })
         .catch((error)=> {
             console.log(error)
@@ -39,6 +39,7 @@ function EmailVerify() {
                 name='email' 
                 value={email.email} 
                 onChange={handleChange} 
+                autoFocus
             />
             <button type='submit'>Submit</button>
         </form>

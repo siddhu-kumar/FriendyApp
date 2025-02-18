@@ -8,11 +8,11 @@ import { routes as resetPasswordRouters } from './routes/password_reset.js';
 import { getEndpoint } from './controllers/chat.js';
 import { Message } from './class/Message.js';
 import { Chat, User } from './models/models.js';
+import { authToken } from './middleware/token.js';
+import { verifyToken } from './middleware/authMiddleware.js';
 
 
 const app = express()
-
-app.use(cors());
 
 app.use(cors({
   origin: '*',
@@ -21,6 +21,10 @@ app.use(cors({
 app.use(express.json());
 
 await connectDB();
+
+app.get('/token',verifyToken,(req,res)=> {
+  res.status(200).json({message:'message'})
+})
 
 app.use('/user', userRouters)
 app.use('/friend', friendRouters)

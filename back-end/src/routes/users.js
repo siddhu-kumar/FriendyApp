@@ -9,6 +9,7 @@ import {
 
 import { verifyToken } from "../middleware/authMiddleware.js"
 import { acceptRequest, createFriend, createRequest, deletePendingRequest, getPendingRequest, getReceivedRequest } from "../controllers/friends.js"
+import { email_validate } from "../controllers/email_validate.js"
 
 const router = express.Router()
 
@@ -17,6 +18,7 @@ router
     .post("/login", loginUser)
     .post("/all_user", verifyToken, getAllUser)
     .post("/register", createUser)
+    .post("/validate_email",email_validate)
     .patch("/update", verifyToken, updateUser)
     .post("/create_request",verifyToken,createRequest)
     .get('/pending_request',verifyToken, getPendingRequest)

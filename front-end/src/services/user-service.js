@@ -1,10 +1,16 @@
 import { myAxios, privateAxios } from './helper'
 
 export const loginUser = (loginUser) => {
+    
+    console.log('login user',loginUser)
     return myAxios.post('/user/login', loginUser)
     .then((res) => {
     return  res.data
     })
+}
+
+export const emailValidate = (data) => {
+    return myAxios.post("/user/validate_email",data).then(res=>res.data);
 }
 
 export const getAllUser = () => {
@@ -48,6 +54,6 @@ export const editProfile = (userData) => {
     return privateAxios.patch('/user/update',userData)
 }
 
-export const createUser = (userData) => {
+export const    createUser = (userData) => {
     return myAxios.post('/user/register',userData).then(res=>res.data)
 }

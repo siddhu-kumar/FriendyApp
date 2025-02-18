@@ -8,6 +8,7 @@ function Pending() {
   useEffect(()=> {
     pendingRequest().then(data=>{ 
       setUserList(data);
+      console.log(data);
     }).catch(error => console.log(error))
   },[])
 
@@ -25,20 +26,20 @@ function Pending() {
 
   return (<>
     <div className={style.Users}>
-        <div className={style.usersHead}>
+        {/* <div className={style.usersHead}>
           <div className={style.nums}>S No.</div>
           <div className={style.user}>
             <div className={style.userInfo}>Name</div>
             <div className={style.userInfo}>Contact</div>
             <div className={style.userInfo}>Add Friend</div>
           </div>
-        </div>
+        </div> */}
         {
           userList.length !== 0 ? userList.map((data, index) =>
             <div key={index} className={style.usersEntries}>
               <div className={`${style.nums}`}>{index + 1}</div>
               <div className={style.user}>
-                <div className={style.userInfo}>{data.friendName}</div>
+                <div className={style.userInfo}>You sent request to {data.friendName}</div>
                 <button className={`${style.userInfo} ${style.button}`} onClick={(e) => deleteRequest(e,data)}>Cancel</button>
               </div>
             </div>

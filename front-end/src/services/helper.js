@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getToken } from "../auth";
 
-export const BASE_URL = 'http://192.168.1.7:8000'
-
+const BASE_URL = process.env.REACT_APP_BACKEND_HOST
+console.log(BASE_URL)
 export const myAxios = axios.create({
     baseURL: BASE_URL
 });
