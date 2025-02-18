@@ -3,6 +3,7 @@ products/
 logger/
 config/
 models/
+seeders/
 test.js
 ./test/
 
