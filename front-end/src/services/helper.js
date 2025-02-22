@@ -17,4 +17,4 @@ privateAxios.interceptors.request.use(config => {
         config.headers.Authorization = `Bearer ${token.token}`
     }
     return config
-}, error => { return Promise.reject(error) })
+}, error => { console.log(error); return Promise.reject(error) })

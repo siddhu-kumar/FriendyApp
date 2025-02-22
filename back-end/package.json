@@ -4,7 +4,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --env-file=.env ./src/index.js",
+    "start": "node --env-file=.env ./src/index.js",
     "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
     "pretest": "cross-env NODE_ENV=test npm run migrate:reset",
     "migrate:reset": "npx sequelize-cli db:migrate:undo:all && npm run migrate",
