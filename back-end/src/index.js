@@ -12,6 +12,7 @@ import { authToken } from './middleware/token.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 
 const allowed_origin = process.env.ORIGIN || "*"
+console.log(allowed_origin);
 const app = express()
 
 app.use(cors(
