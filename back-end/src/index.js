@@ -11,10 +11,14 @@ import { Chat, User } from './models/models.js';
 import { authToken } from './middleware/token.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 
-
+const allowed_origin = process.env.ORIGIN || "*"
 const app = express()
 
-app.use(cors());
+app.use(cors(
+  {
+  origin: allowed_origin
+  }
+));
 
 app.use(express.json());
 
