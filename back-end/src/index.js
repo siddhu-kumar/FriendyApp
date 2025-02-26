@@ -17,11 +17,7 @@ const PORT = process.env.PORT || 8000
 console.log(allowed_origin);
 const app = express()
 
-app.use(cors(
-  {
-    origin: allowed_origin
-  }
-));
+app.use(cors());
 
 app.use(express.json());
 
