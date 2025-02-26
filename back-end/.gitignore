@@ -8,6 +8,5 @@ test.js
 ./test/
 migrations/
 products.json
-package-lock.json
 filestructure.js
 .env
