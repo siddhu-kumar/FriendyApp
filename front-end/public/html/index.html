@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<link rel="stylesheet" href="home.css">
+<script>
+
+</script>
+<body>
+    <!-- This is navbar with Home page redirection and Showing Main User profile and will also logout the User(Main) -->
+    <div class="navbar">
+        <div class="my-detail">
+            <div class="my-image" id="profile"></div>
+            <div id="myname"></div>
+        </div>
+    </div>
+    <div class="chat-page">
+        <div id="my-friends">
+            <ul></ul>
+        </div>
+        <div id="chat">
+            
+        </div>
+    </div>
+
+    <script src="http://127.0.0.1:8000/socket.io/socket.io.min.js"></script>
+    <script src="/chatForm.js"></script>
+    <script src="/joinRoom.js"></script>
+    <script src="/showFriend.js"></script>
+    <script src="/f-logic.js">
+       
+    </script>
+</body>
+
+</html>

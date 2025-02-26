@@ -25,7 +25,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
@@ -33,7 +33,7 @@ function App() {
           <Route path="/received_request" element={<Request />} />
           <Route path="/pending_request" element={<Pending />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
               <Route path="/chats" element={
                 <ChatProvider >

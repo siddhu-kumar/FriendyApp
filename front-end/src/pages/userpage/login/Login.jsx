@@ -5,6 +5,7 @@ import { loginUser } from '../../../services/user-service'
 import { doLogin, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
 import { useNavigate } from 'react-router-dom'
+import Loader from './Loader'
 const Login = () => {
   const navigate = useNavigate()
   const {setAuth, setUserDetails} = useContext(UserContext)
@@ -23,7 +24,7 @@ const Login = () => {
     if (userInput.email.trim() === "" || userInput.user_password.trim() === "") {
       return;
     }
-
+    <Loader />
     loginUser(userInput)
     .then((data) => {
       console.log(data)
