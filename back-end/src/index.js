@@ -12,10 +12,15 @@ import { authToken } from './middleware/token.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 
 const allowed_origin = process.env.ORIGIN || "*"
+const PORT = process.env.PORT || 8000
+
+console.log(allowed_origin);
 const app = express()
 
 app.use(cors(
-
+  {
+    origin: allowed_origin
+  }
 ));
 
 app.use(express.json());
@@ -29,7 +34,7 @@ app.get('/token',verifyToken,(req,res)=> {
 app.use('/user', userRouters)
 app.use('/friend', friendRouters)
 app.use('/', resetPasswordRouters)
-const expressServer = app.listen(8000)
+const expressServer = app.listen(PORT)
 
 const io = new Server(expressServer, {
   cors: '*',
