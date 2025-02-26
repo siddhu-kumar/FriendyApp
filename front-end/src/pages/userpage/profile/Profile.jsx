@@ -40,7 +40,7 @@ const Profile = () => {
     setUserList('');
     setUserDetails('');
     setAuth(isLoggedIn); 
-    navigate('/login');
+    navigate('/');
   }
 
 

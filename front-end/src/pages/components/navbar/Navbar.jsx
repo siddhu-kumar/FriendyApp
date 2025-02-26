@@ -14,7 +14,7 @@ const Navbar = () => {
       {auth ?
         <>
           <div className={`${style.Logo} ${style.items}`}>
-            <NavLink to="/">FriendyApp</NavLink>
+            <NavLink to="/home">FriendyApp</NavLink>
           </div>
           {/* <div className={`${style.search} `}>
             <span type='search'>Search</span>
@@ -36,7 +36,7 @@ const Navbar = () => {
         :
         <>
           <div className={style.items}>
-            <NavLink to="/login">LogIn</NavLink>
+            <NavLink to="/">LogIn</NavLink>
           </div>
           <div className={style.items}>
             <NavLink to="/register">SignIn</NavLink>

@@ -54,6 +54,6 @@ export const editProfile = (userData) => {
     return privateAxios.patch('/user/update',userData)
 }
 
-export const    createUser = (userData) => {
-    return myAxios.post('/user/register',userData).then(res=>res.data)
+export const createUser = (userData) => {
+    return myAxios.post('/user/register',userData).then(res=> res.data)
 }

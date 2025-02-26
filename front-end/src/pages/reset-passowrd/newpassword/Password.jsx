@@ -22,7 +22,7 @@ function Password() {
         resetPassword(password).then((data) => {
             console.log(data)
             localStorage.removeItem('email');
-            navigate('/login')
+            navigate('/')
         })
         .catch((error) => {
             console.log(error)

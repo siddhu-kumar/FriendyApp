@@ -7,7 +7,8 @@ let otp
 
 export const verifyEmail = async (req, res) => {
     const { email } = req.body;
-    const findEmail = await User.findOne({ email });
+    console.log(email)
+    const findEmail = await User.findOne({ email :email });
     if (!findEmail) {
         res.status(400).json({ 'message': 'User does not exists' })
     }
@@ -26,7 +27,7 @@ const generateOTP = async (useremail) => {
     const hash = crypto.createHash('sha256');
     hash.update(useremail)
     const sskey = hash.digest('hex')
-    totp.options = {step:120}
+    totp.options = {step:300}
     const otp = totp.generate(sskey)
     
     const userotp = new Resetpwd({ 'sskey': sskey, 'otp': otp })
@@ -51,7 +52,7 @@ export const validateOTP = async (req,res) => {
     console.log('isVAlid', isValid)
     if(!isValid){
         console.log(isValid)
-        res.status(400).json({message:'OTP expired, retry'})
+        res.status(400).json({message:'OTP expired, Retry'})
         return;
     }
     res.status(200).json({ 'message': 'OTP Validated.' })

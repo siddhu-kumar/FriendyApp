@@ -15,9 +15,7 @@ const allowed_origin = process.env.ORIGIN || "*"
 const app = express()
 
 app.use(cors(
-  {
-  origin: allowed_origin
-  }
+
 ));
 
 app.use(express.json());

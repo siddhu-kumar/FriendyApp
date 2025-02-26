@@ -6,6 +6,7 @@ import { UserContext } from '../../../context/userContext'
 import { doLogin, isLoggedIn } from '../../../auth'
 import { getUserData } from '../../../auth'
 import { createUser, emailValidate, loginUser } from '../../../services/user-service'
+ 
 function OTPVerify() {
   const { state } = useLocation();
   const { setAuth, userDetails } = useContext(UserContext);
@@ -15,6 +16,11 @@ function OTPVerify() {
   })
 
   const [count, setCount] = useState(0)
+  const [error, setError] = useState({
+    valid: '',
+    object:'',
+    message:''});
+  const [otpExpire, setOTPExpire] = useState(null);
 
   const handleChange = async (e) => {
     const { name, value } = e.target
@@ -31,7 +37,15 @@ function OTPVerify() {
           console.log(data);
           doLogin(data)
           setAuth(isLoggedIn);
-          navigate('/');
+          navigate("/home");
+        }).catch(err=> {
+          console.log(err.response.data)
+          if(!err.response.data.valid && err.response.data.object === "contact") 
+
+          setError({
+            valid: err.response.data.isValid,
+            object: err.response.data.object,
+            message:"Contact already exists: "+err.response.data.message})
         })
         console.log(data)
       } else {
@@ -40,15 +54,18 @@ function OTPVerify() {
     })
       .catch((error) => {
         console.log(error)
+        if(error.response.data.message === 'OTP expired, Retry'){
+          setOTPExpire(error.response.data.message)
+        }
         if (error.response.data) {
-          console.log('otp checking')
+          console.log('otp checking',error.response.data.message)
         }
         setCount(count + 3)
         if (count < 3) {
           console.log(count)
           // handleSubmit(e);
         } else {
-          navigate('/login')
+          navigate("/home")
         }
         console.log(error)
       })
@@ -56,6 +73,11 @@ function OTPVerify() {
 
   return (
     <div className={style.OTP}>
+      <div className={style.error}>
+      {
+        !error.valid?error.message:''
+      }
+      </div>
       <span>Verify Your OTP</span>
       <form onSubmit={handleSubmit} >
         <label htmlFor="text">Enter OTP</label>
@@ -69,6 +91,9 @@ function OTPVerify() {
         />
         <button type='submit'>Submit</button>
       </form>
+      {
+        otpExpire?<button>{otpExpire}</button>:''
+      }
     </div>
   )
 }

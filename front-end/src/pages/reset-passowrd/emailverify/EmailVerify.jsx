@@ -26,7 +26,7 @@ function EmailVerify() {
         .catch((error)=> {
             console.log(error)
         }) 
-        
+    
     }
   return (
     <div className={style.Email}>

@@ -59,25 +59,51 @@ export const createUser = async (req, res) => {
         const endPoint = await generateEndpoint(contact)
         const id = uuidv4()
         console.log(id)
-        const newUser = new User({id: id, name: name, email: email, contact: contact,endpoint:endPoint, password: hashedPassword });
-        const saveUser = await newUser.save();
+        try {
+            const newUser = new User({id: id, name: name, email: email, contact: contact,endpoint:endPoint, password: hashedPassword });
+            const saveUser = await newUser.save();
+        } catch(error) {
+            // if (error.code === 11000) {
+            //     // Extract the field that caused the duplicate key error
+            //     const duplicateField = Object.keys(error.keyValue)[0];
+            //     const duplicateValue = error.keyValue[duplicateField];
+            //     console.log(`Duplicate key error on field: ${duplicateField} with value: ${duplicateValue}`);
+            // }
+            if (error.code === 11000) {
+                if (error.keyValue.email) {
+                    console.log('Email already exists');
+                    res.status(400).json({ message: error.keyValue.email, isValid: false, object: "mail" });
+                    return;
+                }
+                if (error.keyValue.contact) {
+                    console.log('Contact already exists');
+                    res.status(400).json({ message: error.keyValue.contact, isValid: false, object: "contact" });
+                    return;
+                }
+            }
+        }
         namespace[id] = new Namespace(id,name,endPoint)
 
         const token = jwt.sign({ userId: id }, secret_key, { expiresIn: '100h' })
         const data = {name, email, contact }
         res.status(status.CREATED).json({ data, token });
     } catch (error) {
-        console.log('this is err', error)
-        // if(Object.keys(error.errors)[0] === 'contact') {
-        //     console.log('contact exits')
-        //     res.status(400).json({message:'Contact already exists'})
-        //     return;
-        // }
-        // if(Object.keys(error.errors)[0] === 'email') {
-        //     console.log('email exits')
-        //     res.status(400).json({message:'Email already registerd'})
-        //     return;
-        // }
+        if (error.code === 11000) {
+            // Extract the field that caused the duplicate key error
+            const duplicateField = Object.keys(error.keyValue)[0];
+            const duplicateValue = error.keyValue[duplicateField];
+            console.log(`Duplicate key error on field: ${duplicateField} with value: ${duplicateValue}`);
+        }
+        if (error.code === 11000) {
+            if (error.keyValue.email) {
+                console.log('Email already exists');
+                return res.status(400).json({ message: `Email already exists: ${error.keyValue.email}` });
+            }
+            if (error.keyValue.contact) {
+                console.log('Contact already exists');
+                return res.status(400).json({ message: `Contact already exists: ${error.keyValue.contact}` });
+            }
+        }
         res.status(500).json({message:"Sorry it's us!!"})
     }
 }
@@ -89,6 +115,7 @@ export const loginUser = async (req, res) => {
         const { email, user_password } = req.body;
         console.log(email, user_password)
         const userData = await User.findOne({ email })
+        console.log(userData)
         if (!userData) {
             console.log('user does not exists')
             return res.status(401).json({ message: 'User does not exists!' })

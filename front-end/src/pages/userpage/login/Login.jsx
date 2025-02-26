@@ -33,7 +33,7 @@ const Login = () => {
         setAuth(isLoggedIn)
         setUserDetails(getUserData)
         // navigate('/')
-        window.location.href = "/"
+        window.location.href = "/home"
       },1000)
     })
     .catch(err=> {
