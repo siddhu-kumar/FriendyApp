@@ -50,6 +50,10 @@ export const userProfile = (userData) => {
     .then(res=> res.data)
 }
 
+export const validateUserData = (userData) => {
+    return myAxios.post(`/user/validate_data`,userData).then(res=>res.data)
+}
+
 export const editProfile = (userData) => {
     return privateAxios.patch('/user/update',userData)
 }

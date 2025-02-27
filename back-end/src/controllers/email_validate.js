@@ -89,6 +89,6 @@ const sendEmail = async (email, otp) => {
         html: html,
     }
     const mailsent = await transporter.sendMail(message);
-    console.log(mailsent)
+    // console.log(mailsent)
     return mailsent;
 }

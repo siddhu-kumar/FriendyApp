@@ -25,7 +25,7 @@ const Home = () => {
           <div className={style.user}>
             <div className={style.userInfo}>Name</div>
             <div className={style.userInfo}>Contact</div>
-            <div className={style.userInfo}>Add Friend</div>
+            <div className={style.userInfo} style={{width:"14vh"}} >Add Friend</div>
           </div>
         </div>
         {
@@ -35,7 +35,7 @@ const Home = () => {
               <div className={style.user}>
                 <div className={style.userInfo}>{data.name}</div>
                 <div className={style.userInfo}>{data.contact}</div>
-                <div className={`${style.userInfo} `} onClick={() => addFriend(data)}>Add Friend</div>
+                <div className={`${style.addFriend} ${style.userInfo} `} onClick={() => addFriend(data)}>Add Friend</div>
               </div>
             </div>
           ) :

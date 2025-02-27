@@ -48,6 +48,19 @@ export const getUser = async (req, res) => {
     }
 }
 
+export const validateUserData = async (req,res) => {
+    console.log('called')
+    try{
+        // const {contact,email} = req.body;
+        const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
+        const {contact, email } = doesExists.toObject();
+        console.log(contact, email);
+        res.status(400).json({message:'doesExists', flag:true})
+    } catch(error) {
+        console.log(error)
+    }
+}
+
 // creating new user
 export const createUser = async (req, res) => {
     console.log('// creating new user')

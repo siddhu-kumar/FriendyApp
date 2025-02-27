@@ -5,6 +5,7 @@ import {
     loginUser,
     getUser,
     getAllUser,
+    validateUserData,
 } from "../controllers/users.js"
 
 import { verifyToken } from "../middleware/authMiddleware.js"
@@ -18,6 +19,7 @@ router
     .post("/login", loginUser)
     .post("/all_user", verifyToken, getAllUser)
     .post("/register", createUser)
+    .post("/validate_data", validateUserData)
     .post("/validate_email",email_validate)
     .patch("/update", verifyToken, updateUser)
     .post("/create_request",verifyToken,createRequest)

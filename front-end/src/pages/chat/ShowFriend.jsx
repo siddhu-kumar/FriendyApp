@@ -51,7 +51,7 @@ export const ShowFriend = () => {
           </li>
 
         ))
-          : '<>No Friend</>'
+          : 'No Friend!'
       }
     </ul>
     <div className={style.chatbox}>

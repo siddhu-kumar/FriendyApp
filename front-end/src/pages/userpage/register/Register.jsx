@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import style from './register.module.css'
 import { Link, useNavigate } from 'react-router-dom'
-import { createUser } from '../../../services/user-service'
+import { createUser, validateUserData } from '../../../services/user-service'
 import { doLogin, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
 import { validation } from '../../../auth/validation'
@@ -15,7 +15,7 @@ const Register = () => {
     contact:"",
     password:"",
   })
-
+  const [data,setData] = useState(null)
   const handleChange = async (e) => {
     const {name,value} = e.target;
     setUserInput({...userInput,[name]:value})
@@ -27,7 +27,16 @@ const Register = () => {
 
     if (isValidated.length === 0) {
       setUserDetails(userInput);
-      emailValidate({email:userInput.email}).then(data => {
+      await validateUserData({contact:userInput.contact, email:userInput.email}).then(data => {
+        console.log(data)
+      }).catch(err => {
+        if(err.response.data.flag){
+          console.log('p',err)
+          setData(err.response.data.message)
+          return ;
+        }
+      })
+      await emailValidate({email:userInput.email}).then(data => {
         console.log(data);
       })
       navigate('/otp-verify',{ state:{reg:true}})
@@ -71,6 +80,7 @@ const Register = () => {
             onChange={handleChange}
             required
           />
+          {data}
           <label htmlFor="password">User Password</label>
           <input type="password" 
             placeholder='Use strong passowrd.'

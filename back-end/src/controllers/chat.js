@@ -28,8 +28,11 @@ export const getEndpoint = async (token) => {
         for(let element of friendList) {
             // console.log(element.friendId)
             const friendData = await User.findOne({id:element.friendId});
-            const roomObj = new Room(element.chatId,user.id,user.endpoint,friendData.id,friendData.name,friendData.endpoint)
-            namespace[user.id].addRoom(roomObj)
+            console.log('console',friendData)
+            if(friendData !== null){
+                const roomObj = new Room(element.chatId,user.id,user.endpoint,friendData.id,friendData.name,friendData.endpoint)
+                namespace[user.id].addRoom(roomObj)
+            }
         }
         return [namespace[user.id],user.id];
     } else {
