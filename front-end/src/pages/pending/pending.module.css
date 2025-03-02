@@ -4,44 +4,44 @@
     margin: auto;
 }
 
-.usersHead {
+.Users {
     width: 100%;
+    height: 93vh;
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 1vh 0;
-    height: 4vh;
-    position: sticky;
-    top: 7vh;
-    z-index: 1;
-    border: 2px solid wheat;
-    border-width: 2px 0 ;
-    background-color: black;
-    margin-bottom: 3vh;
+    flex-wrap: wrap;
 }
 
 .usersEntries {
+    width: 150px;
+    height: 150px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-}
-
-.user {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 1vh;
-    height: 4vh;
+    justify-content: center;
+    padding: 1vh 0;
+    color: wheat;
+    background-color: black;
 }
 
 .userInfo {
-    width: 30vh;
     overflow: hidden;
 }
 
-.button {
+.addFriend {
+    background-color: black;
+    color: wheat;
+    border: none;
+    width: 14vh;
+    border: 1px solid wheat;
+    height: 5vh;
+    background-color: purple;
+    text-align: center;
+}
 
-    width: 50px;
+.addFriend:hover {
+    background-color: black;
+    cursor: pointer;
+    color: purple;
 }
 .address {
     display: flex;

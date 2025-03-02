@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { getUserData, isLoggedIn } from "../auth";
 import { getAllUser } from "../services/user-service";
 import { doLogout } from "../auth";
+import { useNavigate } from "react-router-dom";
 export const UserContext = createContext(null)
 
 const DataProvider =  ({children}) => {
@@ -20,9 +21,10 @@ const DataProvider =  ({children}) => {
                     setUserList('');
                     setUserDetails('');
                     setAuth(isLoggedIn); 
-                    // navigate('/login');
                 }
                 console.log(error.response.data)
+                console.log(localStorage.clear("data"))
+                window.location.href = "/"
             })
         }
     },[])

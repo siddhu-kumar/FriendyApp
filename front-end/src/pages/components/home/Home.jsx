@@ -20,23 +20,12 @@ const Home = () => {
 
   return (<>
       <div className={style.Users}>
-        <div className={style.usersHead}>
-          <div className={style.nums}>S No.</div>
-          <div className={style.user}>
-            <div className={style.userInfo}>Name</div>
-            <div className={style.userInfo}>Contact</div>
-            <div className={style.userInfo} style={{width:"14vh"}} >Add Friend</div>
-          </div>
-        </div>
         {
           userList.length !== 0 ? userList.map((data, index) =>
-            <div key={index} className={style.usersEntries}>
-              <div className={`${style.nums}`}>{index + 1}</div>
-              <div className={style.user}>
+          <div key={index} className={style.usersEntries}>
                 <div className={style.userInfo}>{data.name}</div>
                 <div className={style.userInfo}>{data.contact}</div>
                 <div className={`${style.addFriend} ${style.userInfo} `} onClick={() => addFriend(data)}>Add Friend</div>
-              </div>
             </div>
           ) :
             <div>

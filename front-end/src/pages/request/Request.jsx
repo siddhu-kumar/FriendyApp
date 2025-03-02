@@ -35,23 +35,12 @@ function Request() {
  
    return (<>
      <div className={style.Users}>
-         {/* <div className={style.usersHead}>
-           <div className={style.nums}>S No.</div>
-           <div className={style.user}>
-             <div className={style.userInfo}>Name</div>
-             <div className={style.userInfo}>Contact</div>
-             <div className={style.userInfo}>Add Friend</div>
-           </div>
-         </div> */}
          {
            userList.length !== 0 ? userList.map((data, index) =>
              <div key={index} className={style.usersEntries}>
-               <div className={`${style.nums}`}>{index + 1}</div>
-               <div className={style.user}>
                  <div className={style.userInfo}>{data.name} has sent you Friendy request.</div>
-                 <button className={`${style.userInfo} ${style.button}`} onClick={(e) => AcceptRequest(e,data)}>Accept</button>
-                 <button className={`${style.userInfo} ${style.button}`} onClick={(e) => deleteRequest(e,data)}>Decline</button>
-               </div>
+                 <button className={`${style.userInfo} ${style.addFriend}`} onClick={(e) => AcceptRequest(e,data)}>Accept</button>
+                 <button className={`${style.userInfo} ${style.addFriend}`} onClick={(e) => deleteRequest(e,data)}>Decline</button>
              </div>
            ) :
              <div>

@@ -32,8 +32,8 @@ const Login = () => {
       setTimeout(()=> {
         setAuth(isLoggedIn)
         setUserDetails(getUserData)
-        // navigate('/')
-        window.location.href = "/home"
+        navigate('/home')
+        // window.location.href = "/home"
       },1000)
     })
     .catch(err=> {

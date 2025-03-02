@@ -14,6 +14,6 @@ export const authToken = (token) => {
             console.log('got it')
         }
         console.log('err',err)
-        return ({ error: 'Invalid token!' })
+        return { error: 'Invalid token!' }
     }
 }
