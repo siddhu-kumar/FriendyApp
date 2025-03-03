@@ -14,7 +14,6 @@ export const ShowFriend = (props) => {
       friendList.forEach(element => {
         console.log(element.name)
       });
-    console.log('hii', friendList)
     props.getData(friendData, chatHistory, listClicked)
 
   }, [friendList,chatHistory])
@@ -23,7 +22,7 @@ export const ShowFriend = (props) => {
   const handleClick = (event, friendData) => {
     // console.log(friendData, event)
     if (listClicked && listClicked !== event.currentTarget) {
-      console.log(listClicked)
+      // console.log(listClicked)
       listClicked.style.backgroundColor = '';
     }
     namespace[endPoint].emit('joinsRoom', friendData, (val, err) => {

@@ -33,7 +33,6 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
     
     useEffect(()=> {
         if (chatEndRef.current) {
-            console.log('render')
             chatEndRef.current.scrollIntoView({ behavior: 'smooth'});
         }
     },[chatHistory])
