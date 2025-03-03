@@ -15,7 +15,8 @@ const ChatProvider = ({children}) => {
 
       const [namespace,setNamespace] = useState([])
       const [ endPoint, setEndPoint ] = useState('')
-      const [friendList, setFriendList] = useState('')
+      const [friendList, setFriendList] = useState([])
+      const [recentMessage, setRecentMessage] = useState(null);
       const [BASE_URL,setBASE_URL] = useState(process.env.REACT_APP_BACKEND_HOST);
 
       useEffect(()=> {
@@ -25,18 +26,18 @@ const ChatProvider = ({children}) => {
         socket.on('endPoint',(endPoint)=> {
           setEndPoint(endPoint)
           namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
-          console.log(endPoint)
+          // console.log(endPoint)
           namespace[endPoint].on('getFriendList',(friendList, callback)=> {
-            console.log('friendlist',friendList)
+            console.log('friendlist')
             setFriendList(friendList)
             callback({message:'list received'})
           })
-        }) 
+        })
       },[])
    
     // console.log(userDetails.token)
     return (
-        <ChatContext.Provider value={{namespace,setNamespace,endPoint,friendList}}>
+        <ChatContext.Provider value={{namespace,setNamespace,endPoint,friendList, recentMessage, setFriendList, setRecentMessage}}>
             {children}
         </ChatContext.Provider>
     )

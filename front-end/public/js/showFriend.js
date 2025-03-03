@@ -49,11 +49,11 @@ const showFriend = (friendData) => {
         const dataString = JSON.stringify(data)
         // List on click call the friendFunction() to get into Chat with friend by passing _id of friend as argument
         list.innerHTML += `
-        <li onclick=handleClick('${dataString}',event) class="frnd-class">
-            <img class="frnd-profile-img" src="" alt="">
-            <span class="frnd-name">${data.name}</span>
+        <li onclick=handleClick('${dataString}',event) class="friend-class">
+            <img class="friend-profile-img" src="" alt="">
+            <span class="friend-name">${data.name}</span>
             <span class="recent-msg-time"></span>
-            <span class="frnd-recent-msg"></span>
+            <span class="friend-recent-msg"></span>
         </li>
         `
     });

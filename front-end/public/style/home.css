@@ -12,9 +12,9 @@ body {
     margin: 0;
 }
 
-/* #my-friends ul li = .frnd-class */
+/* #my-friends ul li = .friend-class */
 
-.frnd-class {
+.friend-class {
     height: 6vh;
     width: 100%;
     border: 1px solid wheat;
@@ -26,7 +26,7 @@ body {
 
 }
 
-.frnd-profile-img {
+.friend-profile-img {
     width: 5vh;
     height: 5vh;
     border-radius: 50%;
@@ -38,13 +38,13 @@ body {
     margin: 0.5vh;
 }
 
-.frnd-name {
+.friend-name {
     grid-column-start: 2;
     grid-column-end: 3;
     margin: 0;
 }
 
-.frnd-recent-msg {
+.friend-recent-msg {
     grid-row-start: 2;
     grid-row-end: 3;
     grid-column-start: 2;

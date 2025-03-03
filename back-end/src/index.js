@@ -43,10 +43,10 @@ const initializedNamespace = {}
 
 export let namespace = {}
 io.of('/').on('connection', async (socket) => {
-  console.log(socket.id, "has connected to server")
+  // console.log(socket.id, "has connected to server")
   // console.log(socket.handshake.auth.token)
   const [nameSpace,id] = await getEndpoint(socket.handshake.auth.token)
-  if(id === 0) {
+  if(id === null) {
     return;
   } 
   // if(!namespace[id])

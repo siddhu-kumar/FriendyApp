@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState} from "react";
 import style from "./chat.module.css"
 import { ShowFriend } from "./ShowFriend";
 import { ChatBox } from "./ChatBox";
-import { ChatContext } from "../../context/chatContext";
 
 function Chat() {
   const [listClicked, setListClicked] = useState('');
@@ -10,7 +9,6 @@ function Chat() {
   const [chatHistory, setChatHistory] = useState([])
 
   const getData = (friendData,chatHistory,listClicked) => {
-    console.log(friendData,chatHistory,listClicked)
     setListClicked(listClicked)
     setChatHistory(chatHistory)
     setFriendData(friendData);

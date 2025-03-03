@@ -2,21 +2,42 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import style from "./chat.module.css"
 import { ChatContext } from "../../context/chatContext";
 export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
-    const { namespace, endPoint } = useContext(ChatContext);
+    const { namespace, friendList, setFriendList, endPoint } = useContext(ChatContext);
     const chatEndRef = useRef(null);
     const data = friendData
     const [message, setMessage] = useState({
         sender: friendData.namespaceId,
         receiver: friendData.userId,
-        date: '',
+        // date: '',
         message: '',
     })
+    useEffect(()=> {
+        namespace[endPoint].off('listenMessage');
+        namespace[endPoint].on('listenMessage', (messageObj, callback) => {
+            console.log(messageObj)
+            setFriendList(prevList => {
+                const updatedList = [];
+            
+                for (let i = 0; i < prevList.length; i++) {
+                    const ele = prevList[i];
+                    if (ele.userId === messageObj.receiver) {
+                        console.log("Condition is true for:", ele.userId, message.receiver);
+                        updatedList.push({ ...ele, recentMessage: messageObj });
+                    } else {
+                        updatedList.push(ele);
+                    }
+                }
+            
+                return updatedList;
+            });
+            setChatHistory(prevChatHistory => [...prevChatHistory, messageObj]);
+            callback({ message: 'received' })
+        })
+    },[])
 
-    namespace[endPoint].on('listenMessage', (messageObj, callback) => {
-        console.log(messageObj)
-        setChatHistory(prevChatHistory => [...prevChatHistory, messageObj]);
-        callback({ message: 'received' })
-    })
+    useEffect(()=> {
+        console.log(friendList);
+    },[friendList])
     
     const handleChange = async (e) => {
         e.preventDefault()
@@ -29,30 +50,30 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, []);
-    
-    useEffect(()=> {
-        if (chatEndRef.current) {
-            console.log('render')
-            chatEndRef.current.scrollIntoView({ behavior: 'smooth'});
-        }
+        console.log('check')
     },[chatHistory])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         console.log(friendData, endPoint)
-        setMessage({ ...message, [`date`]: Date.now() })
+        // setMessage({ ...message, [`date`]: Date.now() })
         const response = await namespace[endPoint].emitWithAck('newMessageToRoom', message)
         console.log(response)
-        setChatHistory(prevChatHistory => [...prevChatHistory, message]);
         setMessage({
             sender: friendData.namespaceId,
             receiver: friendData.userId,
-            date: '',
             message: '',
         });
-    
-}
+        setFriendList(prevList => 
+            prevList.map(ele => 
+              ele.userId === message.receiver 
+                ? { ...ele, recentMessage: message } 
+                : ele 
+            )
+        );
+        setChatHistory(prevChatHistory => [...prevChatHistory, message]);
+        console.log('chatHistory')
+    }
     return (<>
         <div id={style.chat}>
             <div id={style.messages}>
@@ -81,6 +102,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
                     id={style.message}
                     value={message.message}
                     onChange={handleChange}
+                    autoFocus={true}
                 />
                 <button className={`${style.send_chat} ${style.chat_button}`} type="submit">Send</button>
             </form>
