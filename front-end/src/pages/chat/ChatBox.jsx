@@ -15,29 +15,17 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         namespace[endPoint].off('listenMessage');
         namespace[endPoint].on('listenMessage', (messageObj, callback) => {
             console.log(messageObj)
-            setFriendList(prevList => {
-                const updatedList = [];
-            
-                for (let i = 0; i < prevList.length; i++) {
-                    const ele = prevList[i];
-                    if (ele.userId === messageObj.receiver) {
-                        console.log("Condition is true for:", ele.userId, message.receiver);
-                        updatedList.push({ ...ele, recentMessage: messageObj });
-                    } else {
-                        updatedList.push(ele);
-                    }
-                }
-            
-                return updatedList;
-            });
+            setFriendList(prevList => 
+                prevList.map(ele => {
+                    return { ...ele, recentMessage: messageObj };
+                })
+            )
+            console.log(friendList);
             setChatHistory(prevChatHistory => [...prevChatHistory, messageObj]);
             callback({ message: 'received' })
         })
     },[])
 
-    useEffect(()=> {
-        console.log(friendList);
-    },[friendList])
     
     const handleChange = async (e) => {
         e.preventDefault()
@@ -50,8 +38,8 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-        console.log('check')
-    },[chatHistory])
+        console.log(friendList)
+    },[friendList])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -65,14 +53,14 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
             message: '',
         });
         setFriendList(prevList => 
-            prevList.map(ele => 
-              ele.userId === message.receiver 
-                ? { ...ele, recentMessage: message } 
-                : ele 
-            )
+            prevList.map(ele =>{ 
+                if (ele.namespaceId === message.sender) 
+                    return { ...ele, recentMessage: message };
+                return ele;  
+            })
         );
         setChatHistory(prevChatHistory => [...prevChatHistory, message]);
-        console.log('chatHistory')
+        console.log(chatHistory)
     }
     return (<>
         <div id={style.chat}>
