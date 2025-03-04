@@ -9,10 +9,10 @@ function Chat() {
   const [chatHistory, setChatHistory] = useState([])
 
   const getData = (friendData,chatHistory,listClicked) => {
-<<<<<<< HEAD
+
     // console.log(friendData,chatHistory,listClicked)
-=======
->>>>>>> development
+
+
     setListClicked(listClicked)
     setChatHistory(chatHistory)
     setFriendData(friendData);

@@ -38,7 +38,6 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-<<<<<<< HEAD
     }, []);
     
     useEffect(()=> {
@@ -46,10 +45,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth'});
         }
     },[chatHistory])
-=======
-        console.log(friendList)
-    },[friendList])
->>>>>>> development
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()

@@ -9,13 +9,13 @@ export const ShowFriend = (props) => {
   const [chatHistory, setChatHistory] = useState([])
 
   useEffect(() => {
-<<<<<<< HEAD
+
     if (friendList.length !== 0)
       friendList.forEach(element => {
         console.log(element.name)
       });
-=======
->>>>>>> development
+
+
     props.getData(friendData, chatHistory, listClicked)
   },[chatHistory])
 
