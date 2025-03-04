@@ -63,9 +63,12 @@ export const acceptRequest = async(req,res) => {
         // console.log(updateuser,updatefriend)
         const friend = await User.findOne({ "friends.friendId": userId }, { "friends.$": 1 });
         console.log(namespace[userData.id])
-        
-        namespace[userData.id].addRoom(new Room(roomId,userId,userData.endpoint,friendData.id,friendData.name,friendData.endpoint))
-        
+        try {
+            namespace[userData.id].addRoom(new Room(roomId,userId,userData.endpoint,friendData.id,friendData.name,friendData.endpoint))
+            console.log(namespace[userData.id])
+        } catch(err) {
+            console.log("Error from Friend",err)
+        }
         res.status(201).json({message:'friend added'})
     } catch (err) {
         console.log(err) 

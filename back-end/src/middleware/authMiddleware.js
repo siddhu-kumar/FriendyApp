@@ -13,7 +13,7 @@ export const verifyToken = (req, res, next) => {
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, secret_key)
         req.userId = decoded.userId;
-        console.log(req.userId)
+        // console.log(req.userId)
         next()
     } catch (err) {
         if(err.name == "TokenExpiredError") {

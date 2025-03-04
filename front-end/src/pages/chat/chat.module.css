@@ -10,6 +10,7 @@
     display: flex;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 #chat {
@@ -17,7 +18,6 @@
     height: 88vh;
     display: flex;
     flex-direction: column;
-    border-radius: 8px; /* Optional: Rounded corners */
     overflow: hidden; /* hidden; Prevent overflow of the chat container*/
 }
 
@@ -26,7 +26,11 @@
     /* height: 60vh; */
     flex: 1; /* Allow the messages area to grow and fill available space */
     overflow-y: auto; /* Enable vertical scrolling */
+<<<<<<< HEAD
     padding: 0 20px; /* Add some padding for better spacing */
+=======
+    padding: 20px 5px; /* Add some padding for better spacing */
+>>>>>>> development
     list-style-type: none; /* Remove default list styling */
 }
 
@@ -53,9 +57,9 @@
     border-right: 1px solid wheat;
 }
 
-/* #my-friends ul li = .frnd-class */
+/* #my-friends ul li = .friend-class */
 
-.frnd_class {
+.friend_class {
     height: 6vh;
     width: 100%;
     border: 1px solid wheat;
@@ -67,7 +71,7 @@
 
 }
 
-.frnd_profile_img {
+.friend_profile_img {
     width: 5vh;
     height: 5vh;
     border-radius: 50%;
@@ -79,13 +83,14 @@
     margin: 0.5vh;
 }
 
-.frnd_name {
+.friend_name {
     grid-column-start: 2;
     grid-column-end: 3;
     margin: 0;
+    color: wheat;
 }
 
-.frnd_recent_msg {
+.friend_recent_msg {
     grid-row-start: 2;
     grid-row-end: 3;
     grid-column-start: 2;
