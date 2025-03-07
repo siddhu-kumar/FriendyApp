@@ -16,8 +16,11 @@ function EmailVerify() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('handle')
-        console.log(email)
+        const pattern = /^([a-zA-Z\d._-])+@[a-zA-Z\d]+\.[a-zA-Z]{2,}$/
+        if (!pattern.test(email.email)) {
+            setResponse('Email is not looking valid.')
+            return;
+        }
         localStorage.setItem('email',email.email)
         emailVerify(email).then((data)=> {
             navigate('/otp-verify', {state:{reg:false}});
