@@ -1,11 +1,11 @@
 export const validation = (input) => {
     const message = []
 
-    const checkpassword = {
+    const checkPassword = {
         lowercase: /[a-z]/.test(input.password),
         uppercase: /[A-Z]/.test(input.password),
-        digitcase: /\d/.test(input.password),
-        specialchar: /[!@#$%^&*]/.test(input.password),
+        digitCase: /\d/.test(input.password),
+        specialChar: /[!@#$%^&*]/.test(input.password),
         length: input.password.length >= 4
     }
 
@@ -16,7 +16,7 @@ export const validation = (input) => {
         message.push('User name must be atleast 4 letter.');
     }
 
-    if(!(input.contact.length<=10)) {
+    if (!(input.contact.length <= 10)) {
         message.push('Invalid user contacts.')
     }
 
@@ -27,25 +27,25 @@ export const validation = (input) => {
         }
     }
 
-    // if (input.password) {
+    if (input.password) {
 
-    //     if (!checkpassword.lowercase) {
-    //         message.push('Password must contain lowercase letter.')
-    //     }
-    //     if (!checkpassword.uppercase) {
-    //         message.push('Password must contain uppercase letter.')
-    //     }
-    //     if (!checkpassword.digitcase) {
-    //         message.push('Password must contain digit letter.')
-    //     }
-    //     if (!checkpassword.specialchar) {
-    //         message.push('Password must contain special character.')
-    //     }
-    //     if (!checkpassword.length) {
-    //         message.push('Password must be atleast 8 characters long.')
-    //     }
-    // }
+        if (!checkPassword.lowercase) {
+            message.push('Password must contain lowercase letter.')
+        }
+        if (!checkPassword.uppercase) {
+            message.push('Password must contain uppercase letter.')
+        }
+        if (!checkPassword.digitCase) {
+            message.push('Password must contain digit letter.')
+        }
+        if (!checkPassword.specialChar) {
+            message.push('Password must contain special character.')
+        }
+        if (!checkPassword.length) {
+            message.push('Password must be at least 6 characters long.')
+        }
+    }
 
-   return message;
+    return message;
 
 }

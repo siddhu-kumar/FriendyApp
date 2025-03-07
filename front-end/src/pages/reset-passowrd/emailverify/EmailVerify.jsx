@@ -8,7 +8,7 @@ function EmailVerify() {
     const [email,setEmail] = useState({
         email:''
     })
-
+    const [response,setResponse] = useState(null)
     const handleChange = async (e) => {
         const {name,value} = e.target;
         setEmail({...email,[name]:value})
@@ -24,12 +24,14 @@ function EmailVerify() {
             console.log(data)
         })
         .catch((error)=> {
-            console.log(error)
+            // console.log(error.response.data.message)
+            setResponse(error.response.data.message)
         }) 
     
     }
   return (
     <div className={style.Email}>
+        <div>{response}</div>
         <span>Verify Your Email</span>
         <form onSubmit={handleSubmit} >
             <label htmlFor="text">Enter Email</label>

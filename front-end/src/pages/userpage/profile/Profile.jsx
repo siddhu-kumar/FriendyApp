@@ -14,7 +14,7 @@ const Profile = () => {
   const handleClick = () => {
     setBtn(!btn)
     if (!btn) {
-      if(user === userDetails) {
+      if (user === userDetails) {
         // console.log('nothing changed')
       } else {
         editProfile(user).then(data => {
@@ -36,10 +36,10 @@ const Profile = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    doLogout(); 
+    doLogout();
     setUserList('');
     setUserDetails('');
-    setAuth(isLoggedIn); 
+    setAuth(isLoggedIn);
     navigate('/');
   }
 
@@ -49,7 +49,7 @@ const Profile = () => {
       <div className={style.ProfileHead}>{btn ? 'Profile' : 'Edit Profile'}</div>
       <div className={style.ProfilePicture}>
         <img src="./logo192.png" alt="" />
-        {!btn?<button className={style.ImgBtn}>change</button>:""}
+        {!btn ? <button className={style.ImgBtn}>change</button> : ""}
       </div>
       <button className={style.logout} onClick={handleLogout}>Log Out</button>
       {
@@ -57,7 +57,7 @@ const Profile = () => {
           <div className={style.userInfo}>{user.name}</div>
           <div className={style.userInfo}>{user.email}</div>
           <div className={style.userInfo}>{user.contact}</div>
-          
+
         </>
           :
           <form className={style.EditProfile}
@@ -84,7 +84,7 @@ const Profile = () => {
               onChange={handleChange}
               required
             />
-            
+
           </form>
       }
       <button className={`${style.userInfo} ${style.ProfileBtn}`}

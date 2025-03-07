@@ -5,7 +5,8 @@ export const loginUser = (loginUser) => {
     console.log('login user',loginUser)
     return myAxios.post('/user/login', loginUser)
     .then((res) => {
-    return  res.data
+        console.log(res.data)
+    return res.data
     })
 }
 

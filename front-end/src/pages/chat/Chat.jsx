@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import style from "./chat.module.css"
 import { ShowFriend } from "./ShowFriend";
 import { ChatBox } from "./ChatBox";
@@ -8,11 +8,8 @@ function Chat() {
   const [friendData, setFriendData] = useState('');
   const [chatHistory, setChatHistory] = useState([])
 
-  const getData = (friendData,chatHistory,listClicked) => {
-
+  const getData = (friendData, chatHistory, listClicked) => {
     // console.log(friendData,chatHistory,listClicked)
-
-
     setListClicked(listClicked)
     setChatHistory(chatHistory)
     setFriendData(friendData);
@@ -22,7 +19,7 @@ function Chat() {
     <>
       <div className={style.chat_page}>
         <ShowFriend getData={getData} />
-        {listClicked && <ChatBox  friendData={friendData} chatHistory={chatHistory} setChatHistory={setChatHistory} />}
+        {listClicked && <ChatBox friendData={friendData} chatHistory={chatHistory} setChatHistory={setChatHistory} />}
 
       </div>
     </>

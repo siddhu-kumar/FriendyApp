@@ -1,56 +1,63 @@
-import { Resetpwd } from "../models/models.js"
+import { Resetpwd, User } from "../models/models.js"
 import nodemailer from "nodemailer"
 import { totp } from 'otplib'
 import crypto from 'crypto'
-let otp 
+let otp
 
 export const email_validate = async (req, res) => {
     const { email } = req.body;
+    const checkEmail = await User.find({ email: email })
+    console.log(checkEmail)
+    if (!checkEmail) {
+        res.status(401).json({ message: 'User does not exists.' })
+        return;
+    }
     console.log(email)
     otp = await generateOTP(email);
     const status = await sendEmail(email, otp);
     if (!status.rejected) {
-        res.status(400).json({ 'message': 'Email rejected.' })
+        res.status(400).json({ message: 'Email not sent.' })
+        return;
     }
-    res.status(200).json({ 'message': 'User exists and mail sent.' })
+    res.status(200).json({ message: 'User exists and mail sent.' })
 }
 
 const generateOTP = async (email) => {
     const hash = crypto.createHash('sha256');
 
-    hash.update(email+Math.random()*100);
+    hash.update(email + Math.random() * 100);
     const sskey = hash.digest('hex')
-    totp.options = {step:300}
+    totp.options = { step: 300 }
     const otp = totp.generate(sskey)
-    
+
     const userotp = new Resetpwd({ 'sskey': sskey, 'otp': otp })
     await userotp.save()
     return otp;
 }
 
-export const validateOTP = async (req,res) => {
+export const validateOTP = async (req, res) => {
     try {
 
-    const {otp} = req.body
-    console.log(otp)
-    const validate = await Resetpwd.findOne({otp})
-    console.log('validate',validate)
-    if (!validate) {
-        res.status(400).json({ 'message': 'Invalid OTP' })
-        return;
-    }
+        const { otp } = req.body
+        console.log(otp)
+        const validate = await Resetpwd.findOne({ otp })
+        console.log('validate', validate)
+        if (!validate) {
+            res.status(400).json({ message: 'Invalid OTP' })
+            return;
+        }
 
-    const isValid = totp.check(otp, validate.sskey)
-    console.log('isVAlid', isValid)
-    if(!isValid){
-        console.log(isValid)
-        res.status(400).json({message:'OTP expired, Retry'})
-        return;
-    }
-    res.status(200).json({ 'message': 'OTP Validated.' })
-    await Resetpwd.findOneAndDelete({ 'otp': otp })
+        const isValid = totp.check(otp, validate.sskey)
+        console.log('isVAlid', isValid)
+        if (!isValid) {
+            console.log(isValid)
+            res.status(400).json({ message: 'OTP expired, Retry' })
+            return;
+        }
+        res.status(200).json({ message: 'OTP Validated.' })
+        await Resetpwd.findOneAndDelete({ 'otp': otp })
     } catch (err) {
-        res.status(401).json({message:'Regenerate OTP'})
+        res.status(401).json({ message: 'Regenerate OTP' })
     }
 }
 

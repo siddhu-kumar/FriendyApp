@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import style from './login.module.css'
-import { Link, Redirect, Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { loginUser } from '../../../services/user-service'
 import { doLogin, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
@@ -8,7 +8,8 @@ import { useNavigate } from 'react-router-dom'
 import Loader from './Loader'
 const Login = () => {
   const navigate = useNavigate()
-  const {setAuth, setUserDetails} = useContext(UserContext)
+  const { setAuth, setUserDetails } = useContext(UserContext)
+  const [ response, setResponse]= useState(null);
   const [userInput, setUserInput] = useState({
     email: "",
     user_password: ""
@@ -26,23 +27,28 @@ const Login = () => {
     }
     <Loader />
     loginUser(userInput)
-    .then((data) => {
-      console.log(data)
-      doLogin(data)
-      setTimeout(()=> {
-        setAuth(isLoggedIn)
-        setUserDetails(getUserData)
-        navigate('/home')
-        // window.location.href = "/home"
-      },1000)
-    })
-    .catch(err=> {
-      console.log('this is error',err.message);
+      .then((data) => {
+        console.log(data)
+        doLogin(data)
+        setTimeout(() => {
+          setAuth(isLoggedIn)
+          setUserDetails(getUserData)
+          navigate('/home')
+          // window.location.href = "/home"
+        }, 1000)
+      })
+      .catch(err => {
+        console.log(err)
+        if(err.response.status === 401) {
+          setResponse(err.response.data.message)
+        }
     })
   }
 
   return (
     <div className={style.Login}>
+      <div>{response}
+      </div>
       <div className={style.loginHead}>
         <span>FriendyApp</span>
       </div>

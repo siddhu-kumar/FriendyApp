@@ -10,17 +10,17 @@ export const verifyEmail = async (req, res) => {
     console.log(email)
     const findEmail = await User.findOne({ email :email });
     if (!findEmail) {
-        res.status(400).json({ 'message': 'User does not exists' })
+        res.status(401).json({ message: 'User does not exists!' })
+        return ;
     }
-    console.log(findEmail)
     const useremail = findEmail.email;
     otp = await generateOTP(useremail);
     // console.log(useremail,otp)
     const status = await sendEmail(useremail, otp);
     if (!status.rejected) {
-        res.status(400).json({ 'message': 'Email rejected.' })
+        res.status(401).json({ message: 'Email rejected.' })
     }
-    res.status(200).json({ 'message': 'User exists and mail sent.' })
+    res.status(200).json({ message: 'User exists and mail sent.' })
 }
 
 const generateOTP = async (useremail) => {
@@ -44,7 +44,7 @@ export const validateOTP = async (req,res) => {
     const validate = await Resetpwd.findOne({otp})
     console.log('validate',validate)
     if (!validate) {
-        res.status(400).json({ 'message': 'Invalid OTP' })
+        res.status(401).json({ message: 'Invalid OTP' })
         return;
     }
 
@@ -52,10 +52,10 @@ export const validateOTP = async (req,res) => {
     console.log('isVAlid', isValid)
     if(!isValid){
         console.log(isValid)
-        res.status(400).json({message:'OTP expired, Retry'})
+        res.status(401).json({message:'OTP expired, Retry'})
         return;
     }
-    res.status(200).json({ 'message': 'OTP Validated.' })
+    res.status(200).json({ message: 'OTP Validated.' })
     } catch (err) {
         res.status(401).json({message:'Regenerate OTP'})
     }
@@ -68,7 +68,7 @@ export const resetPassword = async (req, res) => {
     const updatePassword = await User.findOneAndUpdate({ email: email }, {'password':hashedPassword}, { new: true })
     console.log(updatePassword)
     const deleteOTP = await Resetpwd.findOneAndDelete({otp:otp})
-    res.status(201).json({ 'message': 'Password reset' })
+    res.status(201).json({ message: 'Password reset' })
 }
 
 const pass_key = process.env.NODEMAIL_PASS_KEY

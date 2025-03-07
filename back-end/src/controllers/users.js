@@ -131,12 +131,12 @@ export const loginUser = async (req, res) => {
         console.log(userData)
         if (!userData) {
             console.log('user does not exists')
-            return res.status(401).json({ message: 'User does not exists!' })
+            return res.status(401).json({ message: 'User/Password does not exists!' })
         }
         const passwordMatch = await bcrypt.compare(user_password, userData.password);
         if (!passwordMatch) {
             console.log('Login failed!')
-            return res.status(401).json({ error: 'Authentication failed!' })
+            return res.status(401).json({ message: 'User/Password does not exists!' })
         }
         const { _id, password, friends, ...data } = userData.toObject()
         console.log(data)

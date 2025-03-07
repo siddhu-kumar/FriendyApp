@@ -2,22 +2,19 @@ import React, { useContext, useEffect, useState, } from "react";
 import style from "./chat.module.css"
 import { ChatContext } from "../../context/chatContext";
 export const ShowFriend = (props) => {
-  const { friendList,  namespace, endPoint } = useContext(ChatContext)
+  const { friendList, namespace, endPoint } = useContext(ChatContext)
 
   const [listClicked, setListClicked] = useState('');
   const [friendData, setFriendData] = useState('');
   const [chatHistory, setChatHistory] = useState([])
 
   useEffect(() => {
-
     if (friendList.length !== 0)
       friendList.forEach(element => {
         console.log(element.name)
       });
-
-
     props.getData(friendData, chatHistory, listClicked)
-  },[chatHistory])
+  }, [chatHistory])
 
 
   const handleClick = (event, friendData) => {
@@ -51,7 +48,7 @@ export const ShowFriend = (props) => {
           <li onClick={(e) => handleClick(e, data)} key={index} className={style.friend_class}>
             <img className={style.friend_profile_img} alt="" />
             <span className={style.friend_name}>{data.username}</span>
-            <span className={style.recent_msg_time}>{}</span>
+            <span className={style.recent_msg_time}>{ }</span>
             <span className={style.friend_recent_msg}>{data.recentMessage.message}</span>
           </li>
 
