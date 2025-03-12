@@ -26,7 +26,7 @@ const Register = () => {
 
     if (isValidated.length === 0) {
       setUserDetails(userInput);
-      await validateUserData({ contact: userInput.contact, email: userInput.email }).then(data => {
+      await validateUserData({ contact: userInput.contact, email: userInput.email }).then( async data => {
         console.log(data)
         if(data.flag){
           await emailValidate({ email: userInput.email }).then(data => {
@@ -56,7 +56,7 @@ const Register = () => {
 
   return (
     <div className={style.Register}>
-        <div>{response}</div>
+        <div>{data}</div>
       <div className={style.RegisterHead}>
         <span>FriendyApp</span>
       </div>
