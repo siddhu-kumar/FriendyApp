@@ -48,9 +48,6 @@ function OTPVerify() {
   return (
     <div className={style.OTP}>
       <div className={style.error}>
-      {
-        !error.valid?error.message:''
-      }
       </div>
       <span>Verify Your OTP</span>
       <form onSubmit={handleSubmit} >
@@ -66,7 +63,7 @@ function OTPVerify() {
         <button type='submit'>Submit</button>
       </form>
       {
-        otpExpire?<button>{otpExpire}</button>:''
+        otpExpire?<button onClick={navigate('/email-verify')}>{otpExpire}</button>:''
       }
     </div>
   )
