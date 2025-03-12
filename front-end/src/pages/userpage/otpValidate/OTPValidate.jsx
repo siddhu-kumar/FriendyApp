@@ -1,16 +1,23 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import style from './otp.module.css'
 import { verifyOTP } from '../../../services/reset-password'
-import {  useNavigate } from 'react-router-dom'
-
-function OTPVerify() {
+import { useNavigate } from 'react-router-dom'
+import { UserContext } from '../../../context/userContext'
+import { doLogin, isLoggedIn } from '../../../auth'
+import { createUser } from '../../../services/user-service'
+ 
+function OTPVlidate() {
+  const { setAuth, userDetails } = useContext(UserContext);
   const navigate = useNavigate();
   const [otp, setOtp] = useState({
     otp: ''
   })
 
   const [count, setCount] = useState(0)
-
+  const [error, setError] = useState({
+    valid: '',
+    object:'',
+    message:''});
   const [otpExpire, setOTPExpire] = useState(null);
 
   const handleChange = async (e) => {
@@ -23,8 +30,21 @@ function OTPVerify() {
     console.log(otp, 'yui')
 
     verifyOTP(otp).then((data) => {
-      console.log(data)
-      navigate('/reset-password');
+      
+        createUser(userDetails).then(data => {
+          console.log(data);
+          doLogin(data)
+          setAuth(isLoggedIn);
+          navigate("/home");
+        }).catch(err=> {
+          console.log(err.response.data)
+          if(!err.response.data.valid && err.response.data.object === "contact") 
+          setError({
+            valid: err.response.data.isValid,
+            object: err.response.data.object,
+            message:"Contact already exists: "+err.response.data.message})
+        })
+        console.log(data)
     })
       .catch((error) => {
         console.log(error)
@@ -38,18 +58,19 @@ function OTPVerify() {
         setCount(count + 3)
         if (count < 3) {
           console.log(count)
-          // handleSubmit(e);
         } else {
           navigate("/home")
         }
         console.log(error)
       })
+      console.log(error)
   }
 
   return (
     <div className={style.OTP}>
-      <div className={style.error}>
-      </div>
+        <div>
+            {otpExpire}
+        </div>
       <span>Verify Your OTP</span>
       <form onSubmit={handleSubmit} >
         <label htmlFor="text">Enter OTP</label>
@@ -63,11 +84,9 @@ function OTPVerify() {
         />
         <button type='submit'>Submit</button>
       </form>
-      {
-        otpExpire?<button onClick={navigate('/email-verify')}>{otpExpire}</button>:''
-      }
+     
     </div>
   )
 }
 
-export default OTPVerify
+export default OTPVlidate;

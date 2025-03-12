@@ -21,7 +21,7 @@ const Connections = () => {
     e.preventDefault();
     if (e.target.value === 'edit') {
       console.log('edit', id)
-      navigate(`/friend/edit`,{state:{_id:id}})
+      // navigate(`/friend/edit`,{state:{_id:id}})
     } else if (e.target.value === 'delete') {
       deleteFriend(id).then((data)=> {
         setDeleted(data)

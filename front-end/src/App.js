@@ -16,6 +16,7 @@ import Password from './pages/reset-passowrd/newpassword/Password';
 import Chat from './pages/chat/Chat.jsx';
 import Request from './pages/request/Request.jsx';
 import Pending from './pages/pending/Pending.jsx';
+import OTPVlidate from './pages/userpage/otpValidate/OTPValidate.jsx';
 
 function App() {
   
@@ -29,6 +30,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/otp-verify" element={<OTPVerify />} />
+          <Route path="/otp-validate" element={<OTPVlidate />} />
           <Route path="/reset-password" element={<Password />} />
           <Route path="/received_request" element={<Request />} />
           <Route path="/pending_request" element={<Pending />} />

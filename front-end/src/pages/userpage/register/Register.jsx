@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import style from './register.module.css'
 import { Link, useNavigate } from 'react-router-dom'
-import { createUser, validateUserData } from '../../../services/user-service'
+import { validateUserData } from '../../../services/user-service'
 import { UserContext } from '../../../context/userContext'
 import { validation } from '../../../auth/validation'
 import { emailValidate } from '../../../services/user-service'
@@ -14,7 +14,7 @@ const Register = () => {
     contact: "",
     password: "",
   })
-  const [response, setResponse] = useState(null)
+  const [data, setData] = useState(null)
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setUserInput({ ...userInput, [name]: value })
@@ -26,8 +26,7 @@ const Register = () => {
 
     if (isValidated.length === 0) {
       setUserDetails(userInput);
-      await validateUserData({ contact: userInput.contact, email: userInput.email })
-      .then(async data => {
+      await validateUserData({ contact: userInput.contact, email: userInput.email }).then(data => {
         console.log(data)
         if(data.flag){
           await emailValidate({ email: userInput.email }).then(data => {
@@ -36,13 +35,16 @@ const Register = () => {
           })
         }
       }).catch(err => {
-        console.log('p', err)
-        if (!err.response.data.flag) {
-          setResponse(err.response.data.message)
+        if (err.response.data.flag) {
+          console.log('p', err)
+          setData(err.response.data.message)
           return;
         }
       })
-  
+      await emailValidate({ email: userInput.email }).then(data => {
+        console.log(data);
+      })
+      navigate('/otp-verify', { state: { reg: true } })
     } else {
       isValidated.forEach(element => {
         alert(element)
@@ -76,7 +78,6 @@ const Register = () => {
             required
           />
           <label htmlFor="contact">User Contact</label>
-
           <input type="text"
             placeholder='+91 0123456789'
             name='contact'
@@ -86,7 +87,7 @@ const Register = () => {
           />
           <label htmlFor="password">User Password</label>
           <input type="password"
-            placeholder='Use strong passowrd.'
+            placeholder='Use strong password.'
             name='password'
             value={userInput.password}
             onChange={handleChange}
