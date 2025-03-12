@@ -91,7 +91,7 @@ const sendEmail = async (email, otp) => {
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP</h5>
-                        <a href="http://192.168.1.5:3000/otp-verify">FriendyApp</a>
+                        <a href="https://friendyapp-deploment-testing.onrender.com/otp-verify">FriendyApp</a>
                         <h3 style="color: black;">${otp}</h3>
                     </body>
                 </html>`
