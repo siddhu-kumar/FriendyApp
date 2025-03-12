@@ -1,25 +1,16 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import style from './otp.module.css'
 import { verifyOTP } from '../../../services/reset-password'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { UserContext } from '../../../context/userContext'
-import { doLogin, isLoggedIn } from '../../../auth'
-import { getUserData } from '../../../auth'
-import { createUser, emailValidate, loginUser } from '../../../services/user-service'
- 
+import {  useNavigate } from 'react-router-dom'
+
 function OTPVerify() {
-  const { state } = useLocation();
-  const { setAuth, userDetails } = useContext(UserContext);
   const navigate = useNavigate();
   const [otp, setOtp] = useState({
     otp: ''
   })
 
   const [count, setCount] = useState(0)
-  const [error, setError] = useState({
-    valid: '',
-    object:'',
-    message:''});
+
   const [otpExpire, setOTPExpire] = useState(null);
 
   const handleChange = async (e) => {
@@ -32,25 +23,8 @@ function OTPVerify() {
     console.log(otp, 'yui')
 
     verifyOTP(otp).then((data) => {
-      if (state.reg) {
-        createUser(userDetails).then(data => {
-          console.log(data);
-          doLogin(data)
-          setAuth(isLoggedIn);
-          navigate("/home");
-        }).catch(err=> {
-          console.log(err.response.data)
-          if(!err.response.data.valid && err.response.data.object === "contact") 
-
-          setError({
-            valid: err.response.data.isValid,
-            object: err.response.data.object,
-            message:"Contact already exists: "+err.response.data.message})
-        })
-        console.log(data)
-      } else {
-        navigate('/reset-password');
-      }
+      console.log(data)
+      navigate('/reset-password');
     })
       .catch((error) => {
         console.log(error)

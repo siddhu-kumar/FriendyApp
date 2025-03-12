@@ -58,7 +58,6 @@ function OTPVlidate() {
         setCount(count + 3)
         if (count < 3) {
           console.log(count)
-          // handleSubmit(e);
         } else {
           navigate("/home")
         }
