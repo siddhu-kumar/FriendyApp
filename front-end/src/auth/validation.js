@@ -27,24 +27,24 @@ export const validation = (input) => {
         }
     }
 
-    if (input.password) {
+    // if (input.password) {
 
-        if (!checkPassword.lowercase) {
-            message.push('Password must contain lowercase letter.')
-        }
-        if (!checkPassword.uppercase) {
-            message.push('Password must contain uppercase letter.')
-        }
-        if (!checkPassword.digitCase) {
-            message.push('Password must contain digit letter.')
-        }
-        if (!checkPassword.specialChar) {
-            message.push('Password must contain special character.')
-        }
-        if (!checkPassword.length) {
-            message.push('Password must be at least 6 characters long.')
-        }
-    }
+    //     if (!checkPassword.lowercase) {
+    //         message.push('Password must contain lowercase letter.')
+    //     }
+    //     if (!checkPassword.uppercase) {
+    //         message.push('Password must contain uppercase letter.')
+    //     }
+    //     if (!checkPassword.digitCase) {
+    //         message.push('Password must contain digit letter.')
+    //     }
+    //     if (!checkPassword.specialChar) {
+    //         message.push('Password must contain special character.')
+    //     }
+    //     if (!checkPassword.length) {
+    //         message.push('Password must be at least 6 characters long.')
+    //     }
+    // }
 
     return message;
 

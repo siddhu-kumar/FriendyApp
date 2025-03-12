@@ -51,11 +51,19 @@ export const getUser = async (req, res) => {
 export const validateUserData = async (req,res) => {
     console.log('called')
     try{
-        // const {contact,email} = req.body;
+        const {contact,email} = req.body;
         const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
-        const {contact, email } = doesExists.toObject();
-        console.log(contact, email);
-        res.status(400).json({message:'doesExists', flag:true})
+        // const {contact, email } = doesExists.toObject();
+        console.log('not',doesExists)
+        if(doesExists === null) {
+            // flag = true, it allows to create new user
+            res.status(200).json({message:'doesNotExists',flag:true})
+            return ;
+        } 
+        // flag = false, it dose not allow to create new user
+        console.log('r')
+        res.status(400).json({message:'doesExists', flag:false})
+        return;
     } catch(error) {
         console.log(error)
     }
@@ -68,6 +76,11 @@ export const createUser = async (req, res) => {
 
         const {name, email, contact, password } = req.body;
         console.log(req.body)
+        const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
+        // if(doesExists !== null) {
+        //     res.status(409).json({message:'user already exists!'})
+        //     return;
+        // }
         const hashedPassword = await bcrypt.hash(password, 10)
         const endPoint = await generateEndpoint(contact)
         const id = uuidv4()
