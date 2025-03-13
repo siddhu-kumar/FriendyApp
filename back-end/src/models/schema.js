@@ -53,6 +53,32 @@ const chatSchemas = new mongoose.Schema({
     }],
 })
 
+const tempUserSchemas = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    contact: {
+        type: String,
+        required: true,
+    },
+    sskey: {
+        type: String,
+    },
+    otp: {
+        type: String,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true
+    }
+})
+
 const userSchemas = new mongoose.Schema({
     id: {
         type: String,
@@ -96,3 +122,4 @@ export const chatSchema = chatSchemas
 export const userSchema = userSchemas
 export const resetPasswordSchema = resetPassword
 export const requestSchemas = requestSchema
+export const tempUserSchema = tempUserSchemas

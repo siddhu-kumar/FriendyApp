@@ -26,13 +26,13 @@ const Register = () => {
 
     if (isValidated.length === 0) {
       setUserDetails(userInput);
-      await validateUserData({ contact: userInput.contact, email: userInput.email }).then( async data => {
+      await validateUserData(userInput).then( async data => {
         console.log(data)
         if(data.flag){
-          await emailValidate({ email: userInput.email }).then(data => {
-            console.log(data);
-            navigate('/otp-verify', { state: { reg: true } })
-          })
+          navigate('/email_sent')
+          // await emailValidate({ email: userInput.email }).then(data => {
+          //   console.log(data);
+          // })
         }
       }).catch(err => {
         if (err.response.data.flag) {
@@ -41,10 +41,10 @@ const Register = () => {
           return;
         }
       })
-      await emailValidate({ email: userInput.email }).then(data => {
-        console.log(data);
-      })
-      navigate('/otp-verify', { state: { reg: true } })
+      // await emailValidate({ email: userInput.email }).then(data => {
+      //   console.log(data);
+      // })
+      // navigate('/otp-verify', { state: { reg: true } })
     } else {
       isValidated.forEach(element => {
         alert(element)

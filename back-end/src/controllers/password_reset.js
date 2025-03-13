@@ -36,7 +36,7 @@ const generateOTP = async (useremail) => {
     return otp;
 }
 
-export const validateOTP = async (req,res) => {
+export const verifyOTP = async (req,res) => {
     try {
 
     const {otp} = req.body
@@ -91,7 +91,7 @@ const sendEmail = async (email, otp) => {
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP</h5>
-                        <a href="https://friendyapp-1.onrender.com/otp-verify">FriendyApp</a>
+                        <a href="http://localhost:3000/otp-verify">FriendyApp</a>
                         <h3 style="color: black;">${otp}</h3>
                     </body>
                 </html>`

@@ -1,8 +1,9 @@
-import { Resetpwd, User } from "../models/models.js"
+import { Resetpwd, TempUser, User } from "../models/models.js"
 import nodemailer from "nodemailer"
-import { totp } from 'otplib'
+import { createUser } from "./users.js"
+import { status } from "../utils/error.js"
 import crypto from 'crypto'
-let otp
+import { totp } from 'otplib'
 
 export const email_validate = async (req, res) => {
     const { email } = req.body;
@@ -22,25 +23,25 @@ export const email_validate = async (req, res) => {
     res.status(200).json({ message: 'User exists and mail sent.' })
 }
 
-const generateOTP = async (email) => {
-    const hash = crypto.createHash('sha256');
+// export const generateOTP = async (email) => {
+//     const hash = crypto.createHash('sha256');
 
-    hash.update(email + Math.random() * 100);
-    const sskey = hash.digest('hex')
-    totp.options = { step: 300 }
-    const otp = totp.generate(sskey)
+//     hash.update(email + Math.random() * 100);
+//     const sskey = hash.digest('hex')
+//     totp.options = { step: 300 }
+//     const otp = totp.generate(sskey)
 
-    const userotp = new Resetpwd({ 'sskey': sskey, 'otp': otp })
-    await userotp.save()
-    return otp;
-}
+//     const userotp = new Resetpwd({ 'sskey': sskey, 'otp': otp })
+//     await userotp.save()
+//     return otp;
+// }
 
 export const validateOTP = async (req, res) => {
     try {
 
         const { otp } = req.body
         console.log(otp)
-        const validate = await Resetpwd.findOne({ otp })
+        const validate = await TempUser.findOne({ otp })
         console.log('validate', validate)
         if (!validate) {
             res.status(400).json({ message: 'Invalid OTP' })
@@ -54,9 +55,11 @@ export const validateOTP = async (req, res) => {
             res.status(400).json({ message: 'OTP expired, Retry' })
             return;
         }
-        res.status(200).json({ message: 'OTP Validated.' })
-        await Resetpwd.findOneAndDelete({ 'otp': otp })
+        createUser(otp,res);        
+
+        // await TempUser.findOneAndDelete({ 'otp': otp })
     } catch (err) {
+        console.log(err)
         res.status(401).json({ message: 'Regenerate OTP' })
     }
 }
@@ -74,14 +77,14 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const sendEmail = async (email, otp) => {
+export const sendEmail = async (email, otp) => {
 
     const html = `<html lang="en">
                     <body style="background-color: white;">
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP</h5>
-                        <a href="https://friendyapp-1.onrender.com/otp-validate">FriendyApp</a>
+                        <a href="http://localhost:3000/otp-validate">FriendyApp</a>
                         <h3 style="color: black;">${otp}</h3>
                     </body>
                 </html>`

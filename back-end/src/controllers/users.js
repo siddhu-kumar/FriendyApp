@@ -1,4 +1,4 @@
-import { RequestSchema, User } from "../models/models.js"
+import { RequestSchema, TempUser, User } from "../models/models.js"
 import { v4 as uuidv4 } from "uuid"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
@@ -6,6 +6,9 @@ import { generateEndpoint } from "./chat.js"
 import { namespace } from "../index.js"
 import { Namespace } from "../class/Namespace.js"
 import { status } from "../utils/error.js"
+import crypto from 'crypto'
+import { totp } from 'otplib'
+import { sendEmail } from "./user_validate.js"
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 
@@ -21,7 +24,7 @@ export const getAllUser = async (req, res) => {
         for(let element of friendList.friends){
             friendId.push(element.friendId)
         }
-        // console.log(requestList)
+        console.log(requestList)
         for(let element of requestList) {
             friendId.push(element.friendId)
         }
@@ -51,17 +54,27 @@ export const getUser = async (req, res) => {
 export const validateUserData = async (req,res) => {
     console.log('called')
     try{
-        const {contact,email} = req.body;
+        const {name, email, contact, password } = req.body;
         const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
         // const {contact, email } = doesExists.toObject();
-        console.log('not',doesExists)
+        console.log('is',doesExists)
         if(doesExists === null) {
             // flag = true, it allows to create new user
+            const hash = crypto.createHash('sha256');
+            
+            hash.update(email + Math.random() * 100);
+            const sskey = hash.digest('hex')
+            totp.options = { step: 1000 }
+            const otp = totp.generate(sskey)
+            
+            const tempUser = new TempUser({name:name,email:email,contact:contact,sskey:sskey,otp:otp,password:password})
+            await tempUser.save();
+            sendEmail(email,otp);
             res.status(200).json({message:'doesNotExists',flag:true})
+
             return ;
         } 
         // flag = false, it dose not allow to create new user
-        console.log('r')
         res.status(400).json({message:'doesExists', flag:false})
         return;
     } catch(error) {
@@ -70,25 +83,29 @@ export const validateUserData = async (req,res) => {
 }
 
 // creating new user
-export const createUser = async (req, res) => {
+export const createUser = async (otp,res) => {
     console.log('// creating new user')
     try {
-
-        const {name, email, contact, password } = req.body;
-        console.log(req.body)
-        const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
+        const getUser = await TempUser.findOne({ otp })
+        
+        const {name, email, contact, password } = getUser.toObject();
+        // console.log(req.body)
+        // const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
         // if(doesExists !== null) {
         //     res.status(409).json({message:'user already exists!'})
         //     return;
         // }
         const hashedPassword = await bcrypt.hash(password, 10)
+        console.log('h',hashedPassword)
         const endPoint = await generateEndpoint(contact)
-        const id = uuidv4()
+        const id = uuidv4();
         console.log(id)
         try {
             const newUser = new User({id: id, name: name, email: email, contact: contact,endpoint:endPoint, password: hashedPassword });
             const saveUser = await newUser.save();
+            console.log(saveUser)
         } catch(error) {
+            console.log('ct',error)
             // if (error.code === 11000) {
             //     // Extract the field that caused the duplicate key error
             //     const duplicateField = Object.keys(error.keyValue)[0];
@@ -112,8 +129,13 @@ export const createUser = async (req, res) => {
 
         const token = jwt.sign({ userId: id }, secret_key, { expiresIn: '100h' })
         const data = {name, email, contact }
+
         res.status(status.CREATED).json({ data, token });
+        const deleteTempUser = await TempUser.findOneAndDelete({otp:otp})
+        console.log(deleteTempUser)
+
     } catch (error) {
+        console.log('c',error.errors)
         if (error.code === 11000) {
             // Extract the field that caused the duplicate key error
             const duplicateField = Object.keys(error.keyValue)[0];

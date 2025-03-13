@@ -17,6 +17,7 @@ import Chat from './pages/chat/Chat.jsx';
 import Request from './pages/request/Request.jsx';
 import Pending from './pages/pending/Pending.jsx';
 import OTPVlidate from './pages/userpage/otpValidate/OTPValidate.jsx';
+import { EmailSent } from './pages/userpage/register/EmailSent.jsx';
 
 function App() {
   
@@ -34,6 +35,7 @@ function App() {
           <Route path="/reset-password" element={<Password />} />
           <Route path="/received_request" element={<Request />} />
           <Route path="/pending_request" element={<Pending />} />
+          <Route path="/email_sent" element={<EmailSent />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />

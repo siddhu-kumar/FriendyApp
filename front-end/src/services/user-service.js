@@ -62,3 +62,7 @@ export const editProfile = (userData) => {
 export const createUser = (userData) => {
     return myAxios.post('/user/register',userData).then(res=> res.data)
 }
+
+export const validateOTP = (data) => {
+    return myAxios.post('/user/validate_otp',data).then(res=>res.data)
+}
