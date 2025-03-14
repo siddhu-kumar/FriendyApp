@@ -2,7 +2,6 @@ import { createContext, useEffect, useState } from "react";
 import { getUserData, isLoggedIn } from "../auth";
 import { getAllUser } from "../services/user-service";
 import { doLogout } from "../auth";
-import { useNavigate } from "react-router-dom";
 export const UserContext = createContext(null)
 
 const DataProvider =  ({children}) => {

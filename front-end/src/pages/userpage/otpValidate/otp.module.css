@@ -32,10 +32,24 @@
     outline: none;
 }
 .OTP button {
-    padding: 2vh;
-    width: 15vh;
-    margin: 0 auto;
-    background-color: purple;
+    margin: auto;
+    margin-top: 2vh;
+    height: 5vh;
+    width: 12vh;
+    font-size: 2.5vh;
+    background: purple;
     color: wheat;
-    border: none;
+    cursor: pointer;
+    border: 2px solid wheat;
+}
+
+.OTP button:hover{
+    background: black;
+    color: purple;
+    border: 2px solid purple;
+}
+
+.OTP button:active {
+    box-shadow: 2px 2px wheat;
+    transform: translateY(4px);
 }

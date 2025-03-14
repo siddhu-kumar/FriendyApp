@@ -55,7 +55,12 @@ export const validateUserData = async (req,res) => {
     console.log('called')
     try{
         const {name, email, contact, password } = req.body;
-        const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
+        const doesExists = await User.findOne({
+            $or: [
+                { contact: req.body.contact },
+                { email: req.body.email }
+            ]
+        });
         // const {contact, email } = doesExists.toObject();
         console.log('is',doesExists)
         if(doesExists === null) {
@@ -66,10 +71,10 @@ export const validateUserData = async (req,res) => {
             const sskey = hash.digest('hex')
             totp.options = { step: 1000 }
             const otp = totp.generate(sskey)
-            
+            console.log(otp)
             const tempUser = new TempUser({name:name,email:email,contact:contact,sskey:sskey,otp:otp,password:password})
             await tempUser.save();
-            sendEmail(email,otp);
+            await sendEmail(email,otp);
             res.status(200).json({message:'doesNotExists',flag:true})
 
             return ;
@@ -106,12 +111,6 @@ export const createUser = async (otp,res) => {
             console.log(saveUser)
         } catch(error) {
             console.log('ct',error)
-            // if (error.code === 11000) {
-            //     // Extract the field that caused the duplicate key error
-            //     const duplicateField = Object.keys(error.keyValue)[0];
-            //     const duplicateValue = error.keyValue[duplicateField];
-            //     console.log(`Duplicate key error on field: ${duplicateField} with value: ${duplicateValue}`);
-            // }
             if (error.code === 11000) {
                 if (error.keyValue.email) {
                     console.log('Email already exists');

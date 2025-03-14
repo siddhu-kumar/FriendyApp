@@ -9,8 +9,8 @@ import {
 } from "../controllers/users.js"
 
 import { verifyToken } from "../middleware/authMiddleware.js"
-import { acceptRequest, createFriend, createRequest, deletePendingRequest, getPendingRequest, getReceivedRequest } from "../controllers/friends.js"
-import { email_validate, validateOTP } from "../controllers/user_validate.js"
+import { acceptRequest, createRequest, deletePendingRequest, getPendingRequest, getReceivedRequest } from "../controllers/friends.js"
+import { validateOTP } from "../controllers/user_validate.js"
 
 const router = express.Router()
 
@@ -20,7 +20,6 @@ router
     .post("/all_user", verifyToken, getAllUser)
     .post("/register", createUser)
     .post("/validate_data", validateUserData)
-    .post("/validate_email",email_validate)
     .post("/validate_otp",validateOTP)
     .patch("/update", verifyToken, updateUser)
     .post("/create_request",verifyToken,createRequest)

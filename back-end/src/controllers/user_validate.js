@@ -1,40 +1,7 @@
-import { Resetpwd, TempUser, User } from "../models/models.js"
+import { TempUser } from "../models/models.js"
 import nodemailer from "nodemailer"
 import { createUser } from "./users.js"
-import { status } from "../utils/error.js"
-import crypto from 'crypto'
 import { totp } from 'otplib'
-
-export const email_validate = async (req, res) => {
-    const { email } = req.body;
-    const checkEmail = await User.find({ email: email })
-    console.log(checkEmail)
-    if (!checkEmail) {
-        res.status(401).json({ message: 'User does not exists.' })
-        return;
-    }
-    console.log(email)
-    otp = await generateOTP(email);
-    const status = await sendEmail(email, otp);
-    if (!status.rejected) {
-        res.status(400).json({ message: 'Email not sent.' })
-        return;
-    }
-    res.status(200).json({ message: 'User exists and mail sent.' })
-}
-
-// export const generateOTP = async (email) => {
-//     const hash = crypto.createHash('sha256');
-
-//     hash.update(email + Math.random() * 100);
-//     const sskey = hash.digest('hex')
-//     totp.options = { step: 300 }
-//     const otp = totp.generate(sskey)
-
-//     const userotp = new Resetpwd({ 'sskey': sskey, 'otp': otp })
-//     await userotp.save()
-//     return otp;
-// }
 
 export const validateOTP = async (req, res) => {
     try {
@@ -55,7 +22,7 @@ export const validateOTP = async (req, res) => {
             res.status(400).json({ message: 'OTP expired, Retry' })
             return;
         }
-        createUser(otp,res);        
+        await createUser(otp,res);        
 
         // await TempUser.findOneAndDelete({ 'otp': otp })
     } catch (err) {
@@ -77,15 +44,17 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export const sendEmail = async (email, otp) => {
+const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000"
 
+export const sendEmail = async (email, otp) => {
+    console.log(email,otp)
     const html = `<html lang="en">
                     <body style="background-color: white;">
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
-                        <h5 style="color: blueviolet;">Your One time OTP</h5>
-                        <a href="https://friendyapp-1.onrender.com/otp-validate">FriendyApp</a>
-                        <h3 style="color: black;">${otp}</h3>
+                        <h5 style="color: blueviolet;">Your One time OTP - <h3 style="color: black;">${otp}</h3></h5>
+                        <span>Click here <a href="${FRONTENDRUNNINGPORT}/otp-validate">FriendyApp</a> </span>
+                        
                     </body>
                 </html>`
 

@@ -3,7 +3,7 @@ import style from './otp.module.css'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../../../context/userContext'
 import { doLogin, isLoggedIn } from '../../../auth'
-import { createUser, validateOTP } from '../../../services/user-service'
+import { validateOTP } from '../../../services/user-service'
  
 function OTPVlidate() {
   const { setAuth, setUserDetails } = useContext(UserContext);
@@ -13,10 +13,7 @@ function OTPVlidate() {
   })
 
   const [count, setCount] = useState(0)
-  const [error, setError] = useState({
-    valid: '',
-    object:'',
-    message:''});
+
   const [otpExpire, setOTPExpire] = useState(null);
 
   const handleChange = async (e) => {
@@ -63,7 +60,6 @@ function OTPVlidate() {
         }
         console.log(error)
       })
-      console.log(error)
   }
 
   return (
@@ -72,7 +68,7 @@ function OTPVlidate() {
             {otpExpire}
         </div>
       <span>Verify Your OTP</span>
-      <form onSubmit={handleSubmit} >
+      <form className={style.OTPVlidate} onSubmit={handleSubmit} >
         <label htmlFor="text">Enter OTP</label>
         <input
           autoFocus

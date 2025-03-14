@@ -3,6 +3,10 @@ import nodemailer from "nodemailer"
 import { totp } from 'otplib'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
+import fs from "node:fs/promises"
+import path from "path"
+import { fileURLToPath } from "node:url"
+
 let otp 
 
 export const verifyEmail = async (req, res) => {
@@ -13,10 +17,10 @@ export const verifyEmail = async (req, res) => {
         res.status(401).json({ message: 'User does not exists!' })
         return ;
     }
-    const useremail = findEmail.email;
-    otp = await generateOTP(useremail);
-    // console.log(useremail,otp)
-    const status = await sendEmail(useremail, otp);
+    const userEmail = findEmail.email;
+    otp = await generateOTP(userEmail);
+    // console.log(userEmail,otp)
+    const status = await sendEmail(userEmail, otp);
     if (!status.rejected) {
         res.status(401).json({ message: 'Email rejected.' })
     }
@@ -84,17 +88,19 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const sendEmail = async (email, otp) => {
+const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000"
 
-    const html = `<html lang="en">
-                    <body style="background-color: white;">
-                        <h2 style="color: violet">FriendyApp<h2>
-                        <span style="color: red;">To unlock your account ${email}</span>
-                        <h5 style="color: blueviolet;">Your One time OTP</h5>
-                        <a href="https://friendyapp-1.onrender.com/otp-verify">FriendyApp</a>
-                        <h3 style="color: black;">${otp}</h3>
-                    </body>
-                </html>`
+const sendEmail = async (email, otp) => {
+    try {
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    const filepath = path.join(__dirname, './Email.html')
+    const htmlContent = await fs.readFile(filepath,"utf-8")
+
+    const html = htmlContent
+    .replace(/{{email}}/g, email)
+    .replace(/{{otp}}/g, otp)
+    .replace(/{{frontendUrl}}/g, FRONTENDRUNNINGPORT);
 
     const message = {
         from: "browsers.192@gmail.com",
@@ -108,4 +114,7 @@ const sendEmail = async (email, otp) => {
     const mailsent = await transporter.sendMail(message);
     console.log(mailsent)
     return mailsent;
+    } catch(error) {
+        console.error(error)
+    }
 }

@@ -64,3 +64,10 @@
     color: wheat;
     border: 2px solid wheat;
 }
+
+.EmailSentMessage {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

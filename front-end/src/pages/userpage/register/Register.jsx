@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { validateUserData } from '../../../services/user-service'
 import { UserContext } from '../../../context/userContext'
 import { validation } from '../../../auth/validation'
-import { emailValidate } from '../../../services/user-service'
 const Register = () => {
   const { setUserDetails } = useContext(UserContext)
   const navigate = useNavigate()
@@ -35,9 +34,10 @@ const Register = () => {
           // })
         }
       }).catch(err => {
-        if (err.response.data.flag) {
-          console.log('p', err)
-          setData(err.response.data.message)
+        console.log(err.response.data)
+        if (!err.response.data.flag) {
+          // console.log(err)
+          setData("Contact/Email already exists.")
           return;
         }
       })
