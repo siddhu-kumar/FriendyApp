@@ -7,8 +7,7 @@ import { routes as friendRouters } from './routes/friends.js';
 import { routes as resetPasswordRouters } from './routes/password_reset.js';
 import { getEndpoint } from './controllers/chat.js';
 import { Message } from './class/Message.js';
-import { Chat, User } from './models/models.js';
-import { authToken } from './middleware/token.js';
+import { Chat } from './models/models.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 
 const allowed_origin = process.env.ORIGIN || "*"
@@ -65,6 +64,7 @@ const getNamespace = async (endpoint, user_id) => {
     // console.log('frdlfy',user_id)
     io.of(endpoint).on('connection', async (socket) => {
       const response = await socket.emitWithAck('getFriendList', namespace[user_id].room)
+      console.log('3',namespace[user_id].room)
       const roomNameList = []
       socket.on('joinsRoom', async (roomObj, callback) => {
         // console.log('roomObj',roomObj.roomId)
@@ -82,16 +82,17 @@ const getNamespace = async (endpoint, user_id) => {
         const thisRoom = [...socket.rooms][1]
         const thisNs = namespace[user_id].room.find(currentRoom => currentRoom.roomId === thisRoom)
         const chatMessage = await Chat.findOne({roomId:thisRoom})
-        console.log('rrr',chatMessage.chat)
+        console.log('rrr',thisRoom,thisNs)
         thisNs.history = [...chatMessage.chat]
         socket.emit(thisRoom,thisNs.history)
-        console.log('this is room message',thisRoom, thisNs.history)
+        // console.log(thisNs.history)
+        // console.log('this is room message',thisRoom, thisNs.history.length)
         const sockets = await io.of(endpoint).in(roomName).fetchSockets();
         callback({ message: 'ok' })
       })
 
       socket.on('newMessageToRoom', async (messageObj, callback) => {
-        const rooms = socket.rooms
+        const rooms = socket  .rooms
         const currentRoom = [...rooms][1]
         console.log(messageObj)
     

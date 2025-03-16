@@ -21,6 +21,10 @@ const Profile = () => {
           setUser({ ...user, ...data })
           editStorage(user)
         }).catch(err => {
+          if(err.response.status === 401) {
+            doLogout();
+            setAuth(isLoggedIn);navigate("/")
+          } 
           console.log(err)
         });
       }

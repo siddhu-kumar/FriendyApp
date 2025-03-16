@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import style from "./request.module.css";
 import { receivedRequest, deletePendingRequest, acceptRequest } from "../../services/user-service";
+import { doLogout, isLoggedIn } from "../../auth";
+import { UserContext } from "../../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 function Request() {
-
+  const navigate = useNavigate()
+  const {setAuth} = useContext(UserContext)
   const [userList,setUserList] = useState('')
    useEffect(()=> {
      receivedRequest().then(data=>{ 
        setUserList(data);
        console.log(data)
-     }).catch(error => console.log(error))
+     }).catch(error => {console.log(error); if(error.response.status===401) {doLogout(); setAuth(isLoggedIn);navigate("/") }})
    },[])
  
    useEffect(() => { }, [userList])
@@ -20,7 +24,9 @@ function Request() {
     .then(data=> {
       console.log(data)
     })
-    .catch(err => console.error(err))
+    .catch(err => {
+      console.error(err); 
+      if(err.response.status === 401) {doLogout(); setAuth(isLoggedIn);navigate("/")}})
     console.log(data.userId)
    }
 
@@ -29,6 +35,10 @@ function Request() {
     deletePendingRequest({data:{friendId:data.friendId}})
     .then(data => {
       console.log(data)
+      })
+      .catch(err=> {
+        console.log(err);
+        if(err.response.status ===401) {doLogout(); setAuth(isLoggedIn);navigate("/")}
       })
     console.log(data)
    }

@@ -4,22 +4,22 @@ import { ShowFriend } from "./ShowFriend";
 import { ChatBox } from "./ChatBox";
 
 function Chat() {
-  const [listClicked, setListClicked] = useState('');
-  const [friendData, setFriendData] = useState('');
-  const [chatHistory, setChatHistory] = useState([])
+  const [listClicked, setListClicked_] = useState('');
+  const [friendData, setFriendData_] = useState('');
+  const [chatHistory, setChatHistory_] = useState([])
 
   const getData = (friendData, chatHistory, listClicked) => {
     // console.log(friendData,chatHistory,listClicked)
-    setListClicked(listClicked)
-    setChatHistory(chatHistory)
-    setFriendData(friendData);
+    setListClicked_(listClicked)
+    setChatHistory_(chatHistory)
+    setFriendData_(friendData);
   }
 
   return (
     <>
       <div className={style.chat_page}>
         <ShowFriend getData={getData} />
-        {listClicked && <ChatBox friendData={friendData} chatHistory={chatHistory} setChatHistory={setChatHistory} />}
+        {listClicked && <ChatBox friendData={friendData} chatHistory={chatHistory} setChatHistory={setChatHistory_} />}
 
       </div>
     </>

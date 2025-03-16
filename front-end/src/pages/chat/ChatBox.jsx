@@ -11,34 +11,29 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         // date: '',
         message: '',
     })
-    useEffect(()=> {
+
         namespace[endPoint].off('listenMessage');
         namespace[endPoint].on('listenMessage', (messageObj, callback) => {
             console.log(messageObj)
-            setFriendList(prevList => 
-                prevList.map(ele => {
-                    return { ...ele, recentMessage: messageObj };
-                })
-            )
-            console.log(friendList);
             setChatHistory(prevChatHistory => [...prevChatHistory, messageObj]);
+            setFriendList(prevList => {
+                return prevList.map(ele => {
+                    if (ele.userId === messageObj.sender) {
+                        // console.log("Condition is true for:", ele.userId, messageObj.sender);
+                        return { ...ele, recentMessage: messageObj };
+                    }
+                    return ele;
+                });
+            });
+            // console.log(friendList);
             callback({ message: 'received' })
         })
-    },[])
-
     
     const handleChange = async (e) => {
         e.preventDefault()
         const { name, value } = e.target;
         setMessage({ ...message, [name]: value })
     }
-
-    useEffect(() => {
-        // Scroll to the bottom when the component mounts
-        if (chatEndRef.current) {
-            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, []);
     
     useEffect(()=> {
         if (chatEndRef.current) {
@@ -49,24 +44,24 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(friendData, endPoint)
+        // console.log(friendData, endPoint)
         // setMessage({ ...message, [`date`]: Date.now() })
         const response = await namespace[endPoint].emitWithAck('newMessageToRoom', message)
-        console.log(response)
+        // console.log(response)
         setMessage({
             sender: friendData.namespaceId,
             receiver: friendData.userId,
             message: '',
         });
-        setFriendList(prevList => 
-            prevList.map(ele =>{ 
-                if (ele.namespaceId === message.sender) 
-                    return { ...ele, recentMessage: message };
-                return ele;  
-            })
-        );
         setChatHistory(prevChatHistory => [...prevChatHistory, message]);
-        console.log(chatHistory)
+        setFriendList(prevList => 
+            prevList.map(ele =>
+                ele.userId === message.receiver
+                ?{ ...ele, recentMessage: message }:
+                 ele 
+            )
+        );
+        // console.log(friendList)
     }
     return (<>
         <div id={style.chat}>

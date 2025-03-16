@@ -37,12 +37,12 @@ export const getEndpoint = async (token) => {
             if (friendData !== null) {
                 const lastMessage = await Chat.findOne({roomId: element.chatId});
                 const msg = lastMessage.chat.length !== 0 ? lastMessage.chat[lastMessage.chat.length-1] : {message:"No message sent"}
-             
+               
                 // console.log('console', friendData)
-                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, friendData.endpoint, msg)
+                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, friendData.endpoint, msg,0)
                 // console.log(user.id,friendData.id)
                 namespace[user.id].addRoom(roomObj)
-                console.log('display room -',)
+                // console.log('display room -',)
             }
         }
         return [namespace[user.id], user.id];

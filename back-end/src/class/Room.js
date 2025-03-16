@@ -1,7 +1,7 @@
 // class Room - It will store the data of single friend with main user(current login user)
 
 export class Room {
-    constructor(roomId, namespaceId, namespaceEndpoint,userId,username, userEndpoint,recentMessage, privateRoom = true, ) {
+    constructor(roomId, namespaceId, namespaceEndpoint,userId,username, userEndpoint,recentMessage, messageLength=0, privateRoom = true, ) {
         // roomId - It is chatId of chat collection which stores chat details between two user.
         this.roomId = roomId;
         // namespaceId - It is ID of user who is login currently.
@@ -19,6 +19,8 @@ export class Room {
         this.recentMessage = recentMessage;
         // It is chat data between two user, current login user and his friend
         this.history = []
+        // Length of message to be sent
+        this.messageLength = messageLength
     }
     // It is method to add chat data
     addMessage(messageObj) {

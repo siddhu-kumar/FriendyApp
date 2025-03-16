@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import style from "./pending.module.css";
 import { deletePendingRequest, pendingRequest } from "../../services/user-service";
+import { doLogout,isLoggedIn } from "../../auth";
+import { UserContext } from "../../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 function Pending() {
-
+  const navigate = useNavigate()
+  const {setAuth} = useContext(UserContext)
   const [userList,setUserList] = useState('')
   useEffect(()=> {
     pendingRequest().then(data=>{ 
       setUserList(data);
-      console.log(data);
-    }).catch(error => console.log(error))
+      console.log('r',data);
+    }).catch(error => {
+       if(error.response.status === 401) { doLogout(); setAuth(isLoggedIn); navigate("/")}})
   },[])
 
   useEffect(() => { }, [userList])
@@ -21,7 +26,7 @@ function Pending() {
     .then(data => {
       console.log(data)
       })
-    .catch(error=> console.error(error))
+    .catch(error=> {console.error(error); if(error.response.status ===401) doLogout(); setAuth(isLoggedIn);navigate("/")})
   }
 
   return (<>

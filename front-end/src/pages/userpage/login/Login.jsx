@@ -1,14 +1,14 @@
 import React, { useContext, useState } from 'react'
 import style from './login.module.css'
 import { Link } from 'react-router-dom'
-import { loginUser } from '../../../services/user-service'
-import { doLogin, getUserData, isLoggedIn } from '../../../auth'
+import { loginUser, getAllUser } from '../../../services/user-service'
+import { doLogin,doLogout, getUserData, isLoggedIn } from '../../../auth'
 import { UserContext } from '../../../context/userContext'
 import { useNavigate } from 'react-router-dom'
 import Loader from './Loader'
 const Login = () => {
   const navigate = useNavigate()
-  const { setAuth, setUserDetails } = useContext(UserContext)
+  const { setAuth, setUserDetails, setUserList } = useContext(UserContext)
   const [ response, setResponse]= useState(null);
   const [userInput, setUserInput] = useState({
     email: "",
@@ -30,9 +30,24 @@ const Login = () => {
       .then((data) => {
         console.log(data)
         doLogin(data)
+        setUserDetails(getUserData)
+         getAllUser()
+         .then(data=> {
+                        setUserList(data)
+                    }).catch(error => {
+                        if(error.response.data.expire) {    
+                            doLogout(); 
+                            setUserList('');
+                            setUserDetails('');
+                            setAuth(isLoggedIn); 
+                            navigate("/");
+                        }
+                        console.log(error.response.data)
+                        console.log(localStorage.clear("data"))
+                        window.location.href = "/"
+                    })
         setTimeout(() => {
           setAuth(isLoggedIn)
-          setUserDetails(getUserData)
           navigate('/home')
           // window.location.href = "/home"
         }, 1000)

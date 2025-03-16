@@ -3,12 +3,10 @@ import style from './home.module.css'
 import { createRequest } from '../../../services/user-service';
 // import { createFriend } from '../../../services/friends-service';
 import { UserContext } from '../../../context/userContext';
+import { doLogout,isLoggedIn } from '../../../auth';
 const Home = () => {
-  const { userList, setUserList } = useContext(UserContext)
+  const { userList, setUserList,setAuth } = useContext(UserContext)
 
-  useEffect(()=> {
-
-  },[])
   const addFriend = (data) => {
     const updatedList = userList.filter(element => element.email !== data.email)
     setUserList(updatedList)
@@ -16,6 +14,7 @@ const Home = () => {
     console.log('add friend ', index, data)
     createRequest({ email: data.email })
       .then(data => { console.log(data) })
+      .catch(err => { console.log(err); if(err.response.status === 401) doLogout(); setAuth(isLoggedIn); })
   }
 
   return (<>

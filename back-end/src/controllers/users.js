@@ -174,7 +174,7 @@ export const loginUser = async (req, res) => {
         }
         const { _id, password, friends, ...data } = userData.toObject()
         console.log(data)
-        const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: 5000 })
+        const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: 1000 })
         namespace[userData.id] = new Namespace(userData.id,userData.name,userData.endpoint)
         console.log(namespace)
         res.status(200).json({ data, token })
