@@ -9,6 +9,7 @@ import { status } from "../utils/error.js"
 import crypto from 'crypto'
 import { totp } from 'otplib'
 import { sendEmail } from "./user_validate.js"
+import multer from "multer"
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 
@@ -174,7 +175,7 @@ export const loginUser = async (req, res) => {
         }
         const { _id, password, friends, ...data } = userData.toObject()
         console.log(data)
-        const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: 1000 })
+        const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: '100h' })
         namespace[userData.id] = new Namespace(userData.id,userData.name,userData.endpoint)
         console.log(namespace)
         res.status(200).json({ data, token })
@@ -198,4 +199,26 @@ export const updateUser = async (req, res) => {
         console.log(err.errors)
         res.status(500).json({ message: 'Error updating user' })
     }
+}
+
+// update profile image
+export const updateProfile = async (req,res) => {
+    var storage = multer.diskStorage({
+      destination: (req,file,cb) => {
+        console.log(req,file)
+        cb(null,'uploads')
+      },
+      filename: (req,file,cb)=> {
+        console.log(req,file)
+        cb(null,file.fieldname+'-'+Date.now());
+      }
+    })
+    
+    var upload = multer({storage:storage})
+    
+    
+    
+    console.log('// profile image')
+    console.log(req.userId)
+    console.log(req.body)
 }

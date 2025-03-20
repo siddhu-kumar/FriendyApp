@@ -29,6 +29,9 @@ const ChatProvider = ({children}) => {
           // console.log(endPoint)
           namespace[endPoint].on('getFriendList',(friendList, callback)=> {
             console.log('friendlist')
+            friendList.forEach(element => {
+              // console.log(element.userImage)
+            });
             setFriendList(friendList)
             callback({message:'list received'})
           })

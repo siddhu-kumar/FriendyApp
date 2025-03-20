@@ -2,6 +2,7 @@ import { Namespace } from "../class/Namespace.js";
 import { Room } from "../class/Room.js";
 import { authToken } from "../middleware/token.js";
 import { Chat, User } from "../models/models.js";
+import { Image } from "../models/models.js";
 
 export const generateRoomId = (user1, user2) => {
     const roomString = `roomId-${user1.slice(0, user1.length / 2)}-${user2.slice(0, user2.length / 2)}`;
@@ -19,9 +20,9 @@ export const generateEndpoint = async (inputString) => {
 
 export const getEndpoint = async (token) => {
     const id = authToken(token);
-    if(id === null) {
+    if (id === null) {
         console.log('invalid token');
-        return [null,null];
+        return [null, null];
 
     }
     const namespace = {}
@@ -33,13 +34,24 @@ export const getEndpoint = async (token) => {
         for (let element of friendList) {
             // console.log(element.friendId)
             const friendData = await User.findOne({ id: element.friendId });
-           
+            const findImage = await Image.findOne({ id: element.friendId })
+            let image=0;
+            if (findImage === null) {
+                image = ""
+            } else {
+                // image = findImage.image.data;
+                console.log(typeof image)
+                // image = Buffer.from(image,"utf8").toString("base64")
+                // image = findImage.image.data.toString("base64"); // Convert binary to Base64
+
+                 console.log( image.length)
+                // console.log(bufferObj)
+            }
             if (friendData !== null) {
-                const lastMessage = await Chat.findOne({roomId: element.chatId});
-                const msg = lastMessage.chat.length !== 0 ? lastMessage.chat[lastMessage.chat.length-1] : {message:"No message sent"}
-               
+                const lastMessage = await Chat.findOne({ roomId: element.chatId });
+                const msg = lastMessage.chat.length !== 0 ? lastMessage.chat[lastMessage.chat.length - 1] : { message: "No message sent" }
                 // console.log('console', friendData)
-                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, friendData.endpoint, msg,0)
+                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, image, friendData.endpoint, msg, 0)
                 // console.log(user.id,friendData.id)
                 namespace[user.id].addRoom(roomObj)
                 // console.log('display room -',)

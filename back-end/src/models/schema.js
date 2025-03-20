@@ -118,8 +118,20 @@ const userSchemas = new mongoose.Schema({
     }]
 })
 
+const userImage = new mongoose.Schema({
+    id: {
+        type: String,
+        unique: true,
+    },
+    image: {
+        data: Buffer,
+        contentType: String
+    }
+})
+
 export const chatSchema = chatSchemas
 export const userSchema = userSchemas
 export const resetPasswordSchema = resetPassword
 export const requestSchemas = requestSchema
 export const tempUserSchema = tempUserSchemas
+export const userImageSchema = userImage

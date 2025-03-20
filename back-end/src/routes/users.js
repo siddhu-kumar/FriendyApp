@@ -6,6 +6,7 @@ import {
     getUser,
     getAllUser,
     validateUserData,
+    updateProfile,
 } from "../controllers/users.js"
 
 import { verifyToken } from "../middleware/authMiddleware.js"
@@ -22,6 +23,7 @@ router
     .post("/validate_data", validateUserData)
     .post("/validate_otp",validateOTP)
     .patch("/update", verifyToken, updateUser)
+    .post("/profiles", verifyToken, updateProfile)
     .post("/create_request",verifyToken,createRequest)
     .get('/pending_request',verifyToken, getPendingRequest)
     .get('/received_request',verifyToken,getReceivedRequest)

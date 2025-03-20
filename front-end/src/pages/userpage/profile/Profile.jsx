@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import style from './profile.module.css'
 import { doLogout, editStorage, isLoggedIn } from '../../../auth'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../../../context/userContext'
 import { editProfile } from '../../../services/user-service'
+import { privateAxios } from '../../../services/helper'
 const Profile = () => {
   const navigate = useNavigate();
   const { setAuth, userDetails, setUserDetails, setUserList } = useContext(UserContext)
   const [btn, setBtn] = useState(true);
-
+  const [file,setFile] = useState(null)
   const [user, setUser] = useState(userDetails)
 
   const handleClick = () => {
@@ -38,6 +39,50 @@ const Profile = () => {
     setUser({ ...user, [name]: value });
   }
 
+  const handleFile = async (e) => {
+    e.preventDefault();
+    console.log(e.target.files[0])
+    const file = e.target.files[0]
+    console.log(file)
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if(allowedTypes.includes(file.type)) {
+      console.log("true")
+      
+      var reader = new FileReader();
+      reader.onloadend = () => {
+        setFile( reader.result)
+      }
+      reader.readAsDataURL(file);
+  
+      const formData = new FormData();
+      formData.append('imageFile', file);
+      
+      console.log(formData)
+       privateAxios.patch('/user/profile', formData, {
+         headers: {
+           'Content-Type': 'multipart'
+         }
+       })
+       .then(response => {
+         console.log(response.data); // Handle successful upload response
+       })
+       .catch(error => {
+         console.error(error); // Handle upload errors
+       });
+    } else {
+      console.log("false")
+      alert('Kindly select an image.')
+    }
+
+  }
+
+  useEffect(()=> {
+    privateAxios.get("/user/profilePic",{responseType:'blob'}).then((response)=>{
+      let imgUrl=URL.createObjectURL(response.data);
+      console.log('get')
+      setFile(imgUrl);
+    })
+  },[])
   const handleLogout = (e) => {
     e.preventDefault();
     doLogout();
@@ -52,8 +97,13 @@ const Profile = () => {
     <div className={style.Profile}>
       <div className={style.ProfileHead}>{btn ? 'Profile' : 'Edit Profile'}</div>
       <div className={style.ProfilePicture}>
-        <img src="./logo192.png" alt="" />
-        {!btn ? <button className={style.ImgBtn}>change</button> : ""}
+        <img src={file} alt="" />
+        {!btn ?
+          <div  >
+            <input type="file" name='file' className={style.ImgBtn} onChange={handleFile}  />
+            {/* <label for="file" className={style.file_label}>Add profile</label> */}
+          </div> : 
+        ""}
       </div>
       <button className={style.logout} onClick={handleLogout}>Log Out</button>
       {
