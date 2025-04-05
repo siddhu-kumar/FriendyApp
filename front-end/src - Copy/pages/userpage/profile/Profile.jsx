@@ -60,7 +60,7 @@ const Profile = () => {
       console.log(formData)
        privateAxios.patch('/user/profile', formData, {
          headers: {
-           'Content-Type': 'multipart/form-data'
+           'Content-Type': 'multipart'
          }
        })
        .then(response => {
@@ -77,14 +77,12 @@ const Profile = () => {
   }
 
   useEffect(()=> {
-    const image = localStorage.getItem('data');
-    const parsedImage = JSON.parse(image)
-    // console.log('working',parsedImage.imageObj.contentType)
-
-    setFile(`data:${parsedImage.imageObj.contentType};base64,${parsedImage.imageObj.image}`)
+    privateAxios.get("/user/profilePic",{responseType:'blob'}).then((response)=>{
+      let imgUrl=URL.createObjectURL(response.data);
+      console.log('get')
+      setFile(imgUrl);
+    })
   },[])
-
-
   const handleLogout = (e) => {
     e.preventDefault();
     doLogout();

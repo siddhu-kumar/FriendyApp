@@ -7,7 +7,33 @@ export const ShowFriend = (props) => {
   const [listClicked, setListClicked] = useState('');
   const [friendData, setFriendData] = useState('');
   const [chatHistory, setChatHistory] = useState([])
+  const [image,setImage] = useState(null);
   useEffect(() => {
+    if (friendList.length !== 0)
+      friendList.forEach(element => {
+    // if(element.userImage.length !==0) {
+    //   const binaryString = atob(element.userImage);
+
+    //   const length = binaryString.length;
+    //   const bytes = new Uint8Array(length);
+  
+    //   for (let i = 0; i < length; i++) {
+    //       bytes[i] = binaryString.charCodeAt(i);
+    //   }
+  
+    //   const img = bytes.buffer;
+    //   console.log(typeof img)
+    //   const binaryImage = Buffer.from(element, "base64"); // Convert Base64 back to binary
+
+    //   // const img = Buffer.from(element.userImage, "base64").toString("utf8")
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //       setImage(reader.result);
+    //   }
+    //   reader.readAsDataURL(img);
+    //   // setImage(URL.createObjectURL(img))
+    // }
+      });
     props.getData(friendData, chatHistory, listClicked)
   }, [chatHistory])
 
@@ -31,6 +57,7 @@ export const ShowFriend = (props) => {
     setListClicked(event.currentTarget)
 
     namespace[endPoint].on(friendData.roomId, (data) => {
+      console.log('event listen')
       setChatHistory(data)
     })
   }
@@ -41,10 +68,10 @@ export const ShowFriend = (props) => {
           // List on click call the friendFunction() to get into Chat with friend by passing _id of friend as argument
           <li onClick={(e) => handleClick(e, data)} key={index} className={style.friend_class}>
             { 
-              <img className={style.friend_profile_img}  src={`data:${data.contentType};base64,${data.userImage}`} alt="" />
+              <img className={style.friend_profile_img}  src={image} alt="" />
             }
             <span className={style.friend_name}>{data.username}</span>
-            <span className={style.recent_msg_time}>{}</span>
+            <span className={style.recent_msg_time}>{ }</span>
             <span className={style.friend_recent_msg}>{data.recentMessage.message}</span>
           </li>
 

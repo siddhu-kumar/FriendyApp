@@ -10,9 +10,7 @@ import { Message } from './class/Message.js';
 import { Chat } from './models/models.js';
 import { verifyToken } from './middleware/authMiddleware.js';
 import { Image } from './models/models.js';
-import fs from "node:fs/promises"
-import path from 'node:path';
-import multer from "multer"
+
 const allowed_origin = process.env.ORIGIN || "*"
 const PORT = process.env.PORT || 8000
 
@@ -27,74 +25,6 @@ await connectDB();
 
 app.get('/token',verifyToken,(req,res)=> {
   res.status(200).json({message:'message'})
-})
-
-
-// var storage = multer.diskStorage({
-//   destination: (req,file,cb) => {
-//     console.log(req,file)
-//     cb(null,'uploads')
-//   },
-//   filename: (req,file,cb)=> {
-//     console.log(req,file)
-//     cb(null,file.fieldname+'-'+Date.now());
-//   }
-// })
-var storage = multer.memoryStorage()
-var upload = multer({storage:storage})
-
-
-app.patch('/user/profile',verifyToken, upload.single('imageFile'),async (req,res) => {
-  console.log('// profile image')
-  console.log(req.userId)
-  // console.log(req.file)
-  try {
-    const objImage = await Image.findOne({id:req.userId});
-    if(objImage === null) {
-      const objImage = new Image({
-        id:req.userId, 
-        image: {
-          data: req.file.buffer,
-          contentType: req.file.mimetype
-        }
-      })
-      await objImage.save();
-      console.log('obj',objImage)
-    } else {
-      objImage.image = {
-        data: req.file.buffer,
-        contentType: req.file.mimetype
-      }
-      await objImage.save();
-    }
-    res.status(200).json({message:'Hii'})
-    return;
-  } catch(err) {
-    console.error('er',err);
-    res.status(401).json({message:'Not'})
-    return;
-  }
-})
-
-app.get('/user/profilePic',verifyToken, async (req,res) => {
-  try {
-    const findImage = await Image.findOne({id:req.userId});
-  // Assuming findImage.image.data is a Buffer or a binary representation
-const base64Image = findImage.image.data.toString("base64"); // Convert binary to Base64
-// If you need to convert it back to binary from Base64
-const binaryImage = Buffer.from(base64Image, "base64"); // Convert Base64 back to binary
-
-    if(findImage) {
-      res.set("Content-Type","image/png")
-      res.send(binaryImage)
-      // console.log(findImage.id)
-      return;
-    }
-    res.set("Content-Type","image/png")
-    res.send("")
-  } catch(err) {
-    console.error(err)
-  }
 })
 
 app.use('/user', userRouters)
@@ -165,7 +95,7 @@ const getNamespace = async (endpoint, user_id) => {
       socket.on('newMessageToRoom', async (messageObj, callback) => {
         const rooms = socket  .rooms
         const currentRoom = [...rooms][1]
-        console.log(messageObj)
+        // console.log(messageObj)
     
         // console.log('ii',roomObj)
         try {

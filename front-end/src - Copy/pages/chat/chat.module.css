@@ -92,7 +92,6 @@
     grid-row-end: 3;
     grid-column-start: 2;
     grid-column-end: 4;
-    overflow: hidden;
 }
 
 .recent_msg_time {

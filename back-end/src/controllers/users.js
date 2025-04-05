@@ -9,8 +9,7 @@ import { status } from "../utils/error.js"
 import crypto from 'crypto'
 import { totp } from 'otplib'
 import { sendEmail } from "./user_validate.js"
-import multer from "multer"
-
+import { Image } from "../models/models.js"
 const secret_key = process.env.AUTH_SECRET_KEY;
 
 // get all user
@@ -161,9 +160,9 @@ export const loginUser = async (req, res) => {
     console.log('// login user')
     try {
         const { email, user_password } = req.body;
-        console.log(email, user_password)
+        // console.log(email, user_password)
         const userData = await User.findOne({ email })
-        console.log(userData)
+        // console.log(userData)
         if (!userData) {
             console.log('user does not exists')
             return res.status(401).json({ message: 'User/Password does not exists!' })
@@ -174,11 +173,16 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: 'User/Password does not exists!' })
         }
         const { _id, password, friends, ...data } = userData.toObject()
-        console.log(data)
+        const {image} = await Image.findOne({id:data.id});
+        let imageObj
+        if(image !== null) {
+            console.log(image.contentType)
+            imageObj = {image: image.data.toString("base64"), contentType:image.contentType}// Convert binary to Base64
+        }
         const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: '100h' })
         namespace[userData.id] = new Namespace(userData.id,userData.name,userData.endpoint)
         console.log(namespace)
-        res.status(200).json({ data, token })
+        res.status(200).json({ data, token, imageObj })
     } catch (error) {
         console.log(error.errors)
         res.status(500).json({ message: 'Login Failed' })
@@ -203,22 +207,31 @@ export const updateUser = async (req, res) => {
 
 // update profile image
 export const updateProfile = async (req,res) => {
-    var storage = multer.diskStorage({
-      destination: (req,file,cb) => {
-        console.log(req,file)
-        cb(null,'uploads')
-      },
-      filename: (req,file,cb)=> {
-        console.log(req,file)
-        cb(null,file.fieldname+'-'+Date.now());
+    try {
+      const objImage = await Image.findOne({id:req.userId});
+    //   console.log('req',req.userId)
+      if(objImage === null) {
+        const objImage = new Image({
+          id:req.userId, 
+          image: {
+            data: req.file.buffer,
+            contentType: req.file.mimetype
+          }
+        })
+        await objImage.save();
+        // console.log('obj',objImage)
+      } else {
+        objImage.image = {
+          data: req.file.buffer,
+          contentType: req.file.mimetype
+        }
+        await objImage.save();
       }
-    })
-    
-    var upload = multer({storage:storage})
-    
-    
-    
-    console.log('// profile image')
-    console.log(req.userId)
-    console.log(req.body)
+      res.status(200).json({message:'Hii'})
+      return;
+    } catch(err) {
+      console.error('er',err);
+      res.status(401).json({message:'Not'})
+      return;
+    }
 }

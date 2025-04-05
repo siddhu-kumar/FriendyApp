@@ -1,0 +1,74 @@
+.connections {
+    height: 200vh;
+}
+
+.entriesHead {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1vh 0;
+  height: 4vh;
+  position: sticky;
+  top: 7vh;
+  z-index: 1;
+  border: 2px solid wheat;
+  border-width: 2px 0;
+  background-color: black;
+  margin-bottom: 3vh;
+}
+
+.connectionHead {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.entriesData {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 2vh 0;
+}
+
+.entriesData span:last-child {
+    display: flex;
+
+}
+
+.connectionData {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    /* margin-left: -5vh; */
+}
+
+
+.connectionInfo {
+    width: 30vh;
+    overflow: hidden;
+    margin-right: 5vh;
+}
+
+.address {
+    display: flex;
+}
+
+.nums {
+    width: 5vh;
+    padding-left: 3vh;
+    /* margin-right: auto; */
+}
+
+.connectionBtn {
+    width: 10vh;
+    height: 4vh;
+    margin: 0 2vh;
+    cursor: pointer;
+    background-color: purple;
+    color: wheat;
+    border: none;
+    border-radius: 2vh;
+}

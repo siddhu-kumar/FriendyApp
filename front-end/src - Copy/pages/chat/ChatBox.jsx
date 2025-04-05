@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import style from "./chat.module.css"
 import { ChatContext } from "../../context/chatContext";
 export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
-    const { namespace, setFriendList, endPoint } = useContext(ChatContext);
+    const { namespace, friendList, setFriendList, endPoint } = useContext(ChatContext);
     const chatEndRef = useRef(null);
     const data = friendData
     const [message, setMessage] = useState({

@@ -1,0 +1,63 @@
+.Home {
+    height: 93vh;
+    width: 100%;
+    margin: auto;
+}
+
+.Users {
+    width: 100%;
+    height: 93vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.usersEntries {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1vh 0;
+    border-width: 2px 0 ;
+    background-color: black;
+}
+
+.userInfo {
+    padding: 5px;
+    overflow: hidden;
+}
+
+.addFriend {
+    background-color: black;
+    color: wheat;
+    border: none;
+    width: 14vh;
+    border: 1px solid wheat;
+    height: 5vh;
+    background-color: purple;
+    text-align: center;
+}
+
+.addFriend:hover {
+    background-color: black;
+    cursor: pointer;
+    color: purple;
+}
+
+.button {
+    /* width: 30vh; */
+    background-color: black;
+    color: blue;
+    border: none;
+    text-align: center;
+}
+.address {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+.nums {
+    width: 5vh;
+    padding-left: 3vh;
+}

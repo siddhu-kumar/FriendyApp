@@ -35,24 +35,21 @@ export const getEndpoint = async (token) => {
             // console.log(element.friendId)
             const friendData = await User.findOne({ id: element.friendId });
             const findImage = await Image.findOne({ id: element.friendId })
-            let image=0;
-            if (findImage === null) {
-                image = ""
-            } else {
-                // image = findImage.image.data;
-                console.log(typeof image)
-                // image = Buffer.from(image,"utf8").toString("base64")
-                // image = findImage.image.data.toString("base64"); // Convert binary to Base64
 
-                 console.log( image.length)
-                // console.log(bufferObj)
-            }
             if (friendData !== null) {
+                let image="";
+                let contentType = ""
+                if (findImage === null) {
+                    image = ""
+                } else {
+                    image = findImage.image.data.toString("base64"); // Convert binary to Base64
+                    contentType = findImage.image.contentType
+                }
                 const lastMessage = await Chat.findOne({ roomId: element.chatId });
                 const msg = lastMessage.chat.length !== 0 ? lastMessage.chat[lastMessage.chat.length - 1] : { message: "No message sent" }
-                // console.log('console', friendData)
-                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, image, friendData.endpoint, msg, 0)
-                // console.log(user.id,friendData.id)
+                // console.log(image, contentType)
+                const roomObj = new Room(element.chatId, user.id, user.endpoint, friendData.id, friendData.name, image, contentType, friendData.endpoint, msg, 0)
+                // console.log(roomObj)
                 namespace[user.id].addRoom(roomObj)
                 // console.log('display room -',)
             }

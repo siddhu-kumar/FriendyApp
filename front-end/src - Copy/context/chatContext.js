@@ -6,6 +6,7 @@ export const ChatContext = createContext(null)
 const ChatProvider = ({children}) => {
     const token = localStorage.getItem('data')
     const parse = JSON.parse(token)
+    // console.log(parse.token)
     const authHeader = {
       auth: {
         token: `Bearer ${parse.token}`
@@ -27,7 +28,10 @@ const ChatProvider = ({children}) => {
           namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
           // console.log(endPoint)
           namespace[endPoint].on('getFriendList',(friendList, callback)=> {
-            // console.log(friendList)
+            console.log('friendlist')
+            friendList.forEach(element => {
+              // console.log(element.userImage)
+            });
             setFriendList(friendList)
             callback({message:'list received'})
           })

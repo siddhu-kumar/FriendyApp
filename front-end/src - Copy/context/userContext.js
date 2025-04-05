@@ -30,7 +30,7 @@ const DataProvider =  ({children}) => {
     
 
    useEffect(()=> {},[userList])
-    console.log(userDetails)
+    // console.log(userDetails.token)
     return (
         <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails, userList, setUserList, reg, setReg}}>
             {children}

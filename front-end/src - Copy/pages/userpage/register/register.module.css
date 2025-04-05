@@ -1,0 +1,73 @@
+.Register {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.RegisterHead {
+    padding: 2vh;
+    font-size: 2em;
+    color: purple;
+}
+
+.userInput form{
+    display: flex;
+    flex-direction: column;
+    margin: 2vh;
+}
+
+.userInput form input {
+    padding: 4px 6px;
+    margin: 4px 0px;
+    color: purple;
+    background: snow;
+    outline: none;
+    border: 1px solid gray;
+    width: 35vh;
+    height: 3vh;
+    font-size: 2vh;
+}
+
+.userInput form input::placeholder {
+    color: gray;
+}
+
+.userInput form span {
+  margin: auto;
+  margin-top: 1vh;
+}
+
+.userInput form span a {
+    color: purple;
+}
+
+.userInput form span a:hover {
+    color: rgba(181, 0, 181, 0.908);
+}
+
+.RegisterBtn {
+  margin: auto;
+  margin-top: 2vh;
+  height: 5vh;
+  width: 12vh;
+  font-size: 2.5vh;
+  background: black;
+  color: wheat;
+  cursor: pointer;
+}
+
+.RegisterBtn:hover {
+    background: purple;
+    color: wheat;
+    border: 2px solid wheat;
+}
+
+.EmailSentMessage {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
