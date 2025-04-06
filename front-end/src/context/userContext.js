@@ -30,7 +30,6 @@ const DataProvider =  ({children}) => {
     
 
    useEffect(()=> {},[userList])
-    console.log(userDetails)
     return (
         <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails, userList, setUserList, reg, setReg}}>
             {children}
