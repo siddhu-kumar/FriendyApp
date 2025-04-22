@@ -12,7 +12,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
         message: '',
     })
 
-        namespace[endPoint].off('listenMessage');
+    useEffect(()=> {
         namespace[endPoint].on('listenMessage', (messageObj, callback) => {
             console.log(messageObj)
             setChatHistory(prevChatHistory => [...prevChatHistory, messageObj]);
@@ -28,7 +28,13 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
             // console.log(friendList);
             callback({ message: 'received' })
         })
+        // return () => {
+        //     namespace[endPoint].off('listenMessage');
+        // }
+    },[endPoint, setChatHistory, setFriendList, namespace])
     
+    
+
     const handleChange = async (e) => {
         e.preventDefault()
         const { name, value } = e.target;

@@ -12,8 +12,7 @@ function Request() {
    useEffect(()=> {
      receivedRequest().then(data=>{ 
        setUserList(data);
-       console.log(data)
-     }).catch(error => {console.log(error); if(error.response.status===401) {doLogout(); setAuth(isLoggedIn);navigate("/") }})
+     }).catch(error => {console.log(error); if(error.response.status===401) {doLogout(); setAuth(isLoggedIn);navigate("/login") }})
    },[])
  
    useEffect(() => { }, [userList])
@@ -26,7 +25,7 @@ function Request() {
     })
     .catch(err => {
       console.error(err); 
-      if(err.response.status === 401) {doLogout(); setAuth(isLoggedIn);navigate("/")}})
+      if(err.response.status === 401) {doLogout(); setAuth(isLoggedIn);navigate("/login")}})
     console.log(data.userId)
    }
 
@@ -38,7 +37,7 @@ function Request() {
       })
       .catch(err=> {
         console.log(err);
-        if(err.response.status ===401) {doLogout(); setAuth(isLoggedIn);navigate("/")}
+        if(err.response.status ===401) {doLogout(); setAuth(isLoggedIn);navigate("/login")}
       })
     console.log(data)
    }

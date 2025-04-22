@@ -24,7 +24,7 @@ const Profile = () => {
         }).catch(err => {
           if(err.response.status === 401) {
             doLogout();
-            setAuth(isLoggedIn);navigate("/")
+            setAuth(isLoggedIn);navigate("/login")
           } 
           console.log(err)
         });
@@ -79,9 +79,10 @@ const Profile = () => {
   useEffect(()=> {
     const image = localStorage.getItem('data');
     const parsedImage = JSON.parse(image)
-    // console.log('working',parsedImage.imageObj.contentType)
-
-    setFile(`data:${parsedImage.imageObj.contentType};base64,${parsedImage.imageObj.image}`)
+    // console.log('working',parsedImage.imageObj)
+    if(parsedImage.imageObj) {
+      setFile(`data:${parsedImage.imageObj.contentType};base64,${parsedImage.imageObj.image}`)
+    }
   },[])
 
 
@@ -91,7 +92,7 @@ const Profile = () => {
     setUserList('');
     setUserDetails('');
     setAuth(isLoggedIn);
-    navigate('/');
+    navigate('/login');
   }
 
 
@@ -99,7 +100,9 @@ const Profile = () => {
     <div className={style.Profile}>
       <div className={style.ProfileHead}>{btn ? 'Profile' : 'Edit Profile'}</div>
       <div className={style.ProfilePicture}>
-        <img src={file} alt="" />
+        {
+          file?<img src={file} alt="" />:<img src="./logo192.png" alt="" />
+        }
         {!btn ?
           <div  >
             <input type="file" name='file' className={style.ImgBtn} onChange={handleFile}  />

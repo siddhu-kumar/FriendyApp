@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { getUserData, isLoggedIn } from "../auth";
 import { getAllUser } from "../services/user-service";
 import { doLogout } from "../auth";
+import { redirect } from "react-router-dom";
 export const UserContext = createContext(null)
 
 const DataProvider =  ({children}) => {
@@ -23,13 +24,12 @@ const DataProvider =  ({children}) => {
                 }
                 console.log(error.response.data)
                 console.log(localStorage.clear("data"))
-                window.location.href = "/"
+                window.location.href = "/login"
             })
+        } else {
+            redirect("/login")
         }
     },[])
-    
-
-   useEffect(()=> {},[userList])
     return (
         <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails, userList, setUserList, reg, setReg}}>
             {children}

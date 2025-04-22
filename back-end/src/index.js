@@ -67,6 +67,7 @@ const getNamespace = async (endpoint, user_id) => {
       const response = await socket.emitWithAck('getFriendList', namespace[user_id].room)
       // console.log('3',namespace[user_id].room)
       const roomNameList = []
+
       socket.on('joinsRoom', async (roomObj, callback) => {
         // console.log('roomObj',roomObj.roomId)
         let roomName = roomObj.roomId
@@ -121,7 +122,7 @@ const getNamespace = async (endpoint, user_id) => {
         callback({ message: 'yes' })
       })
 
-      socket.on('disconnect',async ()=> {
+      socket.on('disconnect', ()=> {
        console.log('disconnected')
        namespace[user_id] = ''
       })

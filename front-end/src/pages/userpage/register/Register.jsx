@@ -94,7 +94,7 @@ const Register = () => {
             required
           />
           <button className={style.RegisterBtn} type='submit'>Register</button>
-          <span>Already have an account? <Link to="/">Log-In here</Link> !</span>
+          <span>Already have an account? <Link to="/login">Log-In here</Link> !</span>
         </form>
       </div>
     </div>

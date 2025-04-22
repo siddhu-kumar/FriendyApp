@@ -10,6 +10,9 @@ import crypto from 'crypto'
 import { totp } from 'otplib'
 import { sendEmail } from "./user_validate.js"
 import { Image } from "../models/models.js"
+import { promises } from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 const secret_key = process.env.AUTH_SECRET_KEY;
 
 // get all user
@@ -21,6 +24,7 @@ export const getAllUser = async (req, res) => {
     try {
         const friendList = await User.findOne({id:id})
         const requestList = await RequestSchema.find({userId:id})
+        // check friends in friendList, not implemented
         for(let element of friendList.friends){
             friendId.push(element.friendId)
         }
@@ -87,6 +91,14 @@ export const validateUserData = async (req,res) => {
     }
 }
 
+const readFile = async () => {
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+    const filepath = path.join(__dirname, './logo192.png')
+    const fileTxt = await promises.readFile(filepath,'utf-8')
+    return fileTxt
+}
+
 // creating new user
 export const createUser = async (otp,res) => {
     console.log('// creating new user')
@@ -103,10 +115,12 @@ export const createUser = async (otp,res) => {
         const hashedPassword = await bcrypt.hash(password, 10)
         console.log('h',hashedPassword)
         const endPoint = await generateEndpoint(contact)
-        const id = uuidv4();
-        console.log(id)
+        const uuid = uuidv4();
+        console.log(uuid)
         try {
-            const newUser = new User({id: id, name: name, email: email, contact: contact,endpoint:endPoint, password: hashedPassword });
+            const newUser = new User({id: uuid, name: name, email: email, contact: contact,endpoint:endPoint, password: hashedPassword });
+            const defaultImage = new Image({id: uuid, image: {data: readFile, contentType: 'image/png'} });
+            await defaultImage.save();
             const saveUser = await newUser.save();
             console.log(saveUser)
         } catch(error) {
@@ -124,9 +138,9 @@ export const createUser = async (otp,res) => {
                 }
             }
         }
-        namespace[id] = new Namespace(id,name,endPoint)
+        namespace[uuid] = new Namespace(uuid,name,endPoint)
 
-        const token = jwt.sign({ userId: id }, secret_key, { expiresIn: '100h' })
+        const token = jwt.sign({ userId: uuid }, secret_key, { expiresIn: '100h' })
         const data = {name, email, contact }
 
         res.status(status.CREATED).json({ data, token });
@@ -173,18 +187,22 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: 'User/Password does not exists!' })
         }
         const { _id, password, friends, ...data } = userData.toObject()
-        const {image} = await Image.findOne({id:data.id});
         let imageObj
-        if(image !== null) {
-            console.log(image.contentType)
-            imageObj = {image: image.data.toString("base64"), contentType:image.contentType}// Convert binary to Base64
+        try {
+            const {image} = await Image.findOne({id:data.id});
+            if(image !== null) {
+                console.log('image',image.contentType)
+                imageObj = {image: image.data.toString("base64"), contentType:image.contentType}// Convert binary to Base64
+            }
+        } catch(error) {
+            console.log("w",error.errors)
         }
         const token = jwt.sign({ userId: userData.id }, secret_key, { expiresIn: '100h' })
         namespace[userData.id] = new Namespace(userData.id,userData.name,userData.endpoint)
-        console.log(namespace)
+        console.log('namspace',namespace)
         res.status(200).json({ data, token, imageObj })
     } catch (error) {
-        console.log(error.errors)
+        console.log('e',error.errors)
         res.status(500).json({ message: 'Login Failed' })
     }
 }

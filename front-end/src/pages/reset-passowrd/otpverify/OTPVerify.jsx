@@ -40,7 +40,7 @@ function OTPVerify() {
           console.log(count)
           // handleSubmit(e);
         } else {
-          navigate("/home")
+          navigate("/")
         }
         console.log(error)
       })

@@ -15,6 +15,7 @@ const Login = () => {
     user_password: ""
   })
 
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setUserInput({ ...userInput, [name]: value })
@@ -40,16 +41,16 @@ const Login = () => {
                             setUserList('');
                             setUserDetails('');
                             setAuth(isLoggedIn); 
-                            navigate("/");
+                            navigate("/login");
                         }
                         console.log(error.response.data)
                         console.log(localStorage.clear("data"))
-                        window.location.href = "/"
+                        window.location.href = "/login"
                     })
         setTimeout(() => {
           setAuth(isLoggedIn)
           navigate('/home')
-          // window.location.href = "/home"
+          // window.location.href = "/"
         }, 1000)
       })
       .catch(err => {

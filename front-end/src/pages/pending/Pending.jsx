@@ -12,9 +12,8 @@ function Pending() {
   useEffect(()=> {
     pendingRequest().then(data=>{ 
       setUserList(data);
-      console.log('r',data);
     }).catch(error => {
-       if(error.response.status === 401) { doLogout(); setAuth(isLoggedIn); navigate("/")}})
+       if(error.response.status === 401) { doLogout(); setAuth(isLoggedIn); navigate("/login")}})
   },[])
 
   useEffect(() => { }, [userList])
@@ -26,7 +25,7 @@ function Pending() {
     .then(data => {
       console.log(data)
       })
-    .catch(error=> {console.error(error); if(error.response.status ===401) doLogout(); setAuth(isLoggedIn);navigate("/")})
+    .catch(error=> {console.error(error); if(error.response.status ===401) doLogout(); setAuth(isLoggedIn);navigate("/login")})
   }
 
   return (<>

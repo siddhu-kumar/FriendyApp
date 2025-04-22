@@ -14,11 +14,8 @@ const Navbar = () => {
       {auth ?
         <>
           <div className={`${style.Logo} ${style.items}`}>
-            <NavLink to="/home">FriendyApp</NavLink>
+            <NavLink to="/">FriendyApp</NavLink>
           </div>
-          {/* <div className={`${style.search} `}>
-            <span type='search'>Search</span>
-          </div> */}
           <div className={style.items}>
             <NavLink to="/chats">Chats</NavLink>
           </div>

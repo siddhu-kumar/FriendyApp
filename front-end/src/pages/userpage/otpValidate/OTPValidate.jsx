@@ -31,7 +31,7 @@ function OTPVlidate() {
       setUserDetails(data.data)
       doLogin(data)
       setAuth(isLoggedIn);
-      navigate("/home");
+      navigate("/");
         // createUser(userDetails).then(data => {
         // }).catch(err=> {
         //   console.log(err.response.data)
@@ -56,7 +56,7 @@ function OTPVlidate() {
         if (count < 3) {
           console.log(count)
         } else {
-          navigate("/home")
+          navigate("/")
         }
         console.log(error)
       })

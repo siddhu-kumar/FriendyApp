@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, RouterProvider, Routes, Route, createBrowserRouter, redirect } from 'react-router-dom';
 import './App.css';
 import Home from './pages/components/home/Home';
 import Navbar from './pages/components/navbar/Navbar';
@@ -18,39 +18,43 @@ import Request from './pages/request/Request.jsx';
 import Pending from './pages/pending/Pending.jsx';
 import OTPVlidate from './pages/userpage/otpValidate/OTPValidate.jsx';
 import { EmailSent } from './pages/userpage/register/EmailSent.jsx';
+import RestrictedRoute from './auth/restricted_route.js';
 
 function App() {
-  
+
   return (
     <div className='App'>
       <DataProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/email-verify" element={<EmailVerify />} />
-          <Route path="/otp-verify" element={<OTPVerify />} />
-          <Route path="/otp-validate" element={<OTPVlidate />} />
-          <Route path="/reset-password" element={<Password />} />
-          <Route path="/received_request" element={<Request />} />
-          <Route path="/pending_request" element={<Pending />} />
-          <Route path="/email_sent" element={<EmailSent />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            
+            <Route element={<ProtectedRoute />}>
+              {["/home", "/"].map((route, index) => <Route key={index} path={route} element={<Home />} />)}
+              <Route path="/pending_request" element={<Pending />} />
+              <Route path="/received_request" element={<Request />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/chats" element={
                 <ChatProvider >
-                <Chat />
+                  <Chat />
                 </ChatProvider>
               } />
+            </Route>
 
-            <Route path="/connections" element={<Connections />} />
-           
-          </Route>
-          <Route path='/*' element={<PageNotFound/>} />
-        </Routes>
-      </BrowserRouter>
+            <Route element={<RestrictedRoute/>}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/connections" element={<Connections />} />
+              <Route path="/email_sent" element={<EmailSent />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/email-verify" element={<EmailVerify />} />
+              <Route path="/otp-verify" element={<OTPVerify />} />
+              <Route path="/otp-validate" element={<OTPVlidate />} />
+              <Route path="/reset-password" element={<Password />} />
+              <Route path='/*' element={<PageNotFound />} />
+            </Route>
+
+          </Routes>
+        </BrowserRouter>
       </DataProvider>
     </div>
   );
