@@ -23,7 +23,7 @@ function EmailVerify() {
         }
         localStorage.setItem('email',email.email)
         emailVerify(email).then((data)=> {
-            navigate('/otp-verify', {state:{reg:false}});
+            // navigate('/otp-verify', {state:{reg:false}});
             console.log(data)
         })
         .catch((error)=> {

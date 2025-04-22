@@ -1,4 +1,12 @@
-import { BrowserRouter, RouterProvider, Routes, Route, createBrowserRouter, redirect } from 'react-router-dom';
+import {
+  BrowserRouter,
+  RouterProvider,
+  Routes, Route,
+  createBrowserRouter,
+  redirect,
+  Outlet
+} from 'react-router-dom';
+
 import './App.css';
 import Home from './pages/components/home/Home';
 import Navbar from './pages/components/navbar/Navbar';
@@ -16,45 +24,106 @@ import Password from './pages/reset-passowrd/newpassword/Password';
 import Chat from './pages/chat/Chat.jsx';
 import Request from './pages/request/Request.jsx';
 import Pending from './pages/pending/Pending.jsx';
-import OTPVlidate from './pages/userpage/otpValidate/OTPValidate.jsx';
+import OTPValidate from './pages/userpage/otpValidate/OTPValidate.jsx';
 import { EmailSent } from './pages/userpage/register/EmailSent.jsx';
 import RestrictedRoute from './auth/restricted_route.js';
+
+const Layout = () => {
+  return <>
+    <Navbar />
+    <Outlet />
+  </>
+}
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <ProtectedRoute ></ProtectedRoute>,
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "home",
+            element: <Home />
+          },
+          {
+            path: "/pending_request",
+            element: <Pending />
+          },
+          {
+            path: "/received_request",
+            element: <Request />
+          },
+          {
+            path: "/profile",
+            element: <Profile />
+          },
+          {
+            path: "/chats",
+            element: <ChatProvider />,
+            children: [
+              <Chat />
+            ]
+          },
+        ]
+      },
+
+      {
+        path: "/",
+        element: <RestrictedRoute />,
+        children: [
+          {
+            path: "/login",
+            element: <Login />
+          },
+          {
+            path: "/register",
+            element: <Register />
+          },
+          {
+            path: "/email_sent",
+            element: <EmailSent />
+          },
+          {
+            path: "/email-verify",
+            element: <EmailVerify />
+          },
+          {
+            path: "/otp-verify",
+            element: <OTPVerify />
+          },
+          {
+            path: "/otp-validate",
+            element: <OTPValidate />
+          },
+          {
+            path: "/reset-password",
+            element: <Password />
+          },
+        ]
+      },
+      {
+        path: "/*",
+        element: <PageNotFound />
+      },
+    ]
+  }
+])
+
 
 function App() {
 
   return (
     <div className='App'>
       <DataProvider>
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
-            
-            <Route element={<ProtectedRoute />}>
-              {["/home", "/"].map((route, index) => <Route key={index} path={route} element={<Home />} />)}
-              <Route path="/pending_request" element={<Pending />} />
-              <Route path="/received_request" element={<Request />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/chats" element={
-                <ChatProvider >
-                  <Chat />
-                </ChatProvider>
-              } />
-            </Route>
-
-            <Route element={<RestrictedRoute/>}>
-              <Route path="/login" element={<Login />} />
-              <Route path="/connections" element={<Connections />} />
-              <Route path="/email_sent" element={<EmailSent />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/email-verify" element={<EmailVerify />} />
-              <Route path="/otp-verify" element={<OTPVerify />} />
-              <Route path="/otp-validate" element={<OTPVlidate />} />
-              <Route path="/reset-password" element={<Password />} />
-              <Route path='/*' element={<PageNotFound />} />
-            </Route>
-
-          </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} >
+        </RouterProvider>
       </DataProvider>
     </div>
   );
