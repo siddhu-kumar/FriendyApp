@@ -12,7 +12,7 @@
     color: purple;
 }
 
-.OTP form{
+.OTP form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,6 +31,7 @@
     text-align: center;
     outline: none;
 }
+
 .OTP button {
     padding: 2vh;
     width: 15vh;

@@ -1,5 +1,7 @@
 import axios from "axios";
-import { getToken } from "../auth";
+import {
+    getToken
+} from "../auth";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_HOST
 console.log(BASE_URL)
@@ -17,4 +19,7 @@ privateAxios.interceptors.request.use(config => {
         config.headers.Authorization = `Bearer ${token.token}`
     }
     return config
-}, error => { console.log(error); return Promise.reject(error) })
+}, error => {
+    console.log(error);
+    return Promise.reject(error)
+})

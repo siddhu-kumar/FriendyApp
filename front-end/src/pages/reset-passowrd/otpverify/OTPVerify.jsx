@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import style from './otp.module.css'
-import { verifyOTP } from '../../../services/reset-password'
-import {  useNavigate } from 'react-router-dom'
+import { userOTPVerify } from '../../../services/reset-password'
+import { useNavigate } from 'react-router-dom'
 
 function OTPVerify() {
   const navigate = useNavigate();
@@ -22,17 +22,17 @@ function OTPVerify() {
     e.preventDefault()
     console.log(otp, 'yui')
 
-    verifyOTP(otp).then((data) => {
+    userOTPVerify(otp).then((data) => {
       console.log(data)
       navigate('/reset-password');
     })
       .catch((error) => {
         console.log(error)
-        if(error.response.data.message === 'OTP expired, Retry'){
+        if (error.response.data.message === 'OTP expired, Retry') {
           setOTPExpire(error.response.data.message)
         }
         if (error.response.data) {
-          console.log('otp checking',error.response.data.message)
+          console.log('otp checking', error.response.data.message)
           setOTPExpire(error.response.data.message)
         }
         setCount(count + 3)
@@ -64,7 +64,13 @@ function OTPVerify() {
         <button type='submit'>Submit</button>
       </form>
       {
-        otpExpire?<button onClick={navigate('/email-verify')}>{otpExpire}</button>:''
+        otpExpire
+          ? <button
+              onClick={navigate('/email-verify')}
+            >
+              {otpExpire}
+            </button>
+          : ''
       }
     </div>
   )

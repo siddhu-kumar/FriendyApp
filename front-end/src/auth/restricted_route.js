@@ -1,9 +1,14 @@
 import React from 'react'
-import { isLoggedIn } from '.'
-import { Outlet, Navigate } from 'react-router-dom'
+import {
+  isLoggedIn
+} from '.'
+import {
+  Outlet,
+  Navigate
+} from 'react-router-dom'
 
 const RestrictedRoute = () => {
-  return !isLoggedIn() ? <Outlet></Outlet> : <Navigate to="/" />
+  return !isLoggedIn() ? <Outlet > </Outlet> : <Navigate to="/" />
 }
 
 export default RestrictedRoute

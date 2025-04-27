@@ -1,17 +1,15 @@
-import React, { useContext, useEffect } from 'react'
-import style from './navbar.module.css'
-import { NavLink } from 'react-router-dom'
-import { UserContext } from '../../../context/userContext'
+import React, { useContext, useEffect } from "react";
+import style from "./navbar.module.css";
+import { NavLink } from "react-router-dom";
+import { UserContext } from "../../../context/userContext";
 
 const Navbar = () => {
-  const { auth, userDetails } = useContext(UserContext)
-  useEffect(()=> {
-    
-  },[auth])
+  const { auth, userDetails } = useContext(UserContext);
+  useEffect(() => {}, [auth]);
 
   return (
     <div className={style.Navbar}>
-      {auth ?
+      {auth ? (
         <>
           <div className={`${style.Logo} ${style.items}`}>
             <NavLink to="/">FriendyApp</NavLink>
@@ -30,7 +28,7 @@ const Navbar = () => {
             <NavLink to="/profile">{userDetails.name}</NavLink>
           </div>
         </>
-        :
+      ) : (
         <>
           <div className={style.items}>
             <NavLink to="/">LogIn</NavLink>
@@ -39,9 +37,9 @@ const Navbar = () => {
             <NavLink to="/register">SignIn</NavLink>
           </div>
         </>
-      }
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

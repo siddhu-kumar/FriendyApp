@@ -7,7 +7,9 @@ export const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization');
     // console.log('verifyToken',req)
     if (!authHeader) {
-        return res.status(401).json({ error: 'Access denied!' })
+        return res.status(401).json({
+            error: 'Access denied!'
+        })
     }
     try {
         const token = authHeader.split(" ")[1];
@@ -16,9 +18,13 @@ export const verifyToken = (req, res, next) => {
         // console.log(req.userId)
         next()
     } catch (err) {
-        if(err.name == "TokenExpiredError") {
-            return res.status(401).json({ expire: 'Token has Expired!' })
+        if (err.name == "TokenExpiredError") {
+            return res.status(401).json({
+                expire: 'Token has Expired!'
+            })
         }
-        res.status(401).json({ error: 'Invalid token!' })
+        res.status(401).json({
+            error: 'Invalid token!'
+        })
     }
 }

@@ -1,8 +1,10 @@
 import express from "express"
+
+import { getFriends } from "../controllers/friends/getFriends/index.js"
+
 import {
     createFriend,
     deleteFriend,
-    getFriends,
     getFriendById
 } from "../controllers/friends.js"
 

@@ -19,7 +19,7 @@
     align-items: center;
     justify-content: center;
     padding: 1vh 0;
-    border-width: 2px 0 ;
+    border-width: 2px 0;
     background-color: black;
 }
 
@@ -52,11 +52,13 @@
     border: none;
     text-align: center;
 }
+
 .address {
     display: flex;
     margin: 0;
     padding: 0;
 }
+
 .nums {
     width: 5vh;
     padding-left: 3vh;

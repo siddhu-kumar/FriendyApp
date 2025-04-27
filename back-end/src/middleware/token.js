@@ -10,7 +10,7 @@ export const authToken = (token) => {
         // console.log('verified',decoded)
         return decoded.userId
     } catch (err) {
-        if(err.name == "TokenExpiredError") {
+        if (err.name == "TokenExpiredError") {
             // console.log('got it')
         }
         // console.log('err',err)
