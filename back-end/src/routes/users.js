@@ -30,7 +30,7 @@ var upload = multer({
 router
     .get("/", verifyToken, getUser)
     .post("/login", loginUser)
-    .post("/all_user", verifyToken, getAllUser)
+    .get("/all_user", verifyToken, getAllUser)
     .post("/register", createUser)
     .post("/validate_data", validateUserData)
     .post("/validate_otp", userOTPValidate)

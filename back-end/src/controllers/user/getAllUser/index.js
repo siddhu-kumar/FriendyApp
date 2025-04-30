@@ -1,40 +1,118 @@
-import { User, RequestSchema } from "../../../models/models.js";
+import { User, RequestSchema, Image } from "../../../models/models.js";
 import { status } from "../../../utils/error.js";
+import { allUsers } from "../../../index.js";
+import { AllUsers } from "../../../class/userRespectiveData.js";
+import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const getAllUser = async (req, res) => {
     console.log("// get all user");
+    let friendId = [];
     const id = req.userId;
-    // console.log(id);
-    const friendId = [id];
+    friendId.push(id)
     try {
-        const friendList = await User.findOne({
+        const userData = await User.findOne({
             id: id,
         });
+        const userImage = await Image.findOne({
+            id: id
+        })
+
+        if (userImage === null) {
+            allUsers[id] = new AllUsers(id, userData.name, userData.email)
+        } else {
+            allUsers[id] = new AllUsers(id, userData.name, userImage.image.data, userImage.image.contentType)
+        }
+
         const requestList = await RequestSchema.find({
-            userId: id,
+            $or: [
+                { userId: id },
+                { friendId: id }
+            ]
         });
-        const receivedList = await RequestSchema.find({
-            friendId: id,
-        });
-        // console.log('rdl',receivedList)
-        // check friends in friendList, not implemented
-        for (let element of friendList.friends) {
+
+        // console.log(requestList)
+
+        for (let element of userData.friends) {
             friendId.push(element.friendId);
         }
-        // console.log('rl',requestList);
         for (let element of requestList) {
+            // received request to user
             friendId.push(element.friendId);
-        }
-        for (let element of receivedList) {
-            console.log(element)
+            // sent request by user
             friendId.push(element.userId);
         }
+
+
+        let tempImageData = {};
         const data = await User.find({
             id: {
                 $nin: friendId,
             },
         });
-        res.status(status.OK).send(data);
+        const imageData = await Image.find({ id: { $nin: friendId } });
+        for (let element of imageData) {
+            tempImageData[element.id] = element;
+        }
+
+        for (let element of requestList) {
+            if (tempImageData[element.userId] && element.userId!==id) {
+                const obj = new UserSharedData(
+                    element.userId,
+                    element.name,
+                    tempImageData[element.userId].image.data.toString("base64"),
+                    tempImageData[element.userId].image.contentType
+                )
+                allUsers[id].addSentRequest(obj)
+            } else if( element.userId!==id) {
+                const obj = new UserSharedData(
+                    element.userId,
+                    element.name,
+                )
+                allUsers[id].addSentRequest(obj)
+            }
+
+            if (tempImageData[element.friendId] && element.friendId!==id) {
+                const obj = new UserSharedData(
+                    element.userId,
+                    element.friendName,
+                    tempImageData[element.friendId].image.data.toString("base64"),
+                    tempImageData[element.friendId].image.contentType
+                )
+                allUsers[id].addReceivedRequest(obj)
+            } else if( element.friendId!==id) {
+                const obj = new UserSharedData(
+                    element.friendId,
+                    element.friendName,
+                )
+                allUsers[id].addReceivedRequest(obj)
+            }
+        }
+
+        console.log('lists', allUsers[id].sentRequestList)
+        console.log('lists2', allUsers[id].receivedRequestList)
+
+        for (let element of data) {
+            if (tempImageData[element.id]) {
+                const obj = new UserSharedData(
+                    element.id,
+                    element.name,
+                    element.email,
+                    tempImageData[element.id].image.data.toString("base64"),
+                    tempImageData[element.id].image.contentType
+                )
+                allUsers[id].globalUserAdd(obj)
+            } else {
+                const obj = new UserSharedData(
+                    element.id,
+                    element.name,
+                    element.email
+                )
+                allUsers[id].globalUserAdd(obj)
+            }
+        }
+
+
+        res.status(status.OK).send(allUsers[id].globalUserList);
     } catch (err) {
         console.log(err);
         res.send(err.message);

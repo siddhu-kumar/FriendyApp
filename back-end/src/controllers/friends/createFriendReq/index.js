@@ -5,6 +5,7 @@ export const createRequest = async (req, res) => {
   console.log("// create new friend");
   const { email } = req.body;
   const userId = req.userId;
+  console.log(userId, email)
   try {
     const userData = await User.findOne({
       id: userId,

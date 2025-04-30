@@ -34,7 +34,7 @@ const ChatProvider = ({ children }) => {
       namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
       // console.log(endPoint)
       namespace[endPoint].on('getFriendList', (friendList, callback) => {
-        // console.log(friendList)
+        console.log(friendList)
         setFriendList(friendList)
         callback({
           message: 'list received'

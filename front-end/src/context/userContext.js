@@ -8,7 +8,8 @@ import {
     isLoggedIn
 } from "../auth";
 import {
-    getAllUser
+    getAllUser,
+    getAllUserImages
 } from "../services/user-service";
 import {
     doLogout
@@ -29,10 +30,18 @@ const DataProvider = ({children}) => {
         if (auth) {
             getAllUser().then(data => {
                 setUserList(data)
+                console.log(data)
+                // getAllUserImages().then(data => {
+                //     console.log(data);
+                // }).catch(err => {
+                //     console.log(err);
+                // })
+                
+                
             }).catch(error => {
                 if (error.response.data.expire) {
                     doLogout();
-                    setUserList('');
+                    setUserList('');    
                     setUserDetails('');
                     setAuth(isLoggedIn);
                 }

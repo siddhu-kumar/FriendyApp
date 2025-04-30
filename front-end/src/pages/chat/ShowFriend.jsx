@@ -44,7 +44,7 @@ export const ShowFriend = (props) => {
                 onClick={(e) => handleClick(e, data)}
                 key={index}
                 className={style.friend_class}
-              >
+                >
                 {
                   <img
                     className={style.friend_profile_img}

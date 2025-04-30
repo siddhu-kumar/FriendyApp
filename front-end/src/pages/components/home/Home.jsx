@@ -32,7 +32,17 @@ const Home = () => {
         {userList.length !== 0 ? (
           userList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
-              <div className={style.userInfo}>{data.name}</div>
+              {
+                data.userImage? 
+                <img 
+                className={style.usersImage}
+                src={`data:${data.contentType};base64,${data.userImage}`} alt="" />
+                : 
+                <img className={style.tempImage}
+                 src="./logo192.png" 
+                 alt=""/>
+              }
+              <div className={style.userInfo}>{data.username}</div>
               <div className={style.userInfo}>{data.contact}</div>
               <div
                 className={`${style.addFriend} ${style.userInfo} `}

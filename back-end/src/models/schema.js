@@ -1,12 +1,12 @@
 import mongoose, {mongo } from "mongoose"
 import uniqueValidator from "mongoose-unique-validator"
 
-import { chatSchemas } from "./chatSchema"
-import { requestSchema } from "./requestSchema"
-import { resetPassword } from "./resetPassword"
-import { tempUserSchemas } from "./tempUserSchema"
-import { userImage } from "./userImage"
-import { userSchemas } from "./userSchema"
+import { chatSchemas } from "./chatSchema/index.js"
+import { requestSchema } from "./requestSchema/index.js"
+import { resetPassword } from "./resetPassword/index.js"
+import { tempUserSchemas } from "./tempUserSchema/index.js"
+import { userImage } from "./userImage/index.js"
+import { userSchemas } from "./userSchema/index.js"
 
 // const resetPassword = new mongoose.Schema({
 //     sskey: {

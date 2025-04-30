@@ -17,7 +17,12 @@ export const emailValidate = (data) => {
 }
 
 export const getAllUser = () => {
-    return privateAxios.post('/user/all_user')
+    return privateAxios.get('/user/all_user')
+        .then(res => res.data)
+}
+
+export const getAllUserImages = () => {
+    return privateAxios.post('/user/all_user/images')
         .then(res => res.data)
 }
 

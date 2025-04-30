@@ -11,12 +11,13 @@ import { doLogout, isLoggedIn } from "../../auth";
 function Pending() {
   const navigate = useNavigate();
   const { setAuth } = useContext(UserContext);
-  const [userList, setUserList] = useState("");
+  const [sentRequestList, setSentRequestList] = useState("");
 
   useEffect(() => {
     pendingRequest()
       .then((data) => {
-        setUserList(data);
+        console.log(data)
+        setSentRequestList(data);
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -27,7 +28,7 @@ function Pending() {
       });
   }, []);
 
-  // useEffect(() => { }, [userList])
+  // useEffect(() => { }, [sentRequestList])
 
   const deleteRequest = (e, data) => {
     e.preventDefault();
@@ -49,10 +50,10 @@ function Pending() {
   return (
     <>
       <div className={style.Users}>
-        {userList.length !== 0 ? (
-          userList.map((data, index) => (
+        {sentRequestList.length !== 0 ? (
+          sentRequestList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
-              <div className={style.userInfo}>{data.friendName}</div>
+              <div className={style.userInfo}>{data.username}</div>
               <button
                 className={`${style.userInfo} ${style.addFriend}`}
                 onClick={(e) => deleteRequest(e, data)}
