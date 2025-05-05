@@ -13,4 +13,5 @@ export const requestSchema = new mongoose.Schema({
   friendName: {
       type: String
   }
-})
+},
+{timestamps: true})

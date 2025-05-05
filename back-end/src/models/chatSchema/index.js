@@ -25,4 +25,5 @@ export const chatSchemas = new mongoose.Schema({
       }
 
   }],
-})
+},
+{timestamps: true})

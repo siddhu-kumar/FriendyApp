@@ -1,6 +1,6 @@
 import { User, RequestSchema, Image } from "../../../models/models.js";
 import { status } from "../../../utils/error.js";
-import { allUsers } from "../../../index.js";
+import { allUsers, tempImageData } from "../../../index.js";
 import { AllUsers } from "../../../class/userRespectiveData.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 
@@ -18,9 +18,9 @@ export const getAllUser = async (req, res) => {
         })
 
         if (userImage === null) {
-            allUsers[id] = new AllUsers(id, userData.name, userData.email)
+            allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt)
         } else {
-            allUsers[id] = new AllUsers(id, userData.name, userImage.image.data, userImage.image.contentType)
+            allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt, userImage.image.data, userImage.image.contentType)
         }
 
         const requestList = await RequestSchema.find({
@@ -29,7 +29,7 @@ export const getAllUser = async (req, res) => {
                 { friendId: id }
             ]
         });
-
+ 
         // console.log(requestList)
 
         for (let element of userData.friends) {
@@ -42,13 +42,18 @@ export const getAllUser = async (req, res) => {
             friendId.push(element.userId);
         }
 
-
-        let tempImageData = {};
+        allUsers[id].addRequestedUserId(friendId)
+        // createdAt: {$gte:new Date(allUsers[id].createdAt),$lte:new Date(allUsers[id].createdAt.getTime()+24*60*60*1000*5)}
+        // console.log(allUsers[id].createdAt, new Date(allUsers[id].createdAt.getTime()+24*60*60*1000*5))
+        
         const data = await User.find({
             id: {
                 $nin: friendId,
             },
-        });
+        }).sort({"createdAt":1}).limit(9);
+
+        // console.log('data',data)
+        
         const imageData = await Image.find({ id: { $nin: friendId } });
         for (let element of imageData) {
             tempImageData[element.id] = element;
@@ -59,6 +64,8 @@ export const getAllUser = async (req, res) => {
                 const obj = new UserSharedData(
                     element.userId,
                     element.name,
+                    element.email,
+                    element.createdAt,
                     tempImageData[element.userId].image.data.toString("base64"),
                     tempImageData[element.userId].image.contentType
                 )
@@ -67,8 +74,10 @@ export const getAllUser = async (req, res) => {
                 const obj = new UserSharedData(
                     element.userId,
                     element.name,
+                    element.email,
+                    element.createdAt,
                 )
-                allUsers[id].addSentRequest(obj)
+                allUsers[id].addReceivedRequest(obj)
             }
 
             if (tempImageData[element.friendId] && element.friendId!==id) {
@@ -84,7 +93,7 @@ export const getAllUser = async (req, res) => {
                     element.friendId,
                     element.friendName,
                 )
-                allUsers[id].addReceivedRequest(obj)
+                allUsers[id].addSentRequest(obj)
             }
         }
 
@@ -97,17 +106,19 @@ export const getAllUser = async (req, res) => {
                     element.id,
                     element.name,
                     element.email,
+                    element.createdAt,
                     tempImageData[element.id].image.data.toString("base64"),
                     tempImageData[element.id].image.contentType
                 )
-                allUsers[id].globalUserAdd(obj)
+                allUsers[id].addGlobalRespectiveUser(obj)
             } else {
                 const obj = new UserSharedData(
                     element.id,
                     element.name,
-                    element.email
+                    element.email,
+                    element.createdAt
                 )
-                allUsers[id].globalUserAdd(obj)
+                allUsers[id].addGlobalRespectiveUser(obj)
             }
         }
 

@@ -10,6 +10,9 @@ import {
   routes as userRouters
 } from './routes/users.js';
 import {
+  routes as userTempRouters
+} from './routes/temproute.js';
+import {
   routes as friendRouters
 } from './routes/friends.js';
 import {
@@ -63,7 +66,7 @@ const initializedNamespace = {}
 
 export let namespace = {};
 export let allUsers = {}
-
+export let tempImageData = {};
 io.of('/').on('connection', async (socket) => {
   // console.log(socket.id, "has connected to server")
   // console.log(socket.handshake.auth.token)
