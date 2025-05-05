@@ -37,4 +37,5 @@ export const userSchemas = new mongoose.Schema({
             type: String,
         }
     }]
-})
+},
+{timestamps: true})

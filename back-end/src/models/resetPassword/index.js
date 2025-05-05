@@ -9,4 +9,5 @@ export const resetPassword = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+},
+{timestamps: true})

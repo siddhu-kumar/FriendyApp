@@ -24,4 +24,5 @@ export const tempUserSchemas = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+},
+{timestamps: true})

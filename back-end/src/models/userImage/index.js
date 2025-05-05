@@ -9,4 +9,5 @@ export const userImage = new mongoose.Schema({
         data: Buffer,
         contentType: String
     }
-})
+},
+{timestamps: true})

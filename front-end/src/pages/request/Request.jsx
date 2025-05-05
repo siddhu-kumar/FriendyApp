@@ -20,6 +20,7 @@ function Request() {
     receivedRequest()
       .then((data) => {
         setUserList(data);
+        console.log(data)
       })
       .catch((error) => {
         console.log(error);
