@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useContext, useState } from 'react'
 import style from './register.module.css'
 import { Link, useNavigate } from 'react-router-dom'
@@ -5,6 +6,15 @@ import { validateUserData } from '../../../services/user-service'
 import { UserContext } from '../../../context/userContext'
 import { validation } from '../../../auth/validation'
 import { emailValidate } from '../../../services/user-service'
+=======
+import React, { useContext, useState } from "react";
+import style from "./register.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import { registerTempUser, validateUserData } from "../../../services/user-service";
+import { UserContext } from "../../../context/userContext";
+import { validation } from "../../../auth/validation";
+
+>>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 const Register = () => {
   const { setUserDetails } = useContext(UserContext)
   const navigate = useNavigate()
@@ -25,6 +35,7 @@ const Register = () => {
     const isValidated = validation(userInput)
 
     if (isValidated.length === 0) {
+<<<<<<< HEAD
       setUserDetails(userInput);
       await validateUserData({ contact: userInput.contact, email: userInput.email }).then(data => {
         console.log(data)
@@ -39,6 +50,34 @@ const Register = () => {
         console.log(data);
       })
       navigate('/otp-verify', { state: { reg: true } })
+=======
+          //   await registerTempUser(userInput).then(data => {
+          //     console.log(data)
+          //     navigate("/")
+          //   }).catch((err) => {
+          //     console.log(err)
+          //   }) return;
+
+      await validateUserData(userInput)
+        .then(async (data) => {
+          console.log(data);
+          if (data.flag) {
+            setUserDetails(userInput);
+            navigate("/email_sent");
+            // await emailValidate({ email: userInput.email }).then(data => {
+            //   console.log(data);
+            // })
+          }
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          if (!err.response.data.flag) {
+            // console.log(err)
+            setData("Contact/Email already exists.");
+            return;
+          }
+        });
+>>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
     } else {
       isValidated.forEach(element => {
         alert(element)

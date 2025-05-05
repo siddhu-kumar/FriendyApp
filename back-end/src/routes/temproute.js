@@ -1,9 +1,9 @@
 import express from "express"
-<<<<<<< HEAD
-=======
+import multer from "multer"
+import { createUserTemp } from "../controllers/user/createUser/index.js"
+import { verifyToken } from "../middleware/authMiddleware.js"
 
 import { getAllUser } from "../controllers/user/getAllUser/index.js"
-import { createUser } from "../controllers/user/createUser/index.js"
 import { validateUserData } from "../controllers/user/validateUserData/index.js"
 import { getUser } from "../controllers/user/getUser/index.js"
 import { loginUser } from "../controllers/user/loginUser/index.js"
@@ -13,48 +13,30 @@ import { acceptRequest } from "../controllers/friends/acceptRequest/index.js"
 import { getPendingRequest } from "../controllers/friends/getPendingReq/index.js"
 import { getReceivedRequest } from "../controllers/friends/getReceivedReq/index.js"
 import { deletePendingRequest } from "../controllers/friends/deletePendingReq/index.js"
-import { pagination } from "../controllers/user/pagination/index.js"
 
-import multer from "multer"
-
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 import {
-    createUser,
-    updateUser,
-    loginUser,
-    getUser,
-    getAllUser,
-    validateUserData,
-} from "../controllers/users.js"
+  userOTPValidate
+} from "../controllers/user_validate.js"
 
-import { verifyToken } from "../middleware/authMiddleware.js"
-import { acceptRequest, createFriend, createRequest, deletePendingRequest, getPendingRequest, getReceivedRequest } from "../controllers/friends.js"
-import { email_validate } from "../controllers/email_validate.js"
 
 const router = express.Router()
-
+var storage = multer.memoryStorage()
+var upload = multer({
+    storage: storage
+})
 router
     .get("/", verifyToken, getUser)
     .post("/login", loginUser)
-    .post("/all_user", verifyToken, getAllUser)
-    .post("/register", createUser)
+    .get("/all_user", verifyToken, getAllUser)
+    .post("/register/temp", createUserTemp)
     .post("/validate_data", validateUserData)
-    .post("/validate_email",email_validate)
+    .post("/validate_otp", userOTPValidate)
     .patch("/update", verifyToken, updateUser)
-<<<<<<< HEAD
-    .post("/create_request",verifyToken,createRequest)
-    .get('/pending_request',verifyToken, getPendingRequest)
-    .get('/received_request',verifyToken,getReceivedRequest)
-    .post('/accept_request',verifyToken,acceptRequest)
-    .delete('/delete_request',verifyToken,deletePendingRequest)
-=======
     .patch("/profile", verifyToken, upload.single('imageFile'), updateProfile)
     .post("/create_request", verifyToken, createRequest)
     .get('/pending_request', verifyToken, getPendingRequest)
     .get('/received_request', verifyToken, getReceivedRequest)
     .post('/accept_request', verifyToken, acceptRequest)
     .delete('/delete_request', verifyToken, deletePendingRequest)
-    .post('/pagination',verifyToken,pagination)
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 
 export const routes = router

@@ -4,6 +4,7 @@ import { receivedRequest, deletePendingRequest, acceptRequest } from "../../serv
 
 function Request() {
 
+<<<<<<< HEAD
   const [userList,setUserList] = useState('')
    useEffect(()=> {
      receivedRequest().then(data=>{ 
@@ -15,6 +16,27 @@ function Request() {
    useEffect(() => { }, [userList])
  
    const AcceptRequest = (e,data) => {
+=======
+  useEffect(() => {
+    receivedRequest()
+      .then((data) => {
+        setUserList(data);
+        console.log(data)
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 401) {
+          doLogout();
+          setAuth(isLoggedIn);
+          navigate("/login");
+        }
+      });
+  }, []);
+
+  //  useEffect(() => { }, [userList])
+
+  const AcceptRequest = (e, data) => {
+>>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
     e.preventDefault();
     acceptRequest({requestId:data.userId})
     .then(data=> {

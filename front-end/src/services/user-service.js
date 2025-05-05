@@ -59,5 +59,21 @@ export const editProfile = (userData) => {
 }
 
 export const createUser = (userData) => {
+<<<<<<< HEAD
     return myAxios.post('/user/register',userData).then(res=> res.data)
+=======
+    return myAxios.post('/user/register', userData).then(res => res.data)
+}
+
+export const userOTPValidate = (data) => {
+    return myAxios.post('/user/validate_otp', data).then(res => res.data)
+}
+
+export const pagination = (data) => {
+    return privateAxios.post('/user/pagination',data).then(res => res.data)
+}
+
+export const registerTempUser = (data) => {
+    return myAxios.post('/user/register/temp',data).then(res => res.data);
+>>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 }
