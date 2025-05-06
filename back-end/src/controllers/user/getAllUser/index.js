@@ -97,8 +97,8 @@ export const getAllUser = async (req, res) => {
             }
         }
 
-        console.log('lists', allUsers[id].sentRequestList)
-        console.log('lists2', allUsers[id].receivedRequestList)
+        // console.log('lists', allUsers[id].sentRequestList)
+        // console.log('lists2', allUsers[id].receivedRequestList)
 
         for (let element of data) {
             if (tempImageData[element.id]) {

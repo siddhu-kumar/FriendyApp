@@ -9,8 +9,6 @@ export const getReceivedRequest = async (req, res) => {
     const receivedRequest = await RequestSchema.find({
       friendId: userId,
     });
-
-    
     console.log(receivedRequest);
     res.status(200).json(receivedRequest);
   } catch (err) {

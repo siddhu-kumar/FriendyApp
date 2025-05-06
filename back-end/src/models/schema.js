@@ -7,6 +7,8 @@ import { resetPassword } from "./resetPassword/index.js"
 import { tempUserSchemas } from "./tempUserSchema/index.js"
 import { userImage } from "./userImage/index.js"
 import { userSchemas } from "./userSchema/index.js"
+import { requestReceived} from "./requestReceived/index.js"
+import { requestSent } from "./requestSent/index.js"
 
 // const resetPassword = new mongoose.Schema({
 //     sskey: {
@@ -142,3 +144,5 @@ export const resetPasswordSchema = resetPassword
 export const requestSchemas = requestSchema
 export const tempUserSchema = tempUserSchemas
 export const userImageSchema = userImage
+export const requestReceivedSchema = requestReceived
+export const requestSentSchema = requestSent

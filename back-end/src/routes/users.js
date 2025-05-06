@@ -8,9 +8,10 @@ import { loginUser } from "../controllers/user/loginUser/index.js"
 import { updateProfile, updateUser } from "../controllers/user/updateProfile/index.js"
 import { createRequest } from "../controllers/friends/createFriendReq/index.js"
 import { acceptRequest } from "../controllers/friends/acceptRequest/index.js"
-import { getPendingRequest } from "../controllers/friends/getPendingReq/index.js"
+import { getSentRequest } from "../controllers/friends/getPendingReq/index.js"
 import { getReceivedRequest } from "../controllers/friends/getReceivedReq/index.js"
-import { deletePendingRequest } from "../controllers/friends/deletePendingReq/index.js"
+import { deleteReceivedRequest } from "../controllers/friends/deletePendingReq/index.js"
+import { deleteSentRequest } from "../controllers/friends/deletePendingReq/index.js"
 import { pagination } from "../controllers/user/pagination/index.js"
 
 import multer from "multer"
@@ -39,10 +40,11 @@ router
     .patch("/update", verifyToken, updateUser)
     .patch("/profile", verifyToken, upload.single('imageFile'), updateProfile)
     .post("/create_request", verifyToken, createRequest)
-    .get('/pending_request', verifyToken, getPendingRequest)
+    .get('/pending_request', verifyToken, getSentRequest)
     .get('/received_request', verifyToken, getReceivedRequest)
     .post('/accept_request', verifyToken, acceptRequest)
-    .delete('/delete_request', verifyToken, deletePendingRequest)
+    .delete('/delete/received_request', verifyToken, deleteReceivedRequest)
+    .delete('/delete/sent_request', verifyToken, deleteSentRequest)
     .post('/pagination',verifyToken,pagination)
 
 export const routes = router

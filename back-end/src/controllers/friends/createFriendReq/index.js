@@ -1,5 +1,7 @@
 
 import { User, RequestSchema } from "../../../models/models.js";
+import { allUsers } from "../../../index.js";
+import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const createRequest = async (req, res) => {
   console.log("// create new friend");
@@ -21,9 +23,10 @@ export const createRequest = async (req, res) => {
       friendId: friendData.id,
       friendName: friendData.name,
     });
-    console.log("Request made");
+    allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
+    console.log("Request made",allUsers[userId].sentRequestList);
     const r = await request.save();
-    console.log(request, r);
+    console.log('r',request, r);
     res.status(200).json({
       message: `Request has been sent to`,
     });
