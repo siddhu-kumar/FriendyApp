@@ -5,7 +5,9 @@ import {
   resetPasswordSchema,
   requestSchemas,
   tempUserSchema,
-  userImageSchema
+  userImageSchema,
+  requestReceivedSchema,
+  requestSentSchema,
 } from "./schema.js";
 
 // models
@@ -15,3 +17,5 @@ export const Resetpwd = mongoose.model('ResetPwd', resetPasswordSchema)
 export const RequestSchema = mongoose.model('RequestUser', requestSchemas)
 export const TempUser = mongoose.model('TempUserData', tempUserSchema)
 export const Image = mongoose.model('Image', userImageSchema);
+// export const ReceivedRequest = mongoose.model('ReceivedRequest',requestReceivedSchema)
+// export const SentRequest = mongoose.model('SentRequest',requestSentSchema)

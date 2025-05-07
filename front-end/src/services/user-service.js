@@ -6,10 +6,7 @@ import {
 export const loginUser = (loginUser) => {
     console.log('login user', loginUser)
     return myAxios.post('/user/login', loginUser)
-        .then((res) => {
-            console.log(res.data)
-            return res.data
-        })
+        .then(res => res.data)
 }
 
 export const emailValidate = (data) => {
@@ -17,7 +14,12 @@ export const emailValidate = (data) => {
 }
 
 export const getAllUser = () => {
-    return privateAxios.post('/user/all_user')
+    return privateAxios.get('/user/all_user')
+        .then(res => res.data)
+}
+
+export const getAllUserImages = () => {
+    return privateAxios.post('/user/all_user/images')
         .then(res => res.data)
 }
 
@@ -26,9 +28,13 @@ export const receivedRequest = () => {
         .then(res => res.data)
 }
 
-export const deletePendingRequest = (data) => {
+export const deleteSentRequest = (data) => {
     console.log(data)
-    return privateAxios.delete('/user/delete_request', data).then(res => res.data)
+    return privateAxios.delete('/user/delete/sent_request', data).then(res => res.data)
+}
+export const deleteReceivedRequest = (data) => {
+    console.log(data)
+    return privateAxios.delete('/user/delete/received_request', data).then(res => res.data)
 }
 
 export const pendingRequest = () => {
@@ -67,4 +73,12 @@ export const createUser = (userData) => {
 
 export const userOTPValidate = (data) => {
     return myAxios.post('/user/validate_otp', data).then(res => res.data)
+}
+
+export const pagination = (data) => {
+    return privateAxios.post('/user/pagination',data).then(res => res.data)
+}
+
+export const registerTempUser = (data) => {
+    return myAxios.post('/user/register/temp',data).then(res => res.data);
 }

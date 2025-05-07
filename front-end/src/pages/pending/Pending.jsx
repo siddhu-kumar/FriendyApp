@@ -1,22 +1,29 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import style from "./pending.module.css";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 import {
-  deletePendingRequest,
+  deleteSentRequest,
   pendingRequest,
 } from "../../services/user-service";
 import { doLogout, isLoggedIn } from "../../auth";
 
 function Pending() {
   const navigate = useNavigate();
-  const { setAuth } = useContext(UserContext);
-  const [userList, setUserList] = useState("");
+  const {
+    setAuth,
+    userList,
+    setUserList,
+    sentRequestList,
+    setSentRequestList,
+  } = useContext(UserContext);
 
   useEffect(() => {
     pendingRequest()
       .then((data) => {
-        setUserList(data);
+        console.log(data);
+        setSentRequestList(data);
+
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -27,12 +34,22 @@ function Pending() {
       });
   }, []);
 
-  // useEffect(() => { }, [userList])
+  useEffect(() => {}, [setUserList, setSentRequestList, sentRequestList]);
 
   const deleteRequest = (e, data) => {
     e.preventDefault();
-    console.log(data.friendId);
-    deletePendingRequest({ data: { friendId: data.friendId } })
+    console.log(data);
+    console.log(sentRequestList);
+
+    const updatedList = sentRequestList.filter(
+      (element) => element.userId !== data.userId
+    );
+    console.log(updatedList)
+    setSentRequestList(updatedList);
+    console.log(updatedList);
+    setUserList((prevList) => [data, ...prevList]);
+    console.log(userList);
+    deleteSentRequest({ data: { friendId: data.friendId } })
       .then((data) => {
         console.log(data);
       })
@@ -44,15 +61,17 @@ function Pending() {
           navigate("/login");
         }
       });
+    window.location.reload();
   };
 
   return (
     <>
       <div className={style.Users}>
-        {userList.length !== 0 ? (
-          userList.map((data, index) => (
+        {sentRequestList.length !== 0 ? (
+          sentRequestList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
               <div className={style.userInfo}>{data.friendName}</div>
+              <div className={style.userInfo}>{data.friendEmail}</div>
               <button
                 className={`${style.userInfo} ${style.addFriend}`}
                 onClick={(e) => deleteRequest(e, data)}

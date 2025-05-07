@@ -85,11 +85,15 @@ const Profile = () => {
     const parsedImage = JSON.parse(image);
     // console.log('working',parsedImage.imageObj)
     if (parsedImage.imageObj) {
+      console.log(parsedImage.imageObj.image)
       setFile(
         `data:${parsedImage.imageObj.contentType};base64,${parsedImage.imageObj.image}`
       );
     }
   }, []);
+
+  // console.log(JSON.parse(localStorage.getItem("data")).imageObj)
+
 
   const handleLogout = (e) => {
     e.preventDefault();

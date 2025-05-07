@@ -11,7 +11,9 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
     message: "",
   });
 
+  
   useEffect(() => {
+    namespace[endPoint].off("listenMessage");
     namespace[endPoint].on("listenMessage", (messageObj, callback) => {
       console.log(messageObj);
       setChatHistory((prevChatHistory) => [...prevChatHistory, messageObj]);

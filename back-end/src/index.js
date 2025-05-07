@@ -10,6 +10,9 @@ import {
   routes as userRouters
 } from './routes/users.js';
 import {
+  routes as userTempRouters
+} from './routes/temproute.js';
+import {
   routes as friendRouters
 } from './routes/friends.js';
 import {
@@ -27,9 +30,7 @@ import {
 import {
   verifyToken
 } from './middleware/authMiddleware.js';
-import {
-  Image
-} from './models/models.js';
+import { set } from 'mongoose';
 
 const allowed_origin = process.env.ORIGIN || "*"
 const PORT = process.env.PORT || 8000
@@ -63,7 +64,9 @@ const io = new Server(expressServer, {
 
 const initializedNamespace = {}
 
-export let namespace = {}
+export let namespace = {};
+export let allUsers = {}
+export let tempImageData = {};
 io.of('/').on('connection', async (socket) => {
   // console.log(socket.id, "has connected to server")
   // console.log(socket.handshake.auth.token)

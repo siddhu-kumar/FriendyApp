@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import style from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { validateUserData } from "../../../services/user-service";
+import { registerTempUser, validateUserData } from "../../../services/user-service";
 import { UserContext } from "../../../context/userContext";
 import { validation } from "../../../auth/validation";
 
@@ -25,6 +25,13 @@ const Register = () => {
     const isValidated = validation(userInput);
 
     if (isValidated.length === 0) {
+          //   await registerTempUser(userInput).then(data => {
+          //     console.log(data)
+          //     navigate("/")
+          //   }).catch((err) => {
+          //     console.log(err)
+          //   }) return;
+
       await validateUserData(userInput)
         .then(async (data) => {
           console.log(data);

@@ -8,7 +8,8 @@ import {
     isLoggedIn
 } from "../auth";
 import {
-    getAllUser
+    getAllUser,
+    getAllUserImages
 } from "../services/user-service";
 import {
     doLogout
@@ -24,15 +25,17 @@ const DataProvider = ({children}) => {
     const [userDetails, setUserDetails] = useState(getUserData)
     const [userList, setUserList] = useState('');
     const [reg, setReg] = useState(false);
-
+    const [sentRequestList, setSentRequestList] = useState("");
+    
     useEffect(() => {
         if (auth) {
             getAllUser().then(data => {
-                setUserList(data)
+                setUserList(data);
+                console.log(data);
             }).catch(error => {
                 if (error.response.data.expire) {
                     doLogout();
-                    setUserList('');
+                    setUserList('');    
                     setUserDetails('');
                     setAuth(isLoggedIn);
                 }
@@ -54,7 +57,9 @@ const DataProvider = ({children}) => {
             userList,
             setUserList,
             reg,
-            setReg
+            setReg,
+            sentRequestList,
+            setSentRequestList
         }
     } > {
             children

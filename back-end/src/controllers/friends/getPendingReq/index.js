@@ -1,19 +1,30 @@
 
 
-import { RequestSchema } from "../../../models/models.js";
+import { Image, RequestSchema } from "../../../models/models.js";
+import { UserSharedData } from "../../../class/usersSharedData.js";
 
 
-
-export const getPendingRequest = async (req, res) => {
+export const getSentRequest = async (req, res) => {
   const userId = req.userId;
   // console.log('enter')
   // console.log(userId)
+  let userList = []
   try {
-    const pendingRequest = await RequestSchema.find({
+    const sentRequest = await RequestSchema.find({
       userId: userId,
     });
-    // console.log(pendingRequest)
-    res.status(200).json(pendingRequest);
+    
+    for(let element of sentRequest) {
+      userList.push(element.friendId);
+    }
+
+    const imageList = await Image.find({
+      id: {$in:userList}
+    })
+    console.log('ll',imageList)
+
+    
+    res.status(200).json(sentRequest);
   } catch (err) {
     console.log(err);
     res.status(400).json({

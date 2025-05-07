@@ -28,13 +28,12 @@ const ChatProvider = ({ children }) => {
   useEffect(() => {
     const socket = io(BASE_URL, authHeader)
     // console.log(authHeader)
-
-    socket.on('endPoint', (endPoint) => {
+      socket.on('endPoint', (endPoint) => {
       setEndPoint(endPoint)
       namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
       // console.log(endPoint)
       namespace[endPoint].on('getFriendList', (friendList, callback) => {
-        // console.log(friendList)
+        console.log(friendList)
         setFriendList(friendList)
         callback({
           message: 'list received'

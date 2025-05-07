@@ -1,6 +1,14 @@
 import mongoose, {mongo } from "mongoose"
 import uniqueValidator from "mongoose-unique-validator"
-// import { resetPassword } from "./resetPassword"
+
+import { chatSchemas } from "./chatSchema/index.js"
+import { requestSchema } from "./requestSchema/index.js"
+import { resetPassword } from "./resetPassword/index.js"
+import { tempUserSchemas } from "./tempUserSchema/index.js"
+import { userImage } from "./userImage/index.js"
+import { userSchemas } from "./userSchema/index.js"
+import { requestReceived} from "./requestReceived/index.js"
+import { requestSent } from "./requestSent/index.js"
 
 // const resetPassword = new mongoose.Schema({
 //     sskey: {
@@ -54,81 +62,81 @@ import uniqueValidator from "mongoose-unique-validator"
 //     }],
 // })
 
-const tempUserSchemas = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-    },
-    contact: {
-        type: String,
-        required: true,
-    },
-    sskey: {
-        type: String,
-    },
-    otp: {
-        type: String,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true
-    }
-})
+// const tempUserSchemas = new mongoose.Schema({
+//     name: {
+//         type: String,
+//         required: true
+//     },
+//     email: {
+//         type: String,
+//         required: true,
+//     },
+//     contact: {
+//         type: String,
+//         required: true,
+//     },
+//     sskey: {
+//         type: String,
+//     },
+//     otp: {
+//         type: String,
+//         unique: true,
+//     },
+//     password: {
+//         type: String,
+//         required: true
+//     }
+// })
 
-const userSchemas = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    contact: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    endpoint: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    friends: [{
-        friendId: {
-            type: String,
-        },
-        chatId: {
-            type: String,
-        }
-    }]
-})
+// const userSchemas = new mongoose.Schema({
+//     id: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//     },
+//     name: {
+//         type: String,
+//         required: true
+//     },
+//     email: {
+//         type: String,
+//         required: true,
+//         unique: true
+//     },
+//     contact: {
+//         type: String,
+//         required: true,
+//         unique: true
+//     },
+//     endpoint: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//     },
+//     password: {
+//         type: String,
+//         required: true
+//     },
+//     friends: [{
+//         friendId: {
+//             type: String,
+//         },
+//         chatId: {
+//             type: String,
+//         }
+//     }]
+// })
 
-const userImage = new mongoose.Schema({
-    id: {
-        type: String,
-        unique: true,
-    },
-    image: {
-        data: Buffer,
-        contentType: String
-    }
-})
+// const userImage = new mongoose.Schema({
+//     id: {
+//         type: String,
+//         unique: true,
+//     },
+//     image: {
+//         data: Buffer,
+//         contentType: String
+//     }
+// })
 
 export const chatSchema = chatSchemas
 export const userSchema = userSchemas
@@ -136,3 +144,5 @@ export const resetPasswordSchema = resetPassword
 export const requestSchemas = requestSchema
 export const tempUserSchema = tempUserSchemas
 export const userImageSchema = userImage
+export const requestReceivedSchema = requestReceived
+export const requestSentSchema = requestSent
