@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import {
   receivedRequest,
-  deletePendingRequest,
   acceptRequest,
+  deleteReceivedRequest,
 } from "../../services/user-service";
 
 import { doLogout, isLoggedIn } from "../../auth";
@@ -54,7 +54,7 @@ function Request() {
 
   const deleteRequest = (e, data) => {
     e.preventDefault();
-    deletePendingRequest({ data: { friendId: data.friendId } })
+    deleteReceivedRequest({ data: { friendId: data.friendId } })
       .then((data) => {
         console.log(data);
       })

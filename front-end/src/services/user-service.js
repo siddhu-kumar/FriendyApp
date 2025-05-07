@@ -31,9 +31,13 @@ export const receivedRequest = () => {
         .then(res => res.data)
 }
 
-export const deletePendingRequest = (data) => {
+export const deleteSentRequest = (data) => {
     console.log(data)
-    return privateAxios.delete('/user/delete_request', data).then(res => res.data)
+    return privateAxios.delete('/user/delete/sent_request', data).then(res => res.data)
+}
+export const deleteReceivedRequest = (data) => {
+    console.log(data)
+    return privateAxios.delete('/user/delete/received_request', data).then(res => res.data)
 }
 
 export const pendingRequest = () => {

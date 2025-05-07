@@ -30,7 +30,8 @@ const DataProvider = ({children}) => {
     useEffect(() => {
         if (auth) {
             getAllUser().then(data => {
-                setUserList(data)
+                setUserList(data);
+                console.log(data);
             }).catch(error => {
                 if (error.response.data.expire) {
                     doLogout();
