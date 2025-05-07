@@ -1,6 +1,4 @@
 import express from "express"
-<<<<<<< HEAD
-=======
 
 import { getAllUser } from "../controllers/user/getAllUser/index.js"
 import { createUser } from "../controllers/user/createUser/index.js"
@@ -17,7 +15,6 @@ import { pagination } from "../controllers/user/pagination/index.js"
 
 import multer from "multer"
 
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 import {
     createUser,
     updateUser,
@@ -41,20 +38,10 @@ router
     .post("/validate_data", validateUserData)
     .post("/validate_email",email_validate)
     .patch("/update", verifyToken, updateUser)
-<<<<<<< HEAD
     .post("/create_request",verifyToken,createRequest)
     .get('/pending_request',verifyToken, getPendingRequest)
     .get('/received_request',verifyToken,getReceivedRequest)
     .post('/accept_request',verifyToken,acceptRequest)
     .delete('/delete_request',verifyToken,deletePendingRequest)
-=======
-    .patch("/profile", verifyToken, upload.single('imageFile'), updateProfile)
-    .post("/create_request", verifyToken, createRequest)
-    .get('/pending_request', verifyToken, getPendingRequest)
-    .get('/received_request', verifyToken, getReceivedRequest)
-    .post('/accept_request', verifyToken, acceptRequest)
-    .delete('/delete_request', verifyToken, deletePendingRequest)
-    .post('/pagination',verifyToken,pagination)
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 
 export const routes = router

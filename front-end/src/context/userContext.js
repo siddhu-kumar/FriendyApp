@@ -10,18 +10,11 @@ const DataProvider =  ({children}) => {
     const [userDetails,setUserDetails] = useState(getUserData)
     const [userList, setUserList] = useState('');
     const [reg, setReg] = useState(false);
-<<<<<<< HEAD
+    const [sentRequestList, setSentRequestList] = useState()
 
     useEffect(()=> {
         if(auth) {
             getAllUser().then(data=> {
-=======
-    const [sentRequestList, setSentRequestList] = useState("");
-    
-    useEffect(() => {
-        if (auth) {
-            getAllUser().then(data => {
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
                 setUserList(data)
             }).catch(error => {
                 if(error.response.data.expire) {    
@@ -38,14 +31,6 @@ const DataProvider =  ({children}) => {
     },[])
     
 
-<<<<<<< HEAD
-   useEffect(()=> {},[userList])
-    // console.log(userDetails.token)
-    return (
-        <UserContext.Provider value={{auth, setAuth, userDetails, setUserDetails, userList, setUserList, reg, setReg}}>
-            {children}
-        </UserContext.Provider>
-=======
     return (<UserContext.Provider value={
         {
             auth,
@@ -62,7 +47,6 @@ const DataProvider =  ({children}) => {
     } > {
             children
         } </UserContext.Provider>
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
     )
 }
 

@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import style from "./request.module.css";
 import { receivedRequest, deletePendingRequest, acceptRequest } from "../../services/user-service";
+import { doLogout, isLoggedIn } from "../../auth";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
+
 
 function Request() {
-
-<<<<<<< HEAD
+  const {setAuth} = useContext(UserContext)
+  const navigate = useNavigate();
   const [userList,setUserList] = useState('')
-   useEffect(()=> {
-     receivedRequest().then(data=>{ 
-       setUserList(data);
-       console.log(data)
-     }).catch(error => console.log(error))
-   },[])
- 
-   useEffect(() => { }, [userList])
- 
-   const AcceptRequest = (e,data) => {
-=======
   useEffect(() => {
     receivedRequest()
       .then((data) => {
@@ -36,7 +29,6 @@ function Request() {
   //  useEffect(() => { }, [userList])
 
   const AcceptRequest = (e, data) => {
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
     e.preventDefault();
     acceptRequest({requestId:data.userId})
     .then(data=> {

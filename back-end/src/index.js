@@ -1,17 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-<<<<<<< HEAD
-import { connectDB } from './models/db.js';
-import { Server } from "socket.io"
-import { routes as userRouters } from './routes/users.js';
-import { routes as friendRouters } from './routes/friends.js';
-import { routes as resetPasswordRouters } from './routes/password_reset.js';
-import { getEndpoint } from './controllers/chat.js';
-import { Message } from './class/Message.js';
-import { Chat, User } from './models/models.js';
-import { authToken } from './middleware/token.js';
-import { verifyToken } from './middleware/authMiddleware.js';
-=======
 import {
   connectDB
 } from './models/db.js';
@@ -43,7 +31,6 @@ import {
   verifyToken
 } from './middleware/authMiddleware.js';
 import { set } from 'mongoose';
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 
 const allowed_origin = process.env.ORIGIN || "*"
 const PORT = process.env.PORT || 8000
@@ -75,13 +62,9 @@ const io = new Server(expressServer, {
 
 const initializedNamespace = {}
 
-<<<<<<< HEAD
-export let namespace = {}
-=======
 export let namespace = {};
 export let allUsers = {}
 export let tempImageData = {};
->>>>>>> d5ab7c9 (features(pagination/home) - pagination implemented to retrieve user data from db)
 io.of('/').on('connection', async (socket) => {
   // console.log(socket.id, "has connected to server")
   // console.log(socket.handshake.auth.token)
