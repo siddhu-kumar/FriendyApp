@@ -30,6 +30,7 @@ export const createRequest = async (req, res) => {
     res.status(200).json({
       message: `Request has been sent to`,
     });
+    sendEmail(friendData.email)
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -37,3 +38,31 @@ export const createRequest = async (req, res) => {
     });
   }
 };
+
+const sendEmail = async (email) => {
+    try {
+        const __filename = fileURLToPath(import.meta.url)
+        const __dirname = path.dirname(__filename)
+        const filepath = path.join(__dirname, './Email.html')
+        const htmlContent = await fs.readFile(filepath, "utf-8")
+
+        const html = htmlContent
+            .replace(/{{email}}/g, email)
+            .replace(/{{frontendUrl}}/g, FRONTENDRUNNINGPORT);
+
+        const message = {
+            from: "browsers.192@gmail.com",
+            to: email,
+            sender: "browsers@gmail.com",
+            subject: "Hello",
+            replyTo: "abc@gmail.com",
+            text: `Hello ${email}`,
+            html: html,
+        }
+        const mailsent = await transporter.sendMail(message);
+        console.log(mailsent)
+        return mailsent;
+    } catch (error) {
+        console.error(error)
+    }
+}

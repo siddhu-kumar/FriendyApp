@@ -43,8 +43,6 @@ export const getAllUser = async (req, res) => {
         }
 
         allUsers[id].addRequestedUserId(friendId)
-        // createdAt: {$gte:new Date(allUsers[id].createdAt),$lte:new Date(allUsers[id].createdAt.getTime()+24*60*60*1000*5)}
-        // console.log(allUsers[id].createdAt, new Date(allUsers[id].createdAt.getTime()+24*60*60*1000*5))
         
         const data = await User.find({
             id: {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import style from "./pending.module.css";
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +49,7 @@ function Pending() {
     console.log(updatedList);
     setUserList((prevList) => [data, ...prevList]);
     console.log(userList);
-    deleteSentRequest({ data: { friendId: data.userId } })
+    deleteSentRequest({ data: { friendId: data.friendId } })
       .then((data) => {
         console.log(data);
       })
@@ -61,7 +61,7 @@ function Pending() {
           navigate("/login");
         }
       });
-    // window.location.reload();
+    window.location.reload();
   };
 
   return (
@@ -70,8 +70,8 @@ function Pending() {
         {sentRequestList.length !== 0 ? (
           sentRequestList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
-              <div className={style.userInfo}>{data.username}</div>
-              <div className={style.userInfo}>{data.email}</div>
+              <div className={style.userInfo}>{data.friendName}</div>
+              <div className={style.userInfo}>{data.friendEmail}</div>
               <button
                 className={`${style.userInfo} ${style.addFriend}`}
                 onClick={(e) => deleteRequest(e, data)}

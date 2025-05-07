@@ -6,10 +6,7 @@ import {
 export const loginUser = (loginUser) => {
     console.log('login user', loginUser)
     return myAxios.post('/user/login', loginUser)
-        .then((res) => {
-            console.log(res.data)
-            return res.data
-        })
+        .then(res => res.data)
 }
 
 export const emailValidate = (data) => {

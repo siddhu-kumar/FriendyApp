@@ -139,8 +139,7 @@ const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000"
 
 const sendEmail = async (email, otp) => {
     try {
-        const __filename = fileURLToPath(
-            import.meta.url)
+        const __filename = fileURLToPath(import.meta.url)
         const __dirname = path.dirname(__filename)
         const filepath = path.join(__dirname, './Email.html')
         const htmlContent = await fs.readFile(filepath, "utf-8")

@@ -2,7 +2,6 @@
 
 import { Image, RequestSchema } from "../../../models/models.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
-import { allUsers } from "../../../index.js";
 
 
 export const getSentRequest = async (req, res) => {
@@ -22,10 +21,10 @@ export const getSentRequest = async (req, res) => {
     const imageList = await Image.find({
       id: {$in:userList}
     })
-    console.log('ll',allUsers[userId].sentRequestList)
+    console.log('ll',imageList)
 
-
-    res.status(200).json(allUsers[userId].sentRequestList);
+    
+    res.status(200).json(sentRequest);
   } catch (err) {
     console.log(err);
     res.status(400).json({

@@ -14,7 +14,7 @@ export const deleteSentRequest = async (req, res) => {
     const deleteSentRequest = await RequestSchema.findOneAndDelete({
       friendId: friendId,
     });
-    console.log("11", deleteSentRequest);
+    console.log("11",deleteSentRequest);
     res.status(200).json({
       message: `Request has been deleted.`,
     });
