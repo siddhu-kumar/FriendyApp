@@ -45,11 +45,14 @@ export const ShowFriend = (props) => {
                 className={style.friend_class}
                 >
                 {
+                  data.userImage?
                   <img
                     className={style.friend_profile_img}
                     src={`data:${data.contentType};base64,${data.userImage}`}
                     alt=""
                   />
+                  :
+                  <img className={style.friend_profile_img} src="./logo192.png" alt="" />
                 }
                 <span className={style.friend_name}>{data.username}</span>
                 <span className={style.recent_msg_time}>{}</span>
