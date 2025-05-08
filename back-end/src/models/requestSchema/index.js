@@ -7,11 +7,20 @@ export const requestSchema = new mongoose.Schema({
   name: {
       type: String
   },
+  userImage: {
+    data: Buffer,
+    contentType: String
+  },
   friendId: {
       type: String,
   },
   friendName: {
       type: String
-  }
+  },
+  friendImage: {
+    data: Buffer,
+    contentType: String
+  },
 },
-{timestamps: true})
+{timestamps: true}
+);

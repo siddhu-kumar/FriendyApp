@@ -4,7 +4,7 @@ import {
     userPasswordReset,
     verifyEmail,
     userOTPVerify
-} from '../controllers/password_reset.js'
+} from '../controllers/userValidation/password_reset.js'
 import { verifyToken } from '../middleware/authMiddleware.js'
 
 const router = express.Router()

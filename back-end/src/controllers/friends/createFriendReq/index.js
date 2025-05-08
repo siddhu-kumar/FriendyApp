@@ -1,7 +1,10 @@
 
+
 import { User, RequestSchema } from "../../../models/models.js";
-import { allUsers } from "../../../index.js";
-import { UserSharedData } from "../../../class/usersSharedData.js";
+import nodemailer from "nodemailer"
+import fs from "node:fs/promises"
+import path from "path"
+import { fileURLToPath } from "node:url"
 
 export const createRequest = async (req, res) => {
   console.log("// create new friend");
@@ -11,22 +14,30 @@ export const createRequest = async (req, res) => {
   try {
     const userData = await User.findOne({
       id: userId,
-    });
+    });    
     const friendData = await User.findOne({
       email: email,
     });
 
-    console.log(userId, friendData);
     const request = new RequestSchema({
       userId: userId,
       name: userData.name,
+      userImage: {
+        data: userData.image.data,
+        contentType: userData.image.contentType
+      },
       friendId: friendData.id,
       friendName: friendData.name,
+      friendImage: {
+        data: friendData.image.data,
+        contentType: friendData.image.contentType,
+      }
     });
-    allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
-    console.log("Request made",allUsers[userId].sentRequestList);
+    console.log('r',request);
+    console.log('u', userData, friendData);
+    // allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
+    // console.log("Request made",allUsers[userId].sentRequestList);
     const r = await request.save();
-    console.log('r',request, r);
     res.status(200).json({
       message: `Request has been sent to`,
     });
@@ -38,6 +49,22 @@ export const createRequest = async (req, res) => {
     });
   }
 };
+
+const pass_key = process.env.NODEMAIL_PASS_KEY
+const nodemail_user_id = process.env.NODEMAIL_USER_ID
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user: nodemail_user_id,
+        pass: pass_key
+    },
+});
+
+const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000"
+
 
 const sendEmail = async (email) => {
     try {

@@ -70,6 +70,16 @@ function Pending() {
         {sentRequestList.length !== 0 ? (
           sentRequestList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
+              {
+                data.friendImage? 
+                <img 
+                className={style.usersImage}
+                src={`data:${data.friendImage.contentType};base64,${data.friendImage.data}`} alt="ftyjhvjh" />
+                : 
+                <img className={style.tempImage}
+                  src="./logo192.png" 
+                  alt=""/>
+              }
               <div className={style.userInfo}>{data.friendName}</div>
               <div className={style.userInfo}>{data.friendEmail}</div>
               <button

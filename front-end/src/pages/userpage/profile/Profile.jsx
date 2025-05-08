@@ -39,29 +39,32 @@ const Profile = () => {
   const handleChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-
     setUser({ ...user, [name]: value });
   };
 
   const handleFile = async (e) => {
     e.preventDefault();
     console.log(e.target.files[0]);
-    const file = e.target.files[0];
-    console.log(file);
+    const fileData = e.target.files[0];
+    console.log(fileData);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    if (allowedTypes.includes(file.type)) {
+    if (allowedTypes.includes(fileData.type)) {
       console.log("true");
 
       var reader = new FileReader();
       reader.onloadend = () => {
+        const base64Data = reader.result.split(",")[1]; // Get the base64 data
         setFile(reader.result);
+        const data = JSON.parse(localStorage.getItem("data"));
+        data.data.image.contentType = fileData.type; // Use the actual file type
+        data.data.image.data = base64Data; // Update with the new base64 data
+        localStorage.setItem("data", JSON.stringify(data));
       };
-      reader.readAsDataURL(file);
-
+      reader.readAsDataURL(fileData);
       const formData = new FormData();
-      formData.append("imageFile", file);
-
+      formData.append("imageFile", fileData);
       console.log(formData);
+    
       privateAxios
         .patch("/user/profile", formData, {
           headers: {
@@ -83,11 +86,11 @@ const Profile = () => {
   useEffect(() => {
     const image = localStorage.getItem("data");
     const parsedImage = JSON.parse(image);
-    // console.log('working',parsedImage.imageObj)
-    if (parsedImage.imageObj) {
-      console.log(parsedImage.imageObj.image)
-      setFile(
-        `data:${parsedImage.imageObj.contentType};base64,${parsedImage.imageObj.image}`
+    console.log('working',parsedImage)
+    if (parsedImage.data.image) {
+      console.log(parsedImage.data.image.contentType)
+      setFile(  
+        `data:${parsedImage.data.image.contentType};base64,${parsedImage.data.image.data}`
       );
     }
   }, []);

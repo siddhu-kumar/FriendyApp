@@ -1,8 +1,6 @@
 
-import { User, Image } from "../../../models/models.js";
 
-// update user profile
-
+import { User, } from "../../../models/models.js";
 
 export const updateUser = async (req, res) => {
     console.log("// update user profile");
@@ -36,27 +34,13 @@ export const updateUser = async (req, res) => {
 // update profile image
 export const updateProfile = async (req, res) => {
     try {
-        const objImage = await Image.findOne({
+        //   console.log('req',req.userId)
+        const objImage = await User.findOne({
             id: req.userId,
         });
-        //   console.log('req',req.userId)
-        if (objImage === null) {
-            const objImage = new Image({
-                id: req.userId,
-                image: {
-                    data: req.file.buffer,
-                    contentType: req.file.mimetype,
-                },
-            });
-            await objImage.save();
-            // console.log('obj',objImage)
-        } else {
-            objImage.image = {
-                data: req.file.buffer,
-                contentType: req.file.mimetype,
-            };
-            await objImage.save();
-        }
+        objImage.image.data = req.file.buffer;
+        objImage.image.contentType = req.file.mimetype;
+        await objImage.save();
         res.status(200).json({
             message: "Hii",
         });

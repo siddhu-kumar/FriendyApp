@@ -31,7 +31,7 @@ const Home = () => {
         }
       })
       .catch(err => {
-        console.log(err)
+        // console.log(err)
       });
     } catch(error) {
       console.log('Error fetching data:',error);
@@ -101,16 +101,16 @@ const Home = () => {
               ref={index === userList.length -1? lastItemRef: null}
               className={style.usersEntries}>
               {
-                data.userImage? 
+                data.image? 
                 <img 
                 className={style.usersImage}
-                src={`data:${data.contentType};base64,${data.userImage}`} alt="" />
+                src={`data:${data.image.contentType};base64,${data.image.data}`} alt="ftyjhvjh" />
                 : 
                 <img className={style.tempImage}
                  src="./logo192.png" 
                  alt=""/>
               }
-              <div className={style.userInfo}>{data.username}</div>
+              <div className={style.userInfo}>{data.name}</div>
               <div className={style.userInfo}>{data.contact}</div>
               <div
                 className={`${style.addFriend} ${style.userInfo} `}
@@ -129,3 +129,7 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
+

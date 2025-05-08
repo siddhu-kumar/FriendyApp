@@ -10,7 +10,6 @@ export const deleteSentRequest = async (req, res) => {
     const updatedSentReq = allUsers[userId].sentRequestList.filter(ele=>ele.userId !== friendId)
     allUsers[userId].sentRequestList = updatedSentReq
     console.log('updatedsentreq',updatedSentReq)
-    // const user = await RequestSchema.findOne({userId:requestId})
     const deleteSentRequest = await RequestSchema.findOneAndDelete({
       friendId: friendId,
     });
@@ -32,11 +31,9 @@ export const deleteReceivedRequest = async (req, res) => {
   const { friendId } = req.body;
   console.log("rr", req.body);
   try {
-    // const user = await RequestSchema.findOne({userId:requestId})
-    const deleteReceivedRequest = await RequestSchema.findOneAndDelete({
+      const deleteReceivedRequest = await RequestSchema.findOneAndDelete({
       friendId: friendId,
     });
-    // console.log("11", deleteReceivedRequest);
     res.status(200).json({  
       message: `Request has been deleted.`,
     });

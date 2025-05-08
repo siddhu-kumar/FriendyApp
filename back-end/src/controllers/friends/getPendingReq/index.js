@@ -1,30 +1,24 @@
 
 
-import { Image, RequestSchema } from "../../../models/models.js";
-import { UserSharedData } from "../../../class/usersSharedData.js";
+import {  RequestSchema } from "../../../models/models.js";
 
 
 export const getSentRequest = async (req, res) => {
+  console.log('// get Sent Request')
   const userId = req.userId;
-  // console.log('enter')
-  // console.log(userId)
-  let userList = []
   try {
     const sentRequest = await RequestSchema.find({
       userId: userId,
     });
-    
-    for(let element of sentRequest) {
-      userList.push(element.friendId);
-    }
 
-    const imageList = await Image.find({
-      id: {$in:userList}
+    const result = sentRequest.map(doc => {
+      const obj = doc.toObject();
+      if(obj.friendImage && obj.friendImage.data) {
+        obj.friendImage.data = obj.friendImage.data.toString("base64");
+      }
+      return obj;
     })
-    console.log('ll',imageList)
-
-    
-    res.status(200).json(sentRequest);
+    res.status(200).json(result);
   } catch (err) {
     console.log(err);
     res.status(400).json({

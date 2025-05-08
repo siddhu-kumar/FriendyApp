@@ -11,6 +11,18 @@
     flex-wrap: wrap;
 }
 
+.usersImage {
+    height: 100px;
+    width: 100px;
+    border-radius: 50% ;
+}
+
+.tempImage {
+    height: 100px;
+    width: 100px;
+}
+
+
 .usersEntries {
     width: 150px;
     height: 150px;

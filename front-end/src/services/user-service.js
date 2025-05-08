@@ -79,6 +79,6 @@ export const pagination = (data) => {
     return privateAxios.post('/user/pagination',data).then(res => res.data)
 }
 
-export const registerTempUser = (data) => {
-    return myAxios.post('/user/register/temp',data).then(res => res.data);
-}
+// export const registerTempUser = (data) => {
+//     return myAxios.post('/user/register/temp',data).then(res => res.data);
+// }

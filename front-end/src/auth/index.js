@@ -41,12 +41,12 @@ export const getToken = () => {
 export const editStorage = (user) => {
     if (isLoggedIn()) {
         const data = JSON.parse(localStorage.getItem("data"))
-        // console.log(data)
+        console.log(data.token)
         data.data.name = user.name;
         data.data.email = user.email;
         data.data.contact = user.contact;
         data.data.address = user.address;
         localStorage.setItem("data", JSON.stringify(data));
-        console.log('stored', data.data)
+        console.log('stored', data.token)
     }
 }

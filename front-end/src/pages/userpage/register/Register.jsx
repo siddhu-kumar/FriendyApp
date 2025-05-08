@@ -23,14 +23,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValidated = validation(userInput);
+ 
 
     if (isValidated.length === 0) {
-          //   await registerTempUser(userInput).then(data => {
-          //     console.log(data)
-          //     navigate("/")
-          //   }).catch((err) => {
-          //     console.log(err)
-          //   }) return;
 
       await validateUserData(userInput)
         .then(async (data) => {

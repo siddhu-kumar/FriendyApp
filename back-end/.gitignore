@@ -9,3 +9,8 @@ migrations/
 products.json
 filestructure.js
 .env
+src/controllers/friends.js
+src/controllers/user/users.js
+src/class/userSharedData.js
+src/class/userRespectiveData.js
+src/routes/temproute.js

@@ -39,7 +39,6 @@ export const ShowFriend = (props) => {
       <ul>
         {friendList.length !== 0
           ? friendList.map((data, index) => (
-              // List on click call the friendFunction() to get into Chat with friend by passing _id of friend as argument
               <li
                 onClick={(e) => handleClick(e, data)}
                 key={index}

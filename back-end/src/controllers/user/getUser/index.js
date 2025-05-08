@@ -10,6 +10,7 @@ export const getUser = async (req, res) => {
             id: id,
         });
         const { _id, friends, password, ...userData } = data.toObject();
+        console.log("getting user profile")
         res.status(200).json(userData);
     } catch (err) {
         console.log(err);

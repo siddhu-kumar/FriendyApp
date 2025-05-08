@@ -2,7 +2,7 @@ import { Namespace } from "../class/Namespace.js";
 import { Room } from "../class/Room.js";
 import { authToken } from "../middleware/token.js";
 import { Chat, User } from "../models/models.js";
-import { Image } from "../models/models.js";
+// import { Image } from "../models/models.js";
 
 export const generateRoomId = (user1, user2) => {
   const roomString = `roomId-${user1.slice(0, user1.length / 2)}-${user2.slice( 0,user2.length / 2)}`;
@@ -39,18 +39,18 @@ export const getEndpoint = async (token) => {
       const friendData = await User.findOne({
         id: element.friendId,
       });
-      const findImage = await Image.findOne({
-        id: element.friendId,
-      });
+      // const findImage = await Image.findOne({
+      //   id: element.friendId,
+      // });
 
       if (friendData !== null) {
         let image = "";
         let contentType = "";
-        if (findImage === null) {
-          image = "";
+        if (friendData.image.data) {
+          image = friendData.image.data.toString("base64"); // Convert binary to Base64
+          contentType = friendData.image.contentType;
         } else {
-          image = findImage.image.data.toString("base64"); // Convert binary to Base64
-          contentType = findImage.image.contentType;
+          image = "";
         }
         const lastMessage = await Chat.findOne({
           roomId: element.chatId,

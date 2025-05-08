@@ -1,5 +1,5 @@
 
-import { User, Image } from "../../../models/models.js";
+import { User, } from "../../../models/models.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { namespace } from "../../../index.js";
 import jwt from "jsonwebtoken";
@@ -37,16 +37,13 @@ export const loginUser = async (req, res) => {
         const { _id, password, friends, ...data } = userData.toObject();
         let imageObj;
         try {
-            const image  = await Image.findOne({
-                id: data.id,
-            });
-            console.log(image)
-            if (image !== null) {
-                console.log("image", image.contentType);
+            if (userData.image.data !== null) {
+                // console.log("image", user.contentType);
                 imageObj = {
-                    image: image.data.toString("base64"),
-                    contentType: image.contentType,
+                    image: userData.image.data.toString("base64"),
+                    contentType: userData.image.contentType,
                 }; // Convert binary to Base64
+                console.log(imageObj.image)
             } else {
                 imageObj = {
                     image: null,
@@ -74,7 +71,6 @@ export const loginUser = async (req, res) => {
         res.status(200).json({
             data,
             token,
-            imageObj,
         });
     } catch (error) {
         console.log("e", error);

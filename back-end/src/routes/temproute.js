@@ -17,7 +17,7 @@ import { deleteSentRequest } from "../controllers/friends/deletePendingReq/index
 
 import {
   userOTPValidate
-} from "../controllers/user_validate.js"
+} from "../controllers/userValidation/user_validate.js"
 
 
 const router = express.Router()

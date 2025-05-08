@@ -1,7 +1,9 @@
+
+
 import {
     Resetpwd,
     User
-} from "../models/models.js"
+} from "../../models/models.js"
 import nodemailer from "nodemailer"
 import {
     totp

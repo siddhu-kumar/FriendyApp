@@ -1,6 +1,6 @@
-import { TempUser } from "../models/models.js";
+import { TempUser } from "../../models/models.js";
 import nodemailer from "nodemailer";
-import { createUser } from "./user/createUser/index.js";
+import { createUser } from "../user/createUser/index.js";
 import { totp } from "otplib";
 
 export const userOTPValidate = async (req, res) => {

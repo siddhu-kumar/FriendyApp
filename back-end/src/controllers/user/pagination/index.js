@@ -1,5 +1,7 @@
-import { User, RequestSchema, Image } from "../../../models/models.js";
-import { allUsers, tempImageData } from "../../../index.js";
+
+
+import { User, RequestSchema } from "../../../models/models.js";
+import { allUsers, } from "../../../index.js";
 import { AllUsers } from "../../../class/userRespectiveData.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 

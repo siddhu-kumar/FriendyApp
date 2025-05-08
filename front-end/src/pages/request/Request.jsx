@@ -75,8 +75,18 @@ function Request() {
         {userList.length !== 0 ? (
           userList.map((data, index) => (
             <div key={index} className={style.usersEntries}>
+                {
+                  data.userImage? 
+                  <img 
+                  className={style.usersImage}
+                  src={`data:${data.userImage.contentType};base64,${data.userImage.data}`} alt="ftyjhvjh" />
+                  : 
+                  <img className={style.tempImage}
+                    src="./logo192.png" 
+                    alt=""/>
+                }
               <div className={style.userInfo}>
-                {data.name} has sent you Friendy request.
+                {data.name}
               </div>
               <button
                 className={`${style.userInfo} ${style.addFriend}`}

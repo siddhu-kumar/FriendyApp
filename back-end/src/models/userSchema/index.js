@@ -25,6 +25,10 @@ export const userSchemas = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    image: {
+        data:Buffer,
+        contentType: String
+    },
     password: {
         type: String,
         required: true

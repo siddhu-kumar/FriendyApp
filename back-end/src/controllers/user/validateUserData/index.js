@@ -1,7 +1,7 @@
 
 import crypto from "crypto";
 import { User, TempUser } from "../../../models/models.js";
-import { sendEmail } from "../../user_validate.js";
+import { sendEmail } from "../../userValidation/user_validate.js";
 import { totp } from "otplib";
 
 export const validateUserData = async (req, res) => {
