@@ -52,14 +52,39 @@ const Profile = () => {
       console.log("true");
 
       var reader = new FileReader();
+
       reader.onloadend = () => {
-        const base64Data = reader.result.split(",")[1]; // Get the base64 data
-        setFile(reader.result);
-        const data = JSON.parse(localStorage.getItem("data"));
-        data.data.image.contentType = fileData.type; // Use the actual file type
-        data.data.image.data = base64Data; // Update with the new base64 data
+        const base64Data = reader.result.split(",")[1]; 
+        setFile(reader.result); 
+  
+        const existingData = localStorage.getItem("data");
+        let data;
+  
+        console.log("Existing data in localStorage:", existingData);
+
+        if (existingData) {
+          data = JSON.parse(existingData);
+        } else {
+          data = {data: {image: {
+              contentType: "",
+              data: ""
+            }
+          }};
+        }
+
+      if (!data.data) {
+        data.data = {};
+      }
+      if (!data.data.image) {
+        data.data.image = {};
+      }
+  
+        data.data.image.contentType = fileData.type; 
+        data.data.image.data = base64Data; 
+  
         localStorage.setItem("data", JSON.stringify(data));
       };
+
       reader.readAsDataURL(fileData);
       const formData = new FormData();
       formData.append("imageFile", fileData);
