@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import style from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { registerTempUser, validateUserData } from "../../../services/user-service";
+import { validateUserData } from "../../../services/user-service";
 import { UserContext } from "../../../context/userContext";
 import { validation } from "../../../auth/validation";
 

@@ -29,12 +29,12 @@ export const createUser = async (otp, res) => {
       });
 
       const { name, email, contact, password } = getUser.toObject();
-      console.log(req.body)
-      const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
-      if(doesExists !== null) {
-          res.status(409).json({message:'user already exists!'})
-          return;
-      }
+    //   console.log(req.body)
+    //   const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
+    //   if(doesExists !== null) {
+    //       res.status(409).json({message:'user already exists!'})
+    //       return;
+    //   }
       const hashedPassword = await bcrypt.hash(password, 10);
       console.log("h", hashedPassword);
       const endPoint = await generateEndpoint(contact);
@@ -100,7 +100,7 @@ export const createUser = async (otp, res) => {
       });
       console.log(deleteTempUser);
   } catch (error) {
-      console.log("c", error.errors);
+      console.log("c", error);
       if (error.code === 11000) {
           // Extract the field that caused the duplicate key error
           const duplicateField = Object.keys(error.keyValue)[0];

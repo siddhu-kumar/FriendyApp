@@ -17,11 +17,11 @@ export const getAllUser = async (req, res) => {
         });
 
 
-        // if (userData.image === null) {
-        //     allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt)
-        // } else {
-        //     allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt, userData.image.data, userData.image.contentType)
-        // }
+        if (userData.image === null) {
+            allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt)
+        } else {
+            allUsers[id] = new AllUsers(id, userData.name, userData.email, userData.createdAt, userData.image.data, userData.image.contentType)
+        }
 
         const requestList = await RequestSchema.find({
             $or: [

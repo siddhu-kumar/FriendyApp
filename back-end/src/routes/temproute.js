@@ -1,6 +1,6 @@
 import express from "express"
 import multer from "multer"
-import { createUserTemp } from "../controllers/user/createUser/index.js"
+// import { createUserTemp } from "../controllers/user/createUser/index.js"
 import { verifyToken } from "../middleware/authMiddleware.js"
 
 import { getAllUser } from "../controllers/user/getAllUser/index.js"
@@ -29,7 +29,7 @@ router
     .get("/", verifyToken, getUser)
     .post("/login", loginUser)
     .get("/all_user", verifyToken, getAllUser)
-    .post("/register/temp", createUserTemp)
+    // .post("/register/temp", createUserTemp)
     .post("/validate_data", validateUserData)
     .post("/validate_otp", userOTPValidate)
     .patch("/update", verifyToken, updateUser)

@@ -1,8 +1,6 @@
 
 
 import { User, RequestSchema } from "../../../models/models.js";
-import { allUsers, } from "../../../index.js";
-import { AllUsers } from "../../../class/userRespectiveData.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const pagination = async (req, res) => {
@@ -10,30 +8,38 @@ export const pagination = async (req, res) => {
     const { cursor, pageSize } = req.body;
     console.log(cursor, pageSize);
     const id = req.userId;
-    const totalLength = allUsers[id].globalUserList.length;
-
+    let data
     try {
-        const created = allUsers[id].globalUserList[totalLength - 1].createdAt;
-        console.log(allUsers[id].receivedRequestList)
-        const data = await User.find({
-            id: {
-                $nin: allUsers[id].requestsList,
-            },
-            createdAt: { $gt: new Date(created) }
-        }).sort({"createdAt":1}).limit(5);
-        // console.log('data', data)
-        for (let element of data) {
+        let friendId = []
+        friendId.push(id);
+        const userData = await User.findOne({id:id})
+        console.log(userData.createdAt)
+        const requestList = await RequestSchema.find({
+            $or: [
+                { userId: id },
+                { friendId: id }
+            ]
+        });
 
-            const obj = new UserSharedData(
-                element.id,
-                element.name,
-                element.email,
-                element.createdAt
-            )
-            allUsers[id].addGlobalRespectiveUser(obj)
+        for (let element of userData.friends) {
+            friendId.push(element.friendId);
         }
+        for (let element of requestList) {
+            // received request to user
+            friendId.push(element.friendId);
+            // sent request by user
+            friendId.push(element.userId);
+        }
+         data = await User.find({
+            id: {
+                $nin: friendId
+            },
+            createdAt: { $gt: new Date(userData.createdAt) }
+        }).sort({"createdAt":1}).limit(cursor+pageSize);
+        // console.log('data', data)
+
     } catch (err) {
         console.log('t',err)
     }
-    res.status(200).send(allUsers[id].globalUserList.slice(totalLength, totalLength + 5))
+    res.status(200).send(data)
 }

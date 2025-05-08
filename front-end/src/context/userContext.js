@@ -31,7 +31,6 @@ const DataProvider = ({children}) => {
         if (auth) {
             getAllUser().then(data => {
                 setUserList(data);
-                console.log(data[0].image);
             }).catch(error => {
                 if (error.response.data.expire) {
                     doLogout();
