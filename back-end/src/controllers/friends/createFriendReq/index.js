@@ -1,10 +1,15 @@
 
 
 import { User, RequestSchema } from "../../../models/models.js";
+<<<<<<< HEAD
 import nodemailer from "nodemailer"
 import fs from "node:fs/promises"
 import path from "path"
 import { fileURLToPath } from "node:url"
+=======
+import { allUsers } from "../../../index.js";
+import { UserSharedData } from "../../../class/usersSharedData.js";
+>>>>>>> 84408644e3c9dfd747a837614043f05f339625bc
 
 export const createRequest = async (req, res) => {
   console.log("// create new friend");
@@ -33,11 +38,18 @@ export const createRequest = async (req, res) => {
         contentType: friendData.image.contentType,
       }
     });
+<<<<<<< HEAD
     console.log('r',request);
     console.log('u', userData, friendData);
     // allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
     // console.log("Request made",allUsers[userId].sentRequestList);
     const r = await request.save();
+=======
+    allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
+    console.log("Request made",allUsers[userId].sentRequestList);
+    const r = await request.save();
+    console.log('r',request, r);
+>>>>>>> 84408644e3c9dfd747a837614043f05f339625bc
     res.status(200).json({
       message: `Request has been sent to`,
     });
@@ -50,6 +62,7 @@ export const createRequest = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 const pass_key = process.env.NODEMAIL_PASS_KEY
 const nodemail_user_id = process.env.NODEMAIL_USER_ID
 
@@ -66,6 +79,8 @@ const transporter = nodemailer.createTransport({
 const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000"
 
 
+=======
+>>>>>>> 84408644e3c9dfd747a837614043f05f339625bc
 const sendEmail = async (email) => {
     try {
         const __filename = fileURLToPath(import.meta.url)
