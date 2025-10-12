@@ -1,0 +1,48 @@
+@import url("variable.css");
+
+.Users1 {
+    width: 100%;
+    height: 93vh;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.template {
+    width: 20vh;
+    height: 25vh;
+    border: var(--border-style-primary);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.userImage {
+    height: 13vh;
+    width: 13vh;
+    border-radius: 53%;
+    border: var(--border-style-primary);
+}
+
+.userImage:hover {
+    height: 13.3vh;
+    width: 13.3vh;
+    border-radius: 50%;
+    border: var(--border-style-primary);
+}
+
+.userInfo {
+    font-family: var(--font-family);
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-1);
+    color: var(--font-color);
+}
+
+.userInfo:hover {
+    color: var(--font-hover-color-2);
+}

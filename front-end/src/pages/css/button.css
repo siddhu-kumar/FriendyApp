@@ -1,0 +1,34 @@
+@import url("variable.css");
+
+.btn {
+    height: 4vh;
+    width: 9vh;
+    text-align: center;
+    color: var(--font-color);
+    background-color: var(--primary-color);
+    font-family: var(--font-family);
+    border: var(--border-style-primary);
+    border-radius: var(--border-radius);
+    font-weight: var(--font-weight-2);
+    font-size: var(--font-size-small);
+}
+
+.btn:hover {
+    height: 4vh;
+    width: 9vh;
+    text-align: center;
+    color: var(--font-hover-color);
+    background-color: var(--secondary-color);
+    font-family: var(--font-family);
+    border: var(--border-style-primary);
+}
+
+.btn:active {
+    height: 4vh;
+    width: 9vh;
+    text-align: center;
+    background-color: var(--bg-color);
+    color: var(--secondary-color);
+    font-family: var(--font-family);
+    border: var(--border-style-active);
+}

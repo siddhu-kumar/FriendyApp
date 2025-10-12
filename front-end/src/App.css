@@ -1,4 +1,7 @@
+@import url("../src/pages/css/index.css");
+
+
 .App {
-  background-color: black;
+  background-color: var(--bg-color);
   color: wheat;
 }

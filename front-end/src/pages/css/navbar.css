@@ -1,7 +1,8 @@
-@import url("../../css/index.css");
+@import url(variable.css);
+
 .Navbar {
     height: 7vh;
-    background-color: rgb(145, 25, 145);
+    background-color: var(--bg-primary-color);
     width: 100%;
     display: flex;
     align-items: center;
@@ -9,10 +10,11 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    gap: 10px;
+    gap: 20px;
 }
 
 .items {
+    font-family: var(--font-family);
     margin: 10px;
 }
 

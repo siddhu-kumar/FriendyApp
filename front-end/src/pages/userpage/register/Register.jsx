@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import style from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { validateUserData } from "../../../services/user-service";
+import { emailValidate, validateUserData } from "../../../services/user-service";
 import { UserContext } from "../../../context/userContext";
 import { validation } from "../../../auth/validation";
 
@@ -33,13 +33,13 @@ const Register = () => {
           if (data.flag) {
             setUserDetails(userInput);
             navigate("/email_sent");
-            // await emailValidate({ email: userInput.email }).then(data => {
-            //   console.log(data);
-            // })
+            await emailValidate({ email: userInput.email }).then(data => {
+              console.log(data);
+            })
           }
         })
         .catch((err) => {
-          console.log(err.response.data);
+          console.log(err.response);
           if (!err.response.data.flag) {
             // console.log(err)
             setData("Contact/Email already exists.");

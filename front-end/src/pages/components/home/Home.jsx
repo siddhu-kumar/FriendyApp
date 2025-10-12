@@ -4,7 +4,7 @@ import { createRequest, pagination } from "../../../services/user-service";
 // import { createFriend } from '../../../services/friends-service';
 import { UserContext } from "../../../context/userContext";
 import { doLogout, isLoggedIn } from "../../../auth";
-
+import "../../css/index.css"
 const pageSize = 5;
 
 const Home = () => {
@@ -94,30 +94,32 @@ const Home = () => {
 
   return (
     <>
-      <div className={style.Users}>
+      <div className="Users1">
         {userList.length !== 0 ? (
           userList.map((data, index) => (
             <div key={index} 
               ref={index === userList.length -1? lastItemRef: null}
-              className={style.usersEntries}>
+              className="template"
+              
+              >
               {
                 data.image? 
                 <img 
-                className={style.usersImage}
+                className="userImage"
                 src={`data:${data.image.contentType};base64,${data.image.data}`} alt="ftyjhvjh" />
                 : 
-                <img className={style.tempImage}
+                <img className="userImage"
                  src="./logo192.png" 
                  alt=""/>
               }
-              <div className={style.userInfo}>{data.name}</div>
-              <div className={style.userInfo}>{data.contact}</div>
-              <div
-                className={`${style.addFriend} ${style.userInfo} `}
+              <div className="userInfo">{data.name}</div>
+              <div className="userInfo">{data.contact}</div>
+              <button
+                className="btn"
                 onClick={() => addFriend(data)}
               >
                 Add Friend
-              </div>
+              </button>
             </div>
           ))
         ) : (
