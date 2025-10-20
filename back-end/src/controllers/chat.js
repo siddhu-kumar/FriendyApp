@@ -23,7 +23,7 @@ export const generateEndpoint = async (inputString) => {
 export const getEndpoint = async (token) => {
   const id = authToken(token);
   if (id === null) {
-    console.log("invalid token");
+    // console.log("invalid token");
     return [null, null];
   }
   const namespace = {};

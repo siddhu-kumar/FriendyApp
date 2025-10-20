@@ -7,7 +7,7 @@ import { generateRoomId } from "../../chat.js";
 export const acceptRequest = async (req, res) => {
   const userId = req.userId;
   const { requestId } = req.body;
-  console.log(userId, requestId);
+  // console.log(userId, requestId);
   try {
     const userData = await User.findOne({
       id: userId,
@@ -23,7 +23,7 @@ export const acceptRequest = async (req, res) => {
     const request = await RequestSchema.findOneAndDelete({
       userId: requestId,
     });
-    console.log(request);
+    // console.log(request);
     const f = friendData.friends.push({
       friendId: userData.id,
       chatId: chatData.roomId,
@@ -34,7 +34,7 @@ export const acceptRequest = async (req, res) => {
     });
     const updateUser = await userData.save();
     const updateFriend = await friendData.save();
-    console.log(updateUser, updateFriend);
+    // console.log(updateUser, updateFriend);
     const friend = await User.findOne(
       {
         "friends.friendId": userId,
@@ -43,7 +43,7 @@ export const acceptRequest = async (req, res) => {
         "friends.$": 1,
       }
     );
-    console.log(namespace[userData.id]);
+    // console.log(namespace[userData.id]);
     try {
       namespace[userData.id].addRoom(
         new Room(
@@ -55,7 +55,7 @@ export const acceptRequest = async (req, res) => {
           friendData.endpoint
         )
       );
-      console.log(namespace[userData.id]);
+      // console.log(namespace[userData.id]);
     } catch (err) {
       console.log("Error from Friend", err);
     }

@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  redis-7000:
+    image: redis:7.0
+    container_name: redis-7000
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7000", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    ports:
+      - "7000:7000"
+      - "7003:7003"
+
+  redis-7001:
+    image: redis:7.0
+    container_name: redis-7001
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7001", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    ports:
+      - "7001:7001"
+      - "7004:7004"
+
+  redis-7002:
+    image: redis:7.0
+    container_name: redis-7002
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7002", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    ports:
+      - "7002:7002"
+      - "7005:7005"
+
+# docker compose up -d
+# docker exec -it redis-7000 redis-cli --cluster create redis-7000:7000 redis-7001:7001 redis-7002:7002  --cluster-replicas 0

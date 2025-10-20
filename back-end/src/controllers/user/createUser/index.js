@@ -36,10 +36,10 @@ export const createUser = async (otp, res) => {
     //       return;
     //   }
       const hashedPassword = await bcrypt.hash(password, 10);
-      console.log("h", hashedPassword);
+    //   console.log("h", hashedPassword);
       const endPoint = await generateEndpoint(contact);
       const uuid = uuidv4();
-      console.log(uuid);
+    //   console.log(uuid);
       try {
           const newUser = new User({
               id: uuid,
@@ -50,7 +50,7 @@ export const createUser = async (otp, res) => {
               password: hashedPassword,
           });
           const saveUser = await newUser.save();
-          console.log(saveUser);
+        //   console.log(saveUser);
       } catch (error) {
           console.log("ct", error);
           if (error.code === 11000) {
@@ -98,7 +98,7 @@ export const createUser = async (otp, res) => {
       const deleteTempUser = await TempUser.findOneAndDelete({
           otp: otp,
       });
-      console.log(deleteTempUser);
+    //   console.log(deleteTempUser);
   } catch (error) {
       console.log("c", error);
       if (error.code === 11000) {

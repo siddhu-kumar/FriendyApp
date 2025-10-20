@@ -18,7 +18,7 @@ export const getFriends = async (req, res) => {
       const { _id, ...friendData } = friendsData.toObject();
       friendsArray.push(friendsData);
     }
-    console.log(friendsArray);
+    // console.log(friendsArray);
     res.status(200).json(friendsArray);
   } catch (err) {
     console.log(err.errors);

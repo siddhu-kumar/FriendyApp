@@ -10,7 +10,7 @@ export const getReceivedRequest = async (req, res) => {
     const receivedRequest = await RequestSchema.find({
       friendId: userId,
     });
-    console.log(receivedRequest);
+    // console.log(receivedRequest);
     const result = receivedRequest.map(doc => {
       const obj = doc.toObject();
       if(obj.friendImage && obj.friendImage.data) {

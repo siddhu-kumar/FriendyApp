@@ -33,7 +33,7 @@ export const loginUser = async (req, res) => {
                 message: "User/Password does not exists!",
             });
         }
-        console.log(email,passwordMatch)
+        // console.log(email,passwordMatch)
         const { _id, password, friends, ...data } = userData.toObject();
         let imageObj;
         try {
@@ -43,7 +43,7 @@ export const loginUser = async (req, res) => {
                     image: userData.image.data.toString("base64"),
                     contentType: userData.image.contentType,
                 }; // Convert binary to Base64
-                console.log(imageObj.image)
+                // console.log(imageObj.image)
             } else {
                 imageObj = {
                     image: null,
@@ -67,7 +67,7 @@ export const loginUser = async (req, res) => {
             userData.name,
             userData.endpoint
         );
-        console.log("namspace", namespace);
+        // console.log("namspace", namespace);
         res.status(200).json({
             data,
             token,

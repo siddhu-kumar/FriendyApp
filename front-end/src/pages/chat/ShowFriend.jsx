@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import style from "./chat.module.css";
-import { ChatContext } from "../../context/chatContext";
+import { ChatContext , socket} from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
   const { friendList, namespace, endPoint } = useContext(ChatContext);
@@ -19,18 +19,20 @@ export const ShowFriend = (props) => {
       // console.log(listClicked)
       listClicked.style.backgroundColor = "";
     }
-    namespace[endPoint].emit("joinsRoom", friendData, (val, err) => {
+    socket.emit("joinsRoom", friendData, (val, err) => {
+      console.log(val)
       if (val) {
-        // console.log('room', val)
+        console.log('room', val)
       } else {
-        // console.log(err)
+        console.log(err)
       }
     });
     setFriendData(friendData);
     event.currentTarget.style.backgroundColor = "purple";
     setListClicked(event.currentTarget);
 
-    namespace[endPoint].on(friendData.roomId, (data) => {
+    socket.on(friendData.roomId, (data) => {
+      console.log(data)
       setChatHistory(data);
     });
   };

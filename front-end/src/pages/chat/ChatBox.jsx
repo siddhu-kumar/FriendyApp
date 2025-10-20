@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import style from "./chat.module.css";
-import { ChatContext } from "../../context/chatContext";
+import { ChatContext, socket } from "../../context/chatContext";
 export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const { namespace, setFriendList, endPoint } = useContext(ChatContext);
   const chatEndRef = useRef(null);
@@ -13,8 +13,8 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
   
   useEffect(() => {
-    namespace[endPoint].off("listenMessage");
-    namespace[endPoint].on("listenMessage", (messageObj, callback) => {
+    socket.off("listenMessage");
+    socket.on("listenMessage", (messageObj, callback) => {
       console.log(messageObj);
       setChatHistory((prevChatHistory) => [...prevChatHistory, messageObj]);
       setFriendList((prevList) => {
@@ -43,11 +43,11 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await namespace[endPoint].emitWithAck(
+    const response = await socket.emitWithAck(
       "newMessageToRoom",
       message
     );
-    // console.log(response)
+    console.log(response)
     setMessage({
       sender: friendData.namespaceId,
       receiver: friendData.userId,
@@ -82,6 +82,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
                     {index === chatHistory.length - 1 && (
                       <div ref={chatEndRef} />
                     )}
+                    {/*  receiver: '8a50d013-933b-45d5-895e-c966ee9da26e', */}
                   </li>
                 )
               )
