@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import style from "./request.module.css";
+<<<<<<< HEAD
 import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
 
@@ -16,11 +17,54 @@ function Request() {
   const { setAuth } = useContext(UserContext);
   const [userList, setUserList] = useState("");
 
+=======
+import { receivedRequest, deletePendingRequest, acceptRequest } from "../../services/user-service";
+import { doLogout, isLoggedIn } from "../../auth";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
+
+
+function Request() {
+  const {setAuth} = useContext(UserContext)
+  const navigate = useNavigate();
+  const [userList,setUserList] = useState('')
+>>>>>>> 0594c758fa5045e0c3891a3144a1c975447a721b
   useEffect(() => {
     receivedRequest()
       .then((data) => {
         setUserList(data);
         console.log(data)
+<<<<<<< HEAD
+=======
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 401) {
+          doLogout();
+          setAuth(isLoggedIn);
+          navigate("/login");
+        }
+      });
+  }, []);
+
+  //  useEffect(() => { }, [userList])
+
+  const AcceptRequest = (e, data) => {
+    e.preventDefault();
+    acceptRequest({requestId:data.userId})
+    .then(data=> {
+      console.log(data)
+    })
+    .catch(err => console.error(err))
+    console.log(data.userId)
+   }
+
+   const deleteRequest = (e,data) => {
+    e.preventDefault();
+    deletePendingRequest({data:{friendId:data.friendId}})
+    .then(data => {
+      console.log(data)
+>>>>>>> 0594c758fa5045e0c3891a3144a1c975447a721b
       })
       .catch((error) => {
         console.log(error);
