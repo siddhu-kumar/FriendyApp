@@ -1,31 +1,4 @@
 import express from "express"
-<<<<<<< HEAD
-=======
-
-import { getAllUser } from "../controllers/user/getAllUser/index.js"
-import { createUser } from "../controllers/user/createUser/index.js"
-import { validateUserData } from "../controllers/user/validateUserData/index.js"
-import { getUser } from "../controllers/user/getUser/index.js"
-import { loginUser } from "../controllers/user/loginUser/index.js"
-import { updateProfile, updateUser } from "../controllers/user/updateProfile/index.js"
-import { createRequest } from "../controllers/friends/createFriendReq/index.js"
-import { acceptRequest } from "../controllers/friends/acceptRequest/index.js"
-import { getPendingRequest } from "../controllers/friends/getPendingReq/index.js"
-import { getReceivedRequest } from "../controllers/friends/getReceivedReq/index.js"
-import { deletePendingRequest } from "../controllers/friends/deletePendingReq/index.js"
-import { pagination } from "../controllers/user/pagination/index.js"
-
-import multer from "multer"
-
-import {
-    createUser,
-    updateUser,
-    loginUser,
-    getUser,
-    getAllUser,
-    validateUserData,
-} from "../controllers/users.js"
->>>>>>> 0594c758fa5045e0c3891a3144a1c975447a721b
 
 import { getAllUser } from "../controllers/user/getAllUser/index.js"
 import { createUser } from "../controllers/user/createUser/index.js"

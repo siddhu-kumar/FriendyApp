@@ -1,10 +1,8 @@
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./models/db.js";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { routes as userRouters } from "./routes/users.js";
-// import { routes as userTempRouters } from "./routes/temproute.js";
-// import { routes as friendRouters } from "./routes/friends.js";
 import { routes as userPasswordResetRouters } from "./routes/password_reset.js";
 import { getEndpoint } from "./controllers/chat.js";
 import { Message } from "./class/Message.js";
@@ -36,22 +34,17 @@ const io = new Server(expressServer, {
   cors: allowed_origin,
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
-  credentials: true, 
-  adapter : createAdapter(pubClient, subClient)
+  credentials: true,
+  adapter: createAdapter(pubClient, subClient),
 });
-
-
 
 export let namespace = {};
 export let allUsers = {};
 
 io.of("/chatns").on("connection", async (socket) => {
   try {
-    // console.log(socket.id)
-    socket.emit("testing", "message check");
     const [namespaceuser, id] = await getEndpoint(socket.handshake.auth.token);
     namespace[id] = namespaceuser;
-    // console.log(namespace[id]);
     socket.emit("endpoint", namespace[id].endpoint);
     const endroom = socket.rooms;
     let i = 0;
@@ -64,10 +57,8 @@ io.of("/chatns").on("connection", async (socket) => {
 
     const roomNameList = [];
     socket.on("joinsRoom", async (roomObj, callback) => {
-      // console.log('roomObj',roomObj.roomId)
       let roomName = roomObj.roomId;
       roomNameList.push(roomName);
-      // console.log(roomNameList)
       const rooms = socket.rooms;
       let i = 0;
       rooms.forEach((room) => {
@@ -82,12 +73,8 @@ io.of("/chatns").on("connection", async (socket) => {
       const chatMessage = await Chat.findOne({
         roomId: thisRoom,
       });
-      // console.log('rrr',thisRoom)
       thisNs.history = [...chatMessage.chat];
       socket.emit(thisRoom, thisNs.history);
-      // console.log(thisNs.history)
-      // console.log('this is room message',thisRoom, thisNs.history.length)
-      // const sockets = await io.of(endpoint).in(roomName).fetchSockets();
       callback({
         message: "ok",
       });
@@ -95,55 +82,61 @@ io.of("/chatns").on("connection", async (socket) => {
     socket.on("newMessageToRoom", async (messageObj, callback) => {
       const rooms = socket.rooms;
       const currentRoom = [...rooms][1];
-      // pubClient.publish("chatns-log", JSON.stringify(messageObj));
-
-      // console.log('crr',rooms, currentRoom)
-      // console.log('ii',messageObj)
       try {
         const senderRoomObj = namespace[id].room.find(
           (element) => element.roomId === currentRoom
         );
-        // console.log('srbj',namespace)
         const messageAdded = new Message(
           messageObj.sender,
           messageObj.receiver,
           messageObj.date,
           messageObj.message
         );
-
+        pubClient.publish("chatns", JSON.stringify(messageObj))
+        .then((count => console.log('Message deliver',count)))
+        .catch(err => console.log('msg deliver',err));
+        
         senderRoomObj.addMessage(messageAdded);
-        // const ack = await io.of(senderRoomObj.userEndpoint).to(currentRoom).timeout(10000).emitWithAck('listenMessage', messageObj);
-        const ack = await socket.to(currentRoom).timeout(10000).emitWithAck("listenMessage", messageObj);
-        // console.log('rrbj',namespace.room.find(ele => messageObj.receiver === ele.userId))
-        // console.log('ack',ack)
-        // if (ack.length === 1) {
-        //   const receiverRoomObj = namespace.room.find(element => element.roomId === currentRoom)
-        //   receiverRoomObj.addMessage(messageAdded)
-        //   // console.log('ack', ack)
-        // } else {
-        //   console.log('not received')
-        // }
-        // console.log('roomId', senderRoomObj.roomId)
         const receiverObj = await Chat.findOne({
           roomId: senderRoomObj.roomId,
         });
         receiverObj.chat.push(messageObj);
         const t = await receiverObj.save();
-        // console.log(t)
+        socket.to(senderRoomObj.roomId).timeout(10000).emit("listenMessage", messageObj);
       } catch (err) {
-        // console.error(err);
+        console.error('room message error',err);
       }
       callback({
-        message: "yes",
+        message: "message delivered to server",
       });
     });
 
+    socket.on('listenMessageAck',(message) => {
+      console.log('message delivered to user end',message)
+    })
     socket.on("disconnect", () => {
       // console.log("disconnected");
       delete namespace[id];
       namespace[id] = "";
     });
   } catch (error) {
-    // console.error("666", error);
+    console.error("socket connection error", error);
   }
+});
+
+subClient.subscribe("chatns", (err, count) => {
+  console.log('check')
+   if (err) {
+    console.error("Subscribe error:", err);
+  } else {
+    console.log("Subscribed to chatns, count:", count);
+  }
+}).then(r => console.log('res'. r)).catch(err => console.log('subscribe err',err));
+
+
+subClient.on("message", (channel, message) => {
+  console.log('subscribe cahnnel - ',channel, message)
+  console.log('message',JSON.parse(message))
+  const parsedMessage = JSON.parse(message)
+  console.log('parsed message', parsedMessage.message)
 });
