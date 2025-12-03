@@ -26,15 +26,6 @@ const Register = () => {
  
 
     if (isValidated.length === 0) {
-<<<<<<< HEAD
-=======
-          //   await registerTempUser(userInput).then(data => {
-          //     console.log(data)
-          //     navigate("/")
-          //   }).catch((err) => {
-          //     console.log(err)
-          //   }) return;
->>>>>>> 0594c758fa5045e0c3891a3144a1c975447a721b
 
       await validateUserData(userInput)
         .then(async (data) => {
@@ -42,7 +33,6 @@ const Register = () => {
           if (data.flag) {
             setUserDetails(userInput);
             navigate("/email_sent");
-<<<<<<< HEAD
             await emailValidate({ email: userInput.email }).then(data => {
               console.log(data);
             })
@@ -50,15 +40,6 @@ const Register = () => {
         })
         .catch((err) => {
           console.log(err.response);
-=======
-            // await emailValidate({ email: userInput.email }).then(data => {
-            //   console.log(data);
-            // })
-          }
-        })
-        .catch((err) => {
-          console.log(err.response.data);
->>>>>>> 0594c758fa5045e0c3891a3144a1c975447a721b
           if (!err.response.data.flag) {
             // console.log(err)
             setData("Contact/Email already exists.");

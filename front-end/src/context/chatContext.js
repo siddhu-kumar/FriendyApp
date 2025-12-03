@@ -33,7 +33,7 @@ const ChatProvider = ({ children }) => {
     // })    
     console.log(BASE_URL)
 
-     socket = io(`${BASE_URL}/chatns`, authHeader)
+    socket = io(`${BASE_URL}/chatns`, authHeader)
     socket.on('endpoint',data => {
       setNamespace(data)
     })

@@ -1,26 +1,25 @@
-version: "3.9"
 
 services:
   redis-7000:
-    image: redis:7.0
+    image: redis/redis-stack-server:latest
     container_name: redis-7000
-    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7000", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7000", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7000:7000"
       - "7003:7003"
 
   redis-7001:
-    image: redis:7.0
+    image: redis/redis-stack-server:latest
     container_name: redis-7001
-    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7001", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7001", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7001:7001"
       - "7004:7004"
 
   redis-7002:
-    image: redis:7.0
+    image: redis/redis-stack-server:latest
     container_name: redis-7002
-    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7002", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    command: ["redis-server", "--cluster-enabled", "yes", "--port", "7002", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7002:7002"
       - "7005:7005"

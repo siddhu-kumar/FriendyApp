@@ -10,6 +10,7 @@ import { Chat } from "./models/models.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./clusterredis.js";
+import JSONTransport from "nodemailer/lib/json-transport/index.js";
 
 const allowed_origin = process.env.ORIGIN || "*";
 const PORT = process.env.PORT || 8000;
@@ -40,6 +41,7 @@ const io = new Server(expressServer, {
 
 export let namespace = {};
 export let allUsers = {};
+ let cacheHistoryObj = {};
 
 io.of("/chatns").on("connection", async (socket) => {
   try {
@@ -67,18 +69,40 @@ io.of("/chatns").on("connection", async (socket) => {
       });
       socket.join(roomName);
       const thisRoom = [...socket.rooms][1];
-      const thisNs = namespace[id].room.find(
+      if (cacheHistoryObj[roomName]) {
+        const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
+        console.log('res2', JSON.parse(res2));
+        const parseHistory = JSON.parse(res2)
+        socket.emit(thisRoom, parseHistory[0]);
+        // await pubClient.call("JSON.DEL", `${thisRoom}`)
+      } else {
+        const chatMessage = await Chat.findOne({
+          roomId: thisRoom,
+        });
+        const thisNs = namespace[id].room.find(
         (currentRoom) => currentRoom.roomId === thisRoom
-      );
-      const chatMessage = await Chat.findOne({
-        roomId: thisRoom,
-      });
-      thisNs.history = [...chatMessage.chat];
-      socket.emit(thisRoom, thisNs.history);
+        );
+        // console.log(thisRoom, roomName);
+        thisNs.history = [...chatMessage.chat];
+        // console.log("his", thisNs.history, chatMessage);
+        const res1 = await pubClient.call(
+          "JSON.SET",
+          `${thisRoom}`,
+          "$",
+          JSON.stringify(thisNs.history),
+        );
+        console.log("res1", res1);
+        const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
+        // console.log('res3', JSON.parse(res2)[0])
+        socket.emit(thisRoom, thisNs.history);
+        cacheHistoryObj[roomName] = true;
+      }
+
       callback({
         message: "ok",
       });
     });
+
     socket.on("newMessageToRoom", async (messageObj, callback) => {
       const rooms = socket.rooms;
       const currentRoom = [...rooms][1];
@@ -90,30 +114,30 @@ io.of("/chatns").on("connection", async (socket) => {
           messageObj.sender,
           messageObj.receiver,
           messageObj.date,
-          messageObj.message
+          messageObj.message,
+          senderRoomObj.roomId
         );
-        pubClient.publish("chatns", JSON.stringify(messageObj))
-        .then((count => console.log('Message deliver',count)))
-        .catch(err => console.log('msg deliver',err));
-        
+        pubClient
+          .publish("chatns", JSON.stringify(messageAdded))
+          .then((count) => console.log("Message deliver", count))
+          .catch((err) => console.log("msg deliver err", err));
         senderRoomObj.addMessage(messageAdded);
-        const receiverObj = await Chat.findOne({
-          roomId: senderRoomObj.roomId,
-        });
-        receiverObj.chat.push(messageObj);
-        const t = await receiverObj.save();
-        socket.to(senderRoomObj.roomId).timeout(10000).emit("listenMessage", messageObj);
+
+        socket
+          .to(senderRoomObj.roomId)
+          .timeout(10000)
+          .emit("listenMessage", messageObj);
       } catch (err) {
-        console.error('room message error',err);
+        console.error("room message error", err);
       }
       callback({
         message: "message delivered to server",
       });
     });
 
-    socket.on('listenMessageAck',(message) => {
-      console.log('message delivered to user end',message)
-    })
+    socket.on("listenMessageAck", (message) => {
+      console.log("message delivered to user end", message);
+    });
     socket.on("disconnect", () => {
       // console.log("disconnected");
       delete namespace[id];
@@ -124,19 +148,45 @@ io.of("/chatns").on("connection", async (socket) => {
   }
 });
 
-subClient.subscribe("chatns", (err, count) => {
-  console.log('check')
-   if (err) {
-    console.error("Subscribe error:", err);
-  } else {
-    console.log("Subscribed to chatns, count:", count);
+subClient
+  .subscribe("chatns", (err, count) => {
+    console.log("check");
+    if (err) {
+      console.error("Subscribe error:", err);
+    } else {
+      console.log("Subscribed to chatns, count:", count);
+    }
+  })
+  .then((r) => console.log("res".r))
+  .catch((err) => console.log("subscribe err", err));
+
+subClient.on("message", async (channel, message) => {
+  console.log("subscribe cahnnel - ", channel, message);
+  // console.log("message", JSON.parse(message));
+
+  const parsedMessage = JSON.parse(message);
+  const obj = {
+    sender: parsedMessage.sender,
+    receiver: parsedMessage.receiver,
+    date: parsedMessage.date,
+    message: parsedMessage.message,
+  };
+
+
+  if(cacheHistoryObj[parsedMessage.roomId]) {
+    const res2 = await pubClient.call("JSON.GET", `${parsedMessage.roomId}`, "$")
+    const prevMsg = JSON.parse(res2);
+    console.log('res2', prevMsg)
+    console.log('prevMsg', prevMsg);
+    const res3 = await pubClient.call("JSON.ARRAPPEND", `${parsedMessage.roomId}`, "$", JSON.stringify(obj));
+    console.log('res3 - ', res3);
+    const res4 = await pubClient.call("JSON.GET", `${parsedMessage.roomId}`, "$")
+    console.log('res4', JSON.parse(res4))
   }
-}).then(r => console.log('res'. r)).catch(err => console.log('subscribe err',err));
 
-
-subClient.on("message", (channel, message) => {
-  console.log('subscribe cahnnel - ',channel, message)
-  console.log('message',JSON.parse(message))
-  const parsedMessage = JSON.parse(message)
-  console.log('parsed message', parsedMessage.message)
+  const receiverObj = await Chat.findOne({
+    roomId: parsedMessage.roomId,
+  });
+  receiverObj.chat.push(obj);
+  const t = await receiverObj.save();
 });

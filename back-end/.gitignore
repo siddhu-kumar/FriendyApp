@@ -14,3 +14,4 @@ src/controllers/user/users.js
 src/class/userSharedData.js
 src/class/userRespectiveData.js
 src/routes/temproute.js
+/node-redis.js

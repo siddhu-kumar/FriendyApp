@@ -7,15 +7,17 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const [message, setMessage] = useState({
     sender: friendData.namespaceId,
     receiver: friendData.userId,
-    // date: '',
+    date: Date.now(),
     message: "",
   });
 
   
   useEffect(() => {
     socket.off("listenMessage");
-    socket.on("listenMessage", (messageObj, callback) => {
+    socket.on("listenMessage", (messageObj) => {
+      socket.emit('listenMessageAck',{ message: 'received'})
       console.log(messageObj);
+
       setChatHistory((prevChatHistory) => [...prevChatHistory, messageObj]);
       setFriendList((prevList) => {
         return prevList.map((ele) => {
@@ -25,9 +27,9 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
           return ele;
         });
       });
-      callback({ message: "received" });
+      // callback({ message: "received" });
     });
-  }, [endPoint, setChatHistory, setFriendList, namespace]);
+  }, [endPoint, setChatHistory, setFriendList, namespace, socket]);
 
   const handleChange = async (e) => {
     e.preventDefault();
@@ -52,6 +54,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
       sender: friendData.namespaceId,
       receiver: friendData.userId,
       message: "",
+      date: Date.now()
     });
     setChatHistory((prevChatHistory) => [...prevChatHistory, message]);
     setFriendList((prevList) =>
