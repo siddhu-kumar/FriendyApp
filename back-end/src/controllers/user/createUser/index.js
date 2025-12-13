@@ -1,7 +1,7 @@
 import { TempUser, User,  } from "../../../models/models.js";
 import { generateEndpoint } from "../../chat.js";
 import { status } from "../../../utils/error.js";
-import { namespace } from "../../../index.js";
+import { namespace } from "../../../websocket/chat.js";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { Namespace } from "../../../class/Namespace.js";

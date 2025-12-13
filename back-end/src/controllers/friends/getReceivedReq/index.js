@@ -1,28 +1,50 @@
-
-
 import { RequestSchema } from "../../../models/models.js";
-
+import { RequestSchemaUser } from "../../../class/usersSharedData.js";
+import { pubClient } from "../../../redis/clusterredis.js";
+import { allUsers } from "../../../index.js";
 
 export const getReceivedRequest = async (req, res) => {
-  console.log('// get Received Request')
+  console.log("// get Received Request");
   const userId = req.userId;
+  const receivedReqList = [];
   try {
-    const receivedRequest = await RequestSchema.find({
-      friendId: userId,
-    });
-    // console.log(receivedRequest);
-    const result = receivedRequest.map(doc => {
-      const obj = doc.toObject();
-      if(obj.friendImage && obj.friendImage.data) {
-        obj.friendImage.data = obj.friendImage.data.toString("base64");
+    
+    const res3 = await pubClient.call("JSON.GET", `RECEIVED-${userId}`, ".");
+    console.log("redis - get -", userId, JSON.parse(res3));
+
+    if(res3) {
+      res.status(200).json(JSON.parse(res3));
+      return;
+    } else {
+
+      // UserDetails (LogIN user) friend class instance & update received request list
+      const receivedRequests = await RequestSchema.find({
+        friendId: userId,
+      });
+      for (let element of receivedRequests) {
+        // const data = await User.findOne({ id: element.userId });
+      receivedReqList.push(
+        new RequestSchemaUser(
+          element.friendId,
+          element.friendName,
+          element.userId,
+          element.name,
+          element.userImage.data.toString("base64"),
+          element.userImage.contentType,
+          element.createdAt
+        )
+        );
+        // console.log("received each", data.name, element);
       }
-      return obj;
-    })
-    res.status(200).json(result);
+      
+      const res2 = await pubClient.call("JSON.SET", `RECEIVED-${userId}`, "$", JSON.stringify(receivedReqList));
+      console.log("received req list -", res2);
+      res.status(200).json(receivedReqList);
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({
       message: "Request could not completed",
     });
   }
-};
+}

@@ -6,7 +6,6 @@ services:
     command: ["redis-server", "--cluster-enabled", "yes", "--port", "7000", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7000:7000"
-      - "7003:7003"
 
   redis-7001:
     image: redis/redis-stack-server:latest
@@ -14,7 +13,6 @@ services:
     command: ["redis-server", "--cluster-enabled", "yes", "--port", "7001", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7001:7001"
-      - "7004:7004"
 
   redis-7002:
     image: redis/redis-stack-server:latest
@@ -22,7 +20,6 @@ services:
     command: ["redis-server", "--cluster-enabled", "yes", "--port", "7002", "--cluster-config-file", "nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes", "--protected-mode", "no", "--loadmodule", "/opt/redis-stack/lib/rejson.so",]
     ports:
       - "7002:7002"
-      - "7005:7005"
 
 # docker compose up -d
 # docker exec -it redis-7000 redis-cli --cluster create redis-7000:7000 redis-7001:7001 redis-7002:7002 --cluster-replicas 0

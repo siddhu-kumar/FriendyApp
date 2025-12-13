@@ -4,13 +4,10 @@ import { connectDB } from "./models/db.js";
 import { Server } from "socket.io";
 import { routes as userRouters } from "./routes/users.js";
 import { routes as userPasswordResetRouters } from "./routes/password_reset.js";
-import { getEndpoint } from "./controllers/chat.js";
-import { Message } from "./class/Message.js";
-import { Chat } from "./models/models.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
 import { createAdapter } from "@socket.io/redis-adapter";
-import { pubClient, subClient } from "./clusterredis.js";
-import JSONTransport from "nodemailer/lib/json-transport/index.js";
+import { pubClient, subClient } from "./redis/clusterredis.js";
+import { chantNamespaceFun } from "./websocket/chat.js";
 
 const allowed_origin = process.env.ORIGIN || "*";
 const PORT = process.env.PORT || 8000;
@@ -30,8 +27,9 @@ app.use("/user", userRouters);
 app.use("/", userPasswordResetRouters);
 
 const expressServer = app.listen(PORT);
+export let allUsers = {};
 
-const io = new Server(expressServer, {
+export const io = new Server(expressServer, {
   cors: allowed_origin,
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
@@ -39,154 +37,4 @@ const io = new Server(expressServer, {
   adapter: createAdapter(pubClient, subClient),
 });
 
-export let namespace = {};
-export let allUsers = {};
- let cacheHistoryObj = {};
-
-io.of("/chatns").on("connection", async (socket) => {
-  try {
-    const [namespaceuser, id] = await getEndpoint(socket.handshake.auth.token);
-    namespace[id] = namespaceuser;
-    socket.emit("endpoint", namespace[id].endpoint);
-    const endroom = socket.rooms;
-    let i = 0;
-    endroom.forEach((room) => {
-      if (i !== 0) socket.leave(room);
-      i++;
-    });
-    socket.join(namespace[id].endpoint);
-    socket.to(namespace[id].endpoint).emit("friendlist", namespace[id].room);
-
-    const roomNameList = [];
-    socket.on("joinsRoom", async (roomObj, callback) => {
-      let roomName = roomObj.roomId;
-      roomNameList.push(roomName);
-      const rooms = socket.rooms;
-      let i = 0;
-      rooms.forEach((room) => {
-        if (i !== 0) socket.leave(room);
-        i++;
-      });
-      socket.join(roomName);
-      const thisRoom = [...socket.rooms][1];
-      if (cacheHistoryObj[roomName]) {
-        const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-        console.log('res2', JSON.parse(res2));
-        const parseHistory = JSON.parse(res2)
-        socket.emit(thisRoom, parseHistory[0]);
-        // await pubClient.call("JSON.DEL", `${thisRoom}`)
-      } else {
-        const chatMessage = await Chat.findOne({
-          roomId: thisRoom,
-        });
-        const thisNs = namespace[id].room.find(
-        (currentRoom) => currentRoom.roomId === thisRoom
-        );
-        // console.log(thisRoom, roomName);
-        thisNs.history = [...chatMessage.chat];
-        // console.log("his", thisNs.history, chatMessage);
-        const res1 = await pubClient.call(
-          "JSON.SET",
-          `${thisRoom}`,
-          "$",
-          JSON.stringify(thisNs.history),
-        );
-        console.log("res1", res1);
-        const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-        // console.log('res3', JSON.parse(res2)[0])
-        socket.emit(thisRoom, thisNs.history);
-        cacheHistoryObj[roomName] = true;
-      }
-
-      callback({
-        message: "ok",
-      });
-    });
-
-    socket.on("newMessageToRoom", async (messageObj, callback) => {
-      const rooms = socket.rooms;
-      const currentRoom = [...rooms][1];
-      try {
-        const senderRoomObj = namespace[id].room.find(
-          (element) => element.roomId === currentRoom
-        );
-        const messageAdded = new Message(
-          messageObj.sender,
-          messageObj.receiver,
-          messageObj.date,
-          messageObj.message,
-          senderRoomObj.roomId
-        );
-        pubClient
-          .publish("chatns", JSON.stringify(messageAdded))
-          .then((count) => console.log("Message deliver", count))
-          .catch((err) => console.log("msg deliver err", err));
-        senderRoomObj.addMessage(messageAdded);
-
-        socket
-          .to(senderRoomObj.roomId)
-          .timeout(10000)
-          .emit("listenMessage", messageObj);
-      } catch (err) {
-        console.error("room message error", err);
-      }
-      callback({
-        message: "message delivered to server",
-      });
-    });
-
-    socket.on("listenMessageAck", (message) => {
-      console.log("message delivered to user end", message);
-    });
-    socket.on("disconnect", () => {
-      // console.log("disconnected");
-      delete namespace[id];
-      namespace[id] = "";
-    });
-  } catch (error) {
-    console.error("socket connection error", error);
-  }
-});
-
-subClient
-  .subscribe("chatns", (err, count) => {
-    console.log("check");
-    if (err) {
-      console.error("Subscribe error:", err);
-    } else {
-      console.log("Subscribed to chatns, count:", count);
-    }
-  })
-  .then((r) => console.log("res".r))
-  .catch((err) => console.log("subscribe err", err));
-
-subClient.on("message", async (channel, message) => {
-  console.log("subscribe cahnnel - ", channel, message);
-  // console.log("message", JSON.parse(message));
-
-  const parsedMessage = JSON.parse(message);
-  const obj = {
-    sender: parsedMessage.sender,
-    receiver: parsedMessage.receiver,
-    date: parsedMessage.date,
-    message: parsedMessage.message,
-  };
-
-
-  if(cacheHistoryObj[parsedMessage.roomId]) {
-    const res2 = await pubClient.call("JSON.GET", `${parsedMessage.roomId}`, "$")
-    const prevMsg = JSON.parse(res2);
-    console.log('res2', prevMsg)
-    console.log('prevMsg', prevMsg);
-    const res3 = await pubClient.call("JSON.ARRAPPEND", `${parsedMessage.roomId}`, "$", JSON.stringify(obj));
-    console.log('res3 - ', res3);
-    const res4 = await pubClient.call("JSON.GET", `${parsedMessage.roomId}`, "$")
-    console.log('res4', JSON.parse(res4))
-  }
-
-  const receiverObj = await Chat.findOne({
-    roomId: parsedMessage.roomId,
-  });
-  receiverObj.chat.push(obj);
-  const t = await receiverObj.save();
-});
+chantNamespaceFun(io);

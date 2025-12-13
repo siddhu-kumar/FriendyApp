@@ -1,3 +1,4 @@
+// user database connection check
 import mongoose from "mongoose";
 
 const uri = process.env.DATABASE_URI

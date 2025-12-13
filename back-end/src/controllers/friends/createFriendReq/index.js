@@ -3,6 +3,8 @@ import nodemailer from "nodemailer";
 import fs from "node:fs/promises";
 import path from "path";
 import { fileURLToPath } from "node:url";
+import { pubClient } from "../../../redis/clusterredis.js";
+import { RequestSchemaUser } from "../../../class/usersSharedData.js";
 
 export const createRequest = async (req, res) => {
   console.log("// create new friend");
@@ -31,10 +33,16 @@ export const createRequest = async (req, res) => {
         contentType: friendData.image.contentType,
       },
     });
-    // console.log('r',request);
-    // console.log('u', userData, friendData);
-    // allUsers[userId].sentRequestList.push(new UserSharedData(friendData.id, friendData.name, friendData.email, friendData.createdAt));
-    // console.log("Request made",allUsers[userId].sentRequestList);
+
+    const requestObj1 = new RequestSchemaUser(userId, userData.name, friendData.id, friendData.name, friendData.image.data.toString("base64"), friendData.image.contentType, request.createdAt)
+    const requestObj2 = new RequestSchemaUser(friendData.id, friendData.name, userId, userData.name, userData.image.data.toString("base64"), userData.image.contentType, request.createdAt)
+
+    const res2 = await pubClient.call("JSON.ARRAPPEND", `SENT-${userId}`, "$", JSON.stringify(requestObj1))
+    const res4 = await pubClient.call("JSON.ARRAPPEND", `RECEIVED-${friendData.id}`, "$", JSON.stringify(requestObj2))
+
+    console.log("new friend added - ",res2, res4);
+    const res3 = await pubClient.call("JSON.GET", `SENT-${userId}`, "$")
+    // console.log(JSON.parse(res3))
     const r = await request.save();
     res.status(200).json({
       message: `Request has been sent to`,
