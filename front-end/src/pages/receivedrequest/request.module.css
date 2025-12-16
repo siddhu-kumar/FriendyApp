@@ -1,0 +1,65 @@
+.Home {
+    height: 93vh;
+    width: 100%;
+    margin: auto;
+}
+
+.Users {
+    width: 100%;
+    height: 93vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.usersImage {
+    height: 100px;
+    width: 100px;
+    border-radius: 50% ;
+}
+
+.tempImage {
+    height: 100px;
+    width: 100px;
+}
+
+.usersEntries {
+    width: 150px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1vh 0;
+    border-width: 2px 0 ;
+    background-color: black;
+}
+
+.userInfo {
+    overflow: hidden;
+}
+
+.addFriend {
+    background-color: black;
+    color: wheat;
+    border: none;
+    width: 14vh;
+    border: 1px solid wheat;
+    height: 5vh;
+    background-color: purple;
+    text-align: center;
+}
+
+.addFriend:hover {
+    background-color: black;
+    cursor: pointer;
+    color: purple;
+}
+.address {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+.nums {
+    width: 5vh;
+    padding-left: 3vh;
+}
