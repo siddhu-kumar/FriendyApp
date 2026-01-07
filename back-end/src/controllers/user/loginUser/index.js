@@ -78,7 +78,7 @@ export const loginUser = async (req, res) => {
       token
     );
 
-    console.log('login user instance ', allUsers[userData.id])
+    // console.log('login user instance ', allUsers[userData.id])
     // UserDetails (LogIN user) friend class instance & update friend list
     for (let element of userData.friends) {
       const data = await User.findOne({ id: element.friendId });

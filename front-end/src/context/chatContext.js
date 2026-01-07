@@ -25,6 +25,8 @@ const ChatProvider = ({ children }) => {
   const [friendList, setFriendList] = useState([])
   const [recentMessage, setRecentMessage] = useState(null);
   const [BASE_URL, setBASE_URL] = useState(process.env.REACT_APP_BACKEND_HOST);
+  const [hasMore, setHasMore] = useState(true);
+  const [offSet, setOffSet] = useState(30);
 
   useEffect(() => {
     // const socketns = io(`${BASE_URL}/chatns`, authHeader)
@@ -40,21 +42,7 @@ const ChatProvider = ({ children }) => {
     socket.on('friendlist',data => {
       setFriendList(data)
     })
-    socket.on('testing',(data)=> console.log(data))
-    // const socket = io(BASE_URL, authHeader)
-    // // console.log(authHeader)
-    //   socket.on('endPoint', (endPoint) => {
-    //   setEndPoint(endPoint)
-    //   namespace[endPoint] = io(`${BASE_URL}/${endPoint}`)
-    //   // console.log(endPoint)
-    //   namespace[endPoint].on('getFriendList', (friendList, callback) => {
-    //     console.log(friendList)
-    //     setFriendList(friendList)
-    //     callback({
-    //       message: 'list received'
-    //     })
-    //   })
-    // })
+
   }, [])
 
   // console.log(userDetails.token)
@@ -65,8 +53,12 @@ const ChatProvider = ({ children }) => {
       endPoint,
       friendList,
       recentMessage,
+      hasMore,
+      offSet,
       setFriendList,
-      setRecentMessage
+      setRecentMessage,
+      setHasMore,
+      setOffSet,
     }
   } > {
       children

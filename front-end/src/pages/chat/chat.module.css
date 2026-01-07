@@ -22,7 +22,7 @@
 }
 
 #messages {
-    width: 100%;
+    /* width: 96%; */
     /* height: 60vh; */
     flex: 1; /* Allow the messages area to grow and fill available space */
     overflow-y: auto; /* Enable vertical scrolling */

@@ -1,9 +1,9 @@
 import { Chat } from "../models/models.js";
 import { getEndpoint } from "../controllers/chat.js";
 import { Message } from "../class/Message.js";
-import { allUsers } from "../index.js";
-import { pubClient, subClient } from "../redis/clusterredis.js";
+import { pubClient } from "../redis/clusterredis.js";
 export let namespace = {};
+// records for specific chat group message exists in redis cache in true/false
 let cacheHistoryObj = {};
 
 export const chantNamespaceFun = (io) => {
@@ -28,6 +28,7 @@ export const chantNamespaceFun = (io) => {
         let roomName = roomObj.roomId;
         roomNameList.push(roomName);
         const rooms = socket.rooms;
+      // console.log(roomObj.roomId)
         let i = 0;
         rooms.forEach((room) => {
           if (i !== 0) socket.leave(room);
@@ -37,19 +38,22 @@ export const chantNamespaceFun = (io) => {
         const thisRoom = [...socket.rooms][1];
         if (cacheHistoryObj[roomName]) {
           const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          // console.log("res2", JSON.parse(res2));
+          console.log("res21", JSON.parse(res2));
           const parseHistory = JSON.parse(res2);
           socket.emit(thisRoom, parseHistory[0]);
           // await pubClient.call("JSON.DEL", `${thisRoom}`)
         } else {
           const chatMessage = await Chat.findOne({
             roomId: thisRoom,
-          });
+          })
+          const limitMessage = chatMessage.chat.slice(chatMessage.chat.length - 30, chatMessage.chat.length );
+
+          // console.log('roommsg',chatMessage.chat.length - 30, chatMessage.chat.length )
           const thisNs = namespace[id].room.find(
             (currentRoom) => currentRoom.roomId === thisRoom
           );
           // console.log(thisRoom, roomName);
-          thisNs.history = [...chatMessage.chat];
+          thisNs.history = [...limitMessage];
           // console.log("his", thisNs.history, chatMessage);
           const res1 = await pubClient.call(
             "JSON.SET",
@@ -69,9 +73,38 @@ export const chantNamespaceFun = (io) => {
         });
       });
 
+
+      let prevOffset = -1;
+      socket.on("message_chunk",async ({offSet, limit})=> {  
+        console.log("message chunk")
+        const rooms = socket.rooms;
+        const currentRoom = [...rooms][1];
+      
+        const res1 = await pubClient.call("JSON.GET", `${currentRoom}`, "$")
+        prevOffset = JSON.parse(res1)[0].length
+        
+        const messageChunk = await Chat.findOne({roomId:currentRoom})
+        if(messageChunk.chat.length < offSet || prevOffset === offSet) {
+          socket.emit("getNextMessage", []);
+          // socket.on('disconnect')
+        } else {  
+          prevOffset = offSet
+          const Messagelength = messageChunk.chat.length;
+          const messageLimit = messageChunk.chat.slice(Math.max(Messagelength - offSet - limit, 0), Messagelength - offSet);
+          // console.log(offSet, Math.max(Messagelength - offSet - limit, 0), Messagelength - offSet)
+          socket.emit("getNextMessage", messageLimit)
+          if(messageLimit.length>0){
+            const res4 = await pubClient.call("JSON.ARRAPPEND", `${currentRoom}`, "$", ...messageLimit.map(ele=>JSON.stringify(ele)))
+            console.log("res1", res4)
+          }
+        }
+      })
+
+
       socket.on("newMessageToRoom", async (messageObj, callback) => {
         const rooms = socket.rooms;
         const currentRoom = [...rooms][1];
+        console.log('cr',currentRoom)
         try {
           console.log('message to room - ', messageObj)
           const senderRoomObj = namespace[id].room.find(

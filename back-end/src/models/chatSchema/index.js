@@ -2,6 +2,7 @@
 import mongoose from "mongoose"
 
 export const chatSchemas = new mongoose.Schema({
+    // room name
   roomId: {
       type: String,
       required: true,

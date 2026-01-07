@@ -37,6 +37,7 @@ export const userSchemas = new mongoose.Schema({
         friendId: {
             type: String,
         },
+        //room name
         chatId: {
             type: String,
         }

@@ -1,5 +1,5 @@
 import { Chat } from "../models/models";
-import { pubClient } from "./clusterredis";
+import { pubClient, subClient } from "./clusterredis";
 
 subClient
   .subscribe("chatns", (err, count) => {

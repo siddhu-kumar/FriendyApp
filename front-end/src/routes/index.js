@@ -17,7 +17,7 @@ import Password from '../pages/reset-passowrd/newpassword/Password';
 import ChatProvider from '../context/chatContext';
 import Chat from '../pages/chat/Chat.jsx';
 import Request from '../pages/request/Request.jsx';
-import Pending from '../pages/pending/Pending.jsx';
+import Pending from '../pages/sentrequest/Pending.jsx';
 import OTPValidate from '../pages/userpage/otpValidate/OTPValidate.jsx';
 import { EmailSent } from '../pages/userpage/register/EmailSent.jsx';
 import RestrictedRoute from '../auth/restricted_route.js';

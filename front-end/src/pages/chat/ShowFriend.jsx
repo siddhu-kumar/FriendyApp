@@ -3,7 +3,7 @@ import style from "./chat.module.css";
 import { ChatContext , socket} from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
-  const { friendList, namespace, endPoint } = useContext(ChatContext);
+  const { friendList, namespace, endPoint, setHasMore, setOffSet } = useContext(ChatContext);
   const [listClicked, setListClicked] = useState("");
   const [friendData, setFriendData] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -30,7 +30,8 @@ export const ShowFriend = (props) => {
     setFriendData(friendData);
     event.currentTarget.style.backgroundColor = "purple";
     setListClicked(event.currentTarget);
-
+    setHasMore(true);
+    setOffSet(10);
     socket.on(friendData.roomId, (data) => {
       console.log(data)
       setChatHistory(data);
