@@ -37,7 +37,10 @@ const PORT = process.env.PORT || 8000
 console.log(allowed_origin);
 const app = express()
 
-app.use(cors());
+app.use(cors(
+  origin: [allowed_origin],
+  credentials: true,
+));
 
 app.use(express.json());
 
