@@ -14,6 +14,8 @@ const ChatProvider = ({ children }) => {
   const token = localStorage.getItem('data')
   const parse = JSON.parse(token)
   const authHeader = {
+    withCredentials: true,
+    transports: ["websocket", "polling"],
     auth: {
       token: `Bearer ${parse.token}`
     }
