@@ -29,7 +29,6 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
   useEffect(() => {
     if (hasMore) {
-      console.log(offSet, limit);
       socket.on("getNextMessage", (data) => {
         console.log(data);
         if (data.length === 0) {
@@ -83,7 +82,6 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatHistory.length]);
-  console.log(chatHistory.length)
 
   useEffect(() => {
     socket.off("listenMessage");

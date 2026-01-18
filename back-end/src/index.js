@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./models/db.js";
-import { Server } from "socket.io";
 import { routes as userRouters } from "./routes/users.js";
 import { routes as userPasswordResetRouters } from "./routes/password_reset.js";
 import { verifyToken } from "./middleware/authMiddleware.js";
+import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./redis/clusterredis.js";
 import { chantNamespaceFun } from "./websocket/chat.js";

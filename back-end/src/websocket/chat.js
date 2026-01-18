@@ -4,7 +4,7 @@ import { Message } from "../class/Message.js";
 import { pubClient } from "../redis/clusterredis.js";
 export let namespace = {};
 // records for specific chat group message exists in redis cache in true/false
-let cacheHistoryObj = {};
+export let cacheHistoryObj = {};
 
 export const chantNamespaceFun = (io) => {
   io.of("/chatns").on("connection", async (socket) => {
@@ -15,12 +15,19 @@ export const chantNamespaceFun = (io) => {
       namespace[id] = namespaceuser;
       socket.emit("endpoint", namespace[id].endpoint);
       const endroom = socket.rooms;
-      let i = 0;
-      endroom.forEach((room) => {
-        if (i !== 0) socket.leave(room);
-        i++;
-      });
-      socket.join(namespace[id].endpoint);
+      // console.log(endroom)
+      for (const room of endroom) {
+        if (room !== socket.id) {
+          await socket.leave(room);
+          // console.log("leave room 1 ", room, socket.id);
+        }
+      }
+      await socket.join(namespace[id].endpoint);
+      await pubClient.sadd(
+        `socket:${namespace[id].endpoint}:rooms`,
+        namespace[id].endpoint
+      );
+
       socket.to(namespace[id].endpoint).emit("friendlist", namespace[id].room);
 
       const roomNameList = [];
@@ -28,42 +35,50 @@ export const chantNamespaceFun = (io) => {
         let roomName = roomObj.roomId;
         roomNameList.push(roomName);
         const rooms = socket.rooms;
-      // console.log(roomObj.roomId)
-        let i = 0;
-        rooms.forEach((room) => {
-          if (i !== 0) socket.leave(room);
-          i++;
-        });
-        socket.join(roomName);
+        // console.log(roomObj.roomId)
+        for (const room of rooms) {
+          if (room !== socket.id) {
+            const lr = await pubClient.srem(`socket:${room}:rooms`, room);
+            await socket.leave(room);
+            console.log(room)
+            // expireRoom(room, cacheHistoryObj, 20);
+          }
+        }
+        await socket.join(roomName);
+        // console.log(roomName)
+        await pubClient.sadd(`socket:${roomName}:rooms`, roomName);
         const thisRoom = [...socket.rooms][1];
+
         if (cacheHistoryObj[roomName]) {
           const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          console.log("res21", JSON.parse(res2));
           const parseHistory = JSON.parse(res2);
           socket.emit(thisRoom, parseHistory[0]);
-          // await pubClient.call("JSON.DEL", `${thisRoom}`)
         } else {
+          // Retrieve chat history of a room from Database with argument roomId
           const chatMessage = await Chat.findOne({
             roomId: thisRoom,
-          })
-          const limitMessage = chatMessage.chat.slice(chatMessage.chat.length - 30, chatMessage.chat.length );
+          });
+          // get subarray of chat history of length 30
+          const limitMessage = chatMessage.chat.slice(
+            chatMessage.chat.length - 30,
+            chatMessage.chat.length
+          );
 
-          // console.log('roommsg',chatMessage.chat.length - 30, chatMessage.chat.length )
           const thisNs = namespace[id].room.find(
             (currentRoom) => currentRoom.roomId === thisRoom
           );
-          // console.log(thisRoom, roomName);
           thisNs.history = [...limitMessage];
-          // console.log("his", thisNs.history, chatMessage);
+
           const res1 = await pubClient.call(
             "JSON.SET",
             `${thisRoom}`,
             "$",
             JSON.stringify(thisNs.history)
           );
-          // console.log("res1", res1);
+
           const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          // console.log('res3', JSON.parse(res2)[0])
+          // console.log("res3", JSON.parse(res2)[0]);
+
           socket.emit(thisRoom, thisNs.history);
           cacheHistoryObj[roomName] = true;
         }
@@ -73,40 +88,44 @@ export const chantNamespaceFun = (io) => {
         });
       });
 
-
       let prevOffset = -1;
-      socket.on("message_chunk",async ({offSet, limit})=> {  
-        console.log("message chunk")
+      socket.on("message_chunk", async ({ offSet, limit }) => {
+        console.log("message chunk");
         const rooms = socket.rooms;
         const currentRoom = [...rooms][1];
-      
-        const res1 = await pubClient.call("JSON.GET", `${currentRoom}`, "$")
-        prevOffset = JSON.parse(res1)[0].length
-        
-        const messageChunk = await Chat.findOne({roomId:currentRoom})
-        if(messageChunk.chat.length < offSet || prevOffset === offSet) {
+        const res1 = await pubClient.call("JSON.GET", `${currentRoom}`, "$");
+        offSet = JSON.parse(res1)[0].length;
+        console.log('chunk length',JSON.parse(res1)[0].length)
+        const messageChunk = await Chat.findOne({ roomId: currentRoom });
+        if (messageChunk.chat.length < offSet || prevOffset === offSet) {
           socket.emit("getNextMessage", []);
           // socket.on('disconnect')
-        } else {  
-          prevOffset = offSet
+        } else {
+          prevOffset = offSet;
           const Messagelength = messageChunk.chat.length;
-          const messageLimit = messageChunk.chat.slice(Math.max(Messagelength - offSet - limit, 0), Messagelength - offSet);
+          const messageLimit = messageChunk.chat.slice(
+            Math.max(Messagelength - offSet - limit, 0),
+            Messagelength - offSet
+          );
           // console.log(offSet, Math.max(Messagelength - offSet - limit, 0), Messagelength - offSet)
-          socket.emit("getNextMessage", messageLimit)
-          if(messageLimit.length>0){
-            const res4 = await pubClient.call("JSON.ARRAPPEND", `${currentRoom}`, "$", ...messageLimit.map(ele=>JSON.stringify(ele)))
-            console.log("res1", res4)
+          socket.emit("getNextMessage", messageLimit);
+          if (messageLimit.length > 0) {
+            const res4 = await pubClient.call(
+              "JSON.ARRAPPEND",
+              `${currentRoom}`,
+              "$",
+              ...messageLimit.map((ele) => JSON.stringify(ele))
+            );
+            console.log("res1", res4);
           }
         }
-      })
-
+      });
 
       socket.on("newMessageToRoom", async (messageObj, callback) => {
         const rooms = socket.rooms;
         const currentRoom = [...rooms][1];
-        console.log('cr',currentRoom)
         try {
-          console.log('message to room - ', messageObj)
+          // console.log("message to room - ", messageObj);
           const senderRoomObj = namespace[id].room.find(
             (element) => element.roomId === currentRoom
           );
@@ -138,8 +157,15 @@ export const chantNamespaceFun = (io) => {
       socket.on("listenMessageAck", (message) => {
         console.log("message delivered to user end", message);
       });
-      socket.on("disconnect", () => {
-        // console.log("disconnected");
+      socket.on("disconnecting", (reason) => {
+        for (const room of socket.rooms) {
+          if (room !== socket.id) {
+            // console.log("user has left room", socket.id, room )
+          }
+        }
+      });
+      socket.on("disconnect", (reason) => {
+        // console.log("disconnected", reason, id);
         delete namespace[id];
         namespace[id] = "";
       });
@@ -148,3 +174,17 @@ export const chantNamespaceFun = (io) => {
     }
   });
 };
+
+// const expireRoom = async (thisRoom, cacheHistoryObj, ttl) => {
+//   const expire = await pubClient.expire(thisRoom, ttl);
+//   cacheHistoryObj[thisRoom] = false;
+//   console.log("expire", expire);
+//   let int = 0;
+
+//   setTimeout(async () => {
+//     const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
+//     console.log("res31",thisRoom, JSON.parse(res2));
+//     const exists = await pubClient.exists(thisRoom);
+//     console.log(exists);
+//   }, 23000);
+// };

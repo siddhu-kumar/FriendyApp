@@ -5,7 +5,6 @@ import { UserDetails } from "../../../class/userRespectiveData.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const getAllUser = async (req, res) => {
-  console.log("// get all user");
   // list of reqeusts received or sent by a user
   let requestsListID = [];
   const id = req.userId;

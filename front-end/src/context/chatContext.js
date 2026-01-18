@@ -24,7 +24,6 @@ const ChatProvider = ({ children }) => {
   const [endPoint, setEndPoint] = useState('')
   const [friendList, setFriendList] = useState([])
   const [recentMessage, setRecentMessage] = useState(null);
-  const [BASE_URL, setBASE_URL] = useState(process.env.REACT_APP_BACKEND_HOST);
   const [hasMore, setHasMore] = useState(true);
   const [offSet, setOffSet] = useState(30);
 
@@ -33,9 +32,7 @@ const ChatProvider = ({ children }) => {
     // socketns.on('chats',(data)=> {
     //   console.log(data)
     // })    
-    console.log(BASE_URL)
-
-    socket = io(`${BASE_URL}/chatns`, authHeader)
+    socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, authHeader)
     socket.on('endpoint',data => {
       setNamespace(data)
     })
@@ -59,6 +56,7 @@ const ChatProvider = ({ children }) => {
       setRecentMessage,
       setHasMore,
       setOffSet,
+      setEndPoint,
     }
   } > {
       children
