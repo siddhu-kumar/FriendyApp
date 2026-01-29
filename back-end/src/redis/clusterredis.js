@@ -4,24 +4,24 @@ import { cacheHistoryObj } from "../websocket/chat.js";
 
 const Redis_URL = process.env.REDIS_URL;
 
-// const pubClient = new Redis(Redis_URL, {
-//   connectTimeout: 10000,
-// });
+const pubClient = new Redis(Redis_URL, {
+  connectTimeout: 10000,
+});
 
-const pubClient = new Cluster([
-  {
-    host: "127.0.0.1",
-    port: 7000,
-  },
-  {
-    host: "127.0.0.1",
-    port: 7001,
-  },
-  {
-    host: "127.0.0.1",
-    port: 7002,
-  },
-]);
+// const pubClient = new Cluster([
+//   {
+//     host: "127.0.0.1",
+//     port: 7000,
+//   },
+//   {
+//     host: "127.0.0.1",
+//     port: 7001,
+//   },
+//   {
+//     host: "127.0.0.1",
+//     port: 7002,
+//   },
+// ]);
 
 const subClient = pubClient.duplicate();
 
