@@ -28,6 +28,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const limit = 10;
 
   useEffect(() => {
+    
     if (hasMore) {
       socket.on("getNextMessage", (data) => {
         console.log(data);

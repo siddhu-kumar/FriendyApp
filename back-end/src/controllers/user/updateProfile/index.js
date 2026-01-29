@@ -44,7 +44,7 @@ export const updateProfile = async (req, res) => {
     });
     return;
   } catch (err) {
-    console.error("er", err);
+    // console.error("er", err);
     res.status(401).json({
       message: "Not",
     });

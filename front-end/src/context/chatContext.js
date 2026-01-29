@@ -28,18 +28,13 @@ const ChatProvider = ({ children }) => {
   const [offSet, setOffSet] = useState(30);
 
   useEffect(() => {
-    // const socketns = io(`${BASE_URL}/chatns`, authHeader)
-    // socketns.on('chats',(data)=> {
-    //   console.log(data)
-    // })    
     socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, authHeader)
-    socket.on('endpoint',data => {
-      setNamespace(data)
-    })
-    socket.on('friendlist',data => {
+    socket.on('friendlist',(data) => {
       setFriendList(data)
     })
-
+    return (()=> {
+      socket.off('friendlist');
+    })
   }, [])
 
   // console.log(userDetails.token)

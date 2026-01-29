@@ -4,24 +4,24 @@ import { cacheHistoryObj } from "../websocket/chat.js";
 
 const Redis_URL = process.env.REDIS_URL;
 
-const pubClient = new Redis(Redis_URL, {
-  connectTimeout: 10000,
-});
+// const pubClient = new Redis(Redis_URL, {
+//   connectTimeout: 10000,
+// });
 
-// const pubClient = new Cluster([
-//   {
-//     host: "127.0.0.1",
-//     port: 7000,
-//   },
-//   {
-//     host: "127.0.0.1",
-//     port: 7001,
-//   },
-//   {
-//     host: "127.0.0.1",
-//     port: 7002,
-//   },
-// ]);
+const pubClient = new Cluster([
+  {
+    host: "127.0.0.1",
+    port: 7000,
+  },
+  {
+    host: "127.0.0.1",
+    port: 7001,
+  },
+  {
+    host: "127.0.0.1",
+    port: 7002,
+  },
+]);
 
 const subClient = pubClient.duplicate();
 
@@ -35,8 +35,7 @@ subClient.on("error", (err) => {
 
 subClient
   .subscribe("chatns", (err, count) => {
-    if (err) 
-      console.error("Subscribe error:", err);
+    if (err) console.error("Subscribe error:", err);
     console.log("Subscribed to chatns, count:", count);
   })
   .then((r) => console.log("res", r))
@@ -57,7 +56,7 @@ subClient.on("message", async (channel, message) => {
     const res2 = await pubClient.call(
       "JSON.GET",
       `${parsedMessage.roomId}`,
-      "$"
+      "$",
     );
     const prevMsg = JSON.parse(res2);
     console.log("res2", prevMsg);
@@ -66,13 +65,13 @@ subClient.on("message", async (channel, message) => {
       "JSON.ARRAPPEND",
       `${parsedMessage.roomId}`,
       "$",
-      JSON.stringify(obj)
+      JSON.stringify(obj),
     );
     console.log("res3 - ", res3);
     const res4 = await pubClient.call(
       "JSON.GET",
       `${parsedMessage.roomId}`,
-      "$"
+      "$",
     );
     console.log("res4", JSON.parse(res4));
   }

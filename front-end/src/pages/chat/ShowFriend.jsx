@@ -3,7 +3,7 @@ import style from "./chat.module.css";
 import { ChatContext , socket} from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
-  const { friendList, namespace, endPoint, setHasMore, setOffSet } = useContext(ChatContext);
+  const { friendList, namespace, endPoint, setHasMore, setOffSet, online } = useContext(ChatContext);
   const [listClicked, setListClicked] = useState("");
   const [friendData, setFriendData] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
