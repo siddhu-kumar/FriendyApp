@@ -3,8 +3,9 @@ import style from "./profile.module.css";
 import { doLogout, editStorage, isLoggedIn } from "../../../auth";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
-import { editProfile } from "../../../services/user-service";
+import { editProfile, logoutUser } from "../../../services/user-service";
 import { privateAxios } from "../../../services/helper";
+import "../../css/index.css"
 const Profile = () => {
   const navigate = useNavigate();
   const { setAuth, userDetails, setUserDetails, setUserList } =
@@ -17,7 +18,6 @@ const Profile = () => {
     setBtn(!btn);
     if (!btn) {
       if (user === userDetails) {
-        // console.log('nothing changed')
       } else {
         editProfile(user)
           .then((data) => {
@@ -44,12 +44,9 @@ const Profile = () => {
 
   const handleFile = async (e) => {
     e.preventDefault();
-    console.log(e.target.files[0]);
     const fileData = e.target.files[0];
-    console.log(fileData);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
     if (allowedTypes.includes(fileData.type)) {
-      console.log("true");
 
       var reader = new FileReader();
 
@@ -60,8 +57,6 @@ const Profile = () => {
         const existingData = localStorage.getItem("data");
         let data;
   
-        console.log("Existing data in localStorage:", existingData);
-
         if (existingData) {
           data = JSON.parse(existingData);
         } else {
@@ -88,7 +83,6 @@ const Profile = () => {
       reader.readAsDataURL(fileData);
       const formData = new FormData();
       formData.append("imageFile", fileData);
-      console.log(formData);
     
       privateAxios
         .patch("/user/profile", formData, {
@@ -111,20 +105,23 @@ const Profile = () => {
   useEffect(() => {
     const image = localStorage.getItem("data");
     const parsedImage = JSON.parse(image);
-    console.log('working',parsedImage)
     if (parsedImage.data.image) {
-      console.log(parsedImage.data.image.contentType)
       setFile(  
         `data:${parsedImage.data.image.contentType};base64,${parsedImage.data.image.data}`
       );
     }
   }, []);
 
-  // console.log(JSON.parse(localStorage.getItem("data")).imageObj)
 
-
-  const handleLogout = (e) => {
-    e.preventDefault();
+  const handleLogout = async (e) => {
+    await logoutUser({
+      scope: "current",
+      reason: "user logout"
+    }).then(response => {
+      console.log(response)
+    }).catch(error => {
+      console.error(error)
+    })
     doLogout();
     setUserList("");
     setUserDetails("");
@@ -153,7 +150,7 @@ const Profile = () => {
           ""
         )}
       </div>
-      <button className={style.logout} onClick={handleLogout}>
+      <button className={`${style.logout} btn` } onClick={handleLogout}>
         Log Out
       </button>
       {btn ? (

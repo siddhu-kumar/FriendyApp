@@ -12,6 +12,7 @@ export const doLogin = (data) => {
 };
 
 export const doLogout = () => {
+  
   localStorage.removeItem("data");
 };
 

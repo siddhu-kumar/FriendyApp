@@ -6,6 +6,7 @@ import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const getAllUser = async (req, res) => {
   // list of reqeusts received or sent by a user
+  console.log('// get all user list')
   let requestsListID = [];
   const id = req.userId;
   requestsListID.push(id);
@@ -13,7 +14,6 @@ export const getAllUser = async (req, res) => {
     const userData = await User.findOne({
       id: id,
     });
-
 
     const requestList = await RequestSchema.find({
       $or: [
@@ -38,7 +38,7 @@ export const getAllUser = async (req, res) => {
 
     // console.log(requestsListID);
 
-    const data = await User.find({
+    const userList = await User.find({
       id: {
         $nin: requestsListID,
       },
@@ -46,25 +46,30 @@ export const getAllUser = async (req, res) => {
       .sort({ createdAt: 1 })
       .limit(9);
 
-    // console.log(data.length);
-
-    const result = data.map((doc) => {
-      const obj = doc.toObject();
-      if (obj.image && obj.image.data) {
-        obj.image.data = obj.image.data.toString("base64");
-      }
-      return obj;
-    });
-
-    for (let i = 0; i < data.length; i++) {
-      const obj = data[i].toObject();
-      if (obj.image && obj.image.data) {
-        obj.image.data = obj.image.data.toString("base64");
-      }
-      data[i] = obj;
+    // console.log(userList);
+    let userHomePageList = []
+    for(const data of userList) {
+      const obj = new UserSharedData(data.id, data.name, data.createdAt, data.image.data?data.image.data:null, data.image.contentType?data.image.contentType:null)
+      userHomePageList.push(obj);
     }
 
-    res.status(200).json(data);
+    // const result = userList.map((doc) => {
+    //   const obj = doc.toObject();
+    //   if (obj.image && obj.image.data) {
+    //     obj.image.data = obj.image.data.toString("base64");
+    //   }
+    //   return obj;
+    // });
+
+    // for (let i = 0; i < userList.length; i++) {
+    //   const obj = userList[i].toObject();
+    //   if (obj.image && obj.image.data) {
+    //     obj.image.data = obj.image.data.toString("base64");
+    //   }
+    //   userList[i] = obj;
+    // }
+    // console.log(userHomePageList)
+    res.status(200).json(userHomePageList);
   } catch (err) {
     console.log(err);
     res.send(err.message);

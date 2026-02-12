@@ -7,13 +7,12 @@ export const getReceivedRequest = async (req, res) => {
   console.log("// get Received Request");
   const userId = req.userId;
   const receivedReqList = [];
-  try {
+  try {    
+    const res3 = await pubClient.call("JSON.GET", `RECEIVED-${userId}`, "$");
     
-    const res3 = await pubClient.call("JSON.GET", `RECEIVED-${userId}`, ".");
-    console.log("redis - get -", userId, JSON.parse(res3));
-
-    if(res3) {
-      res.status(200).json(JSON.parse(res3));
+    // console.log(res3)
+    if(res3!==null && JSON.parse(res3)[0].length>0) {
+      res.status(200).json(JSON.parse(res3)[0]);
       return;
     } else {
 
@@ -23,16 +22,15 @@ export const getReceivedRequest = async (req, res) => {
       });
       for (let element of receivedRequests) {
         // const data = await User.findOne({ id: element.userId });
-      receivedReqList.push(
-        new RequestSchemaUser(
-          element.friendId,
-          element.friendName,
-          element.userId,
-          element.name,
-          element.userImage.data.toString("base64"),
-          element.userImage.contentType,
-          element.createdAt
-        )
+      receivedReqList.push({
+          userId:element.friendId,
+          username:element.friendName,
+          friendId:element.userId,
+          friendname:element.name,
+          friendImage:element.userImage.data?element.userImage.data.toString("base64"):null,
+          contentType:element.userImage.contentType?element.userImage.contentType:null,
+          createdAt:element.createdAt
+      }
         );
         // console.log("received each", data.name, element);
       }

@@ -1,5 +1,11 @@
 @import url("variable.css");
 
+.timestamp {
+    font-weight: var(--font-weight-2);
+    font-family: var(--font-family);
+    font-size: var(--font-size-xsmall);
+}
+
 .Users1 {
     width: 100%;
     height: 93vh;

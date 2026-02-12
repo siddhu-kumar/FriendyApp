@@ -3,7 +3,6 @@ import { User } from "../../../models/models.js";
 export const updateUser = async (req, res) => {
   console.log("// update user profile");
   const userId = req.userId;
-  // console.log(userId, req.body);
   try {
     const userData = await User.findOneAndUpdate(
       {
@@ -31,8 +30,8 @@ export const updateUser = async (req, res) => {
 
 // update profile image
 export const updateProfile = async (req, res) => {
+  console.log('// update profile')
   try {
-    //   console.log('req',req.userId)
     const objImage = await User.findOne({
       id: req.userId,
     });
@@ -44,7 +43,7 @@ export const updateProfile = async (req, res) => {
     });
     return;
   } catch (err) {
-    // console.error("er", err);
+    console.error(err);
     res.status(401).json({
       message: "Not",
     });

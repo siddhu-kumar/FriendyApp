@@ -4,7 +4,6 @@ import {
 } from './helper'
 
 export const loginUser = (loginUser) => {
-    console.log('login user', loginUser)
     return myAxios.post('/user/login', loginUser)
         .then(res => res.data)
 }
@@ -43,7 +42,6 @@ export const pendingRequest = () => {
 }
 
 export const createRequest = (friend) => {
-    console.log(friend)
     return privateAxios.post('/user/create_request', friend)
         .then(res => res.data)
 }
@@ -79,6 +77,6 @@ export const pagination = (data) => {
     return privateAxios.post('/user/pagination',data).then(res => res.data)
 }
 
-// export const registerTempUser = (data) => {
-//     return myAxios.post('/user/register/temp',data).then(res => res.data);
-// }
+export const logoutUser = (data) => {
+    return privateAxios.post('/user/logout',data).then(res => res.data)
+}

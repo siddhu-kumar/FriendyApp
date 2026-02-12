@@ -3,24 +3,27 @@ import { RequestSchema, User } from "../../../models/models.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
 export const deleteSentRequest = async (req, res) => {
+  console.log('// delete sent request')
   const userId = req.userId;
   const { friendId } = req.body;
-  console.log("rr", req.body);
   try {
-    console.log(userId, friendId)
-    const res3 = await pubClient.call("JSON.GET", `SENT-${userId}`, `$[?(@.friendId=="${friendId}")]`);
-    const res4 = await pubClient.call("JSON.GET", `RECEIVED-${friendId}`, `$[?@.userId=="${friendId}"]`);
-    console.log("del sent req - ", JSON.parse(res3), JSON.parse(res4))
-    if(res3) {
-      const res2 = await pubClient.call("JSON.DEL",`SENT-${userId}`, `$[?(@.friendId=="${friendId}")]`)
-      const res1 = await pubClient.call("JSON.DEL",`RECEIVED-${friendId}`, `$[?(@.userId=="${friendId}")]`)
-      console.log("deleted",res2, res1)
-    }
+    const res1 = await pubClient.call("JSON.GET", `SENT-${userId}`, `$`);
+    const res2 = await pubClient.call("JSON.GET", `RECEIVED-${friendId}`, `$`);
+    console.log(JSON.parse(res1),'\n', JSON.parse(res2))
 
+    if(res1!==null ) {
+      const res3 = await pubClient.call("JSON.DEL",`SENT-${userId}`, `$[?(@.friendId=="${friendId}")]`)
+      console.log(' 1-', res3)
+      
+    }
+    if(res2!==null ) {
+      const res3 = await pubClient.call("JSON.DEL",`RECEIVED-${friendId}`, `$[?(@.friendId=="${userId}")]`)
+      console.log(' 2-', res3)
+    }
     const deleteSentRequest = await RequestSchema.findOneAndDelete({
       userId: userId,
     });
-    console.log("del sent request - ",deleteSentRequest);
+    // console.log("del sent request - ",deleteSentRequest);
     res.status(200).json({
       message: `Request has been deleted.`,
     });
@@ -34,24 +37,26 @@ export const deleteSentRequest = async (req, res) => {
 
 
 export const deleteReceivedRequest = async (req, res) => {
+  console.log('// delete Received Request')
   const userId = req.userId;
-  const { friendId, friendname } = req.body;
-  // console.log("rr", req.body);
+  const { friendId } = req.body;
   try {
-    console.log(userId, friendId, friendname)
-    const res3 = await pubClient.call("JSON.GET", `SENT-${friendId}`, `$[?(@.userId=="${friendId}")]`);
-    const res4 = await pubClient.call("JSON.GET", `RECEIVED-${userId}`, `$[?@.friendId=="${friendId}"]`);
-    console.log("del recd req - ", JSON.parse(res3), JSON.parse(res4))
-    if(res3) {
-      const res2 = await pubClient.call("JSON.DEL",`SENT-${friendId}`, `$[?(@.userId=="${friendId}")]`)
-      const res1 = await pubClient.call("JSON.DEL",`RECEIVED-${userId}`, `$[?(@.friendId=="${friendId}")]`)
-      console.log("deleted",res2, res1)
+    const res1 = await pubClient.call("JSON.GET", `SENT-${friendId}`, `$`);
+    const res2 = await pubClient.call("JSON.GET", `RECEIVED-${userId}`, `$`);
+    console.log(res1,'\n', res2)
+    if(res2!==null ) {
+      const res3 = await pubClient.call("JSON.DEL",`RECEIVED-${userId}`, `$[?(@.friendId=="${friendId}")]`)
+      console.log(' 1-', res3)
+    }
+    if(res1!==null ) {
+      const res3 = await pubClient.call("JSON.DEL",`SENT-${friendId}`, `$[?(@.friendId=="${userId}")]`)
+      console.log(' 2-', res3)
     }
 
     const deleteReceivedRequest = await RequestSchema.findOneAndDelete({
       friendId: userId,
     });
-    console.log('del received request',deleteReceivedRequest)
+    // console.log('del received request',deleteReceivedRequest)
     res.status(200).json({  
       message: `Request has been deleted.`,
     });

@@ -3,7 +3,7 @@ import style from "./chat.module.css";
 import { ChatContext , socket} from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
-  const { friendList, namespace, endPoint, setHasMore, setOffSet, online } = useContext(ChatContext);
+  const { friendList, setHasMore, setOffSet } = useContext(ChatContext);
   const [listClicked, setListClicked] = useState("");
   const [friendData, setFriendData] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -20,7 +20,6 @@ export const ShowFriend = (props) => {
       listClicked.style.backgroundColor = "";
     }
     socket.emit("joinsRoom", friendData, (val, err) => {
-      console.log(val)
       if (val) {
         console.log('room', val)
       } else {
@@ -33,14 +32,14 @@ export const ShowFriend = (props) => {
     setHasMore(true);
     setOffSet(10);
     socket.on(friendData.roomId, (data) => {
-      console.log(data)
       setChatHistory(data);
     });
   };
   return (
     <div className={style.my_friends}>
       <ul>
-        {friendList.length !== 0
+        {
+          friendList.length !== 0
           ? friendList.map((data, index) => (
               <li
                 onClick={(e) => handleClick(e, data)}

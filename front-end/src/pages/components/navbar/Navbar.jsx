@@ -22,7 +22,7 @@ const Navbar = () => {
             <NavLink to="/received_request">Received Request</NavLink>
           </div>
           <div className="items">         
-            <NavLink to="/pending_request">Sent Request</NavLink>
+            <NavLink to="/sent_request">Sent Request</NavLink>
           </div>
 
           <div className="items">

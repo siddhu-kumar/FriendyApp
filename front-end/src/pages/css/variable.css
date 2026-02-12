@@ -9,9 +9,11 @@
     --bg-primary-color: #FFE1FF;
     --font-weight-1: 600;
     --font-weight-2: 550;
+    --font-weight-3: 300;
     --font-size-large: large;
     --font-size-medium: medium;
     --font-size-small: small;
+    --font-size-xsmall: x-small;
     --border-style-primary: 0.6px solid #f0d4a0;
     --border-style-active: 0.6px solid #800080;
     --border-radius: 7px;

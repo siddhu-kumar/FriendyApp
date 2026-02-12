@@ -5,25 +5,29 @@ import { pubClient } from "../redis/clusterredis.js";
 export let namespace = {};
 // records for specific chat group message exists in redis cache in true/false
 export let cacheHistoryObj = {};
-let roomIdList = {};
+export let roomIdList = {};
 const roomTimeouts = new Map();
 // let arr = []
-export const chantNamespaceFun = (io) => {
+export const chatNamespaceFun = (io) => {
   io.of("/chatns").on("connection", async (socket) => {
+    console.log('// chatns')
     try {
       const [namespaceuser, id] = await getEndpoint(
         socket.handshake.auth.token,
       );
-      namespace[id] = namespaceuser;
-      roomIdList[id] = new Set();
-
-      socket.emit("friendlist", namespace[id].room);
       
-      if (roomTimeouts.has(id)) {
-        clearTimeout(roomTimeouts.get(id));
-        console.log('clearTimeout')
-        roomTimeouts.delete(id)
-      } 
+      if (id === 0) {
+        socket.emit("friendlist", []);
+      } else {
+        namespace[id] = namespaceuser;
+        roomIdList[id] = new Set();
+        socket.emit("friendlist", namespace[id].room);
+        if (roomTimeouts.has(id)) {
+          clearTimeout(roomTimeouts.get(id));
+          console.log("clearTimeout");
+          roomTimeouts.delete(id);
+        }
+      }
 
       const roomNameList = [];
       socket.on("joinsRoom", async (roomObj, callback) => {
@@ -32,6 +36,7 @@ export const chantNamespaceFun = (io) => {
         roomNameList.push(roomName);
         const rooms = socket.rooms;
 
+        
         for (const room of rooms) {
           if (room !== socket.id) {
             const lr = await pubClient.srem(`socket:${room}:rooms`, room);
@@ -104,9 +109,10 @@ export const chantNamespaceFun = (io) => {
           socket.emit("getNextMessage", messageLimit);
           if (messageLimit.length > 0) {
             const res4 = await pubClient.call(
-              "JSON.ARRAPPEND",
+              "JSON.ARRINSERT",
               `${currentRoom}`,
               "$",
+              "0",
               ...messageLimit.map((ele) => JSON.stringify(ele)),
             );
             // console.log("res1", res4);
@@ -125,7 +131,7 @@ export const chantNamespaceFun = (io) => {
           const messageAdded = new Message(
             messageObj.sender,
             messageObj.receiver,
-            messageObj.date,
+            messageObj.time,
             messageObj.message,
             senderRoomObj.roomId,
           );
@@ -148,11 +154,15 @@ export const chantNamespaceFun = (io) => {
       });
 
       socket.on("disconnect", () => {
+      console.log("expire room setTimeout()");
         const timer = setTimeout(() => {
           expireRoom(roomIdList[id], 5);
           roomTimeouts.delete(id);
         }, 30000);
         roomTimeouts.set(id, timer);
+        // setInterval(() => {
+        //   console.log('timer on - ')
+        // }, 5000);
         // arr.push(timer)
       });
     } catch (error) {
@@ -161,13 +171,17 @@ export const chantNamespaceFun = (io) => {
   });
 };
 
-const expireRoom = async (roomIdList, ttl = 0) => {
-  console.log("expire room");
 
+export const expireRoom = async (roomIdList, ttl = 0) => {
+  console.log("expire room Executing",typeof roomIdList, roomIdList);
+
+  if(roomIdList !== undefined)
   for (const roomId of roomIdList) {
     const expire = await pubClient.expire(roomId, ttl);
-    console.log("expire", expire);
+    cacheHistoryObj[roomId] = false;
+    console.log("expire", roomId);
   }
+
 
   setTimeout(async () => {
     for (const roomId of roomIdList) {
@@ -175,4 +189,15 @@ const expireRoom = async (roomIdList, ttl = 0) => {
       console.log("exists", exists);
     }
   }, 5000);
+
+  // store message in DB
+
+  // const res1 = await pubClient.call("JSON.GET", `${}`)
+
+  //   const receiverObj = await Chat.findOne({
+  //   roomId: parsedMessage.roomId,
+  // });
+  // receiverObj.chat.push(obj);
+  // const t = await receiverObj.save();
+  console.log('All data stored successfully')
 };

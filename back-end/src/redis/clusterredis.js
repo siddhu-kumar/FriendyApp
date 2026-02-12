@@ -48,7 +48,7 @@ subClient.on("message", async (channel, message) => {
   const obj = {
     sender: parsedMessage.sender,
     receiver: parsedMessage.receiver,
-    date: parsedMessage.date,
+    time: new Date(parsedMessage.time),
     message: parsedMessage.message,
   };
 
@@ -59,8 +59,7 @@ subClient.on("message", async (channel, message) => {
       "$",
     );
     const prevMsg = JSON.parse(res2);
-    console.log("res2", prevMsg);
-    console.log("prevMsg", prevMsg);
+    // console.log("prevMsg", prevMsg);
     const res3 = await pubClient.call(
       "JSON.ARRAPPEND",
       `${parsedMessage.roomId}`,
@@ -73,14 +72,24 @@ subClient.on("message", async (channel, message) => {
       `${parsedMessage.roomId}`,
       "$",
     );
-    console.log("res4", JSON.parse(res4));
+    // console.log("res4", JSON.parse(res4));
   }
 
-  const receiverObj = await Chat.findOne({
-    roomId: parsedMessage.roomId,
-  });
-  receiverObj.chat.push(obj);
-  const t = await receiverObj.save();
+  // const receiverObj = await Chat.findOne({
+  //   roomId: parsedMessage.roomId,
+  // });
+  // receiverObj.chat.push(obj);
+  // const t = await receiverObj.save();
 });
 
 export { pubClient, subClient };
+
+
+// docker exec -it redis-7000 redis-cli --cluster create \
+//   redis-7000:7000 \
+//   redis-7001:7001 \
+//   redis-7002:7002 \
+//   redis-7003:7003 \
+//   redis-7004:7004 \
+//   redis-7005:7005 \
+//   --cluster-replicas 1

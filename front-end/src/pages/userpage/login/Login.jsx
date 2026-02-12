@@ -31,7 +31,6 @@ const Login = () => {
     <Loader />;
     loginUser(userInput)
       .then((data) => {
-        console.log(data);
         doLogin(data);
         setUserDetails(getUserData);
         getAllUser()

