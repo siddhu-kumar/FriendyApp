@@ -15,7 +15,7 @@ export const chatNamespaceFun = (io) => {
       const [namespaceuser, id] = await getEndpoint(
         socket.handshake.auth.token,
       );
-      
+
       if (id === 0) {
         socket.emit("friendlist", []);
       } else {
@@ -36,7 +36,7 @@ export const chatNamespaceFun = (io) => {
         roomNameList.push(roomName);
         const rooms = socket.rooms;
 
-        
+
         for (const room of rooms) {
           if (room !== socket.id) {
             const lr = await pubClient.srem(`socket:${room}:rooms`, room);
@@ -47,10 +47,14 @@ export const chatNamespaceFun = (io) => {
         // console.log(roomName)
         await pubClient.sadd(`socket:${roomName}:rooms`, roomName);
         const thisRoom = [...socket.rooms][1];
+          const res5 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
+          console.log('---',res5?true:false)
 
-        if (cacheHistoryObj[roomName]) {
-          const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          const parseHistory = JSON.parse(res2);
+        if (res5) {
+          const res2 = await pubClient.call("JSON.GET", `new${thisRoom}`, "$");
+          const newMessage = res2?JSON.parse(res2):null;
+          const parseHistory = JSON.parse(res5);
+          
           socket.emit(thisRoom, parseHistory[0]);
         } else {
           // Retrieve chat history of a room from Database with argument roomId
@@ -76,10 +80,9 @@ export const chatNamespaceFun = (io) => {
           );
 
           const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          // console.log("res3", JSON.parse(res2)[0]);
-
+          
           socket.emit(thisRoom, thisNs.history);
-          cacheHistoryObj[roomName] = true;
+          cacheHistoryObj[roomName] = {thisRoom:true};
         }
         callback({
           message: "ok",
@@ -154,7 +157,7 @@ export const chatNamespaceFun = (io) => {
       });
 
       socket.on("disconnect", () => {
-      console.log("expire room setTimeout()");
+        console.log("expire room setTimeout()");
         const timer = setTimeout(() => {
           expireRoom(roomIdList[id], 5);
           roomTimeouts.delete(id);
@@ -173,31 +176,38 @@ export const chatNamespaceFun = (io) => {
 
 
 export const expireRoom = async (roomIdList, ttl = 0) => {
-  console.log("expire room Executing",typeof roomIdList, roomIdList);
-
-  if(roomIdList !== undefined)
-  for (const roomId of roomIdList) {
-    const expire = await pubClient.expire(roomId, ttl);
-    cacheHistoryObj[roomId] = false;
-    console.log("expire", roomId);
-  }
-
+  console.log("expire room Executing", typeof roomIdList, roomIdList);
 
   setTimeout(async () => {
+    console.log('settimeout')
+  if (roomIdList !== undefined && roomIdList.length !== 0)
     for (const roomId of roomIdList) {
       const exists = await pubClient.exists(roomId);
+      const res1 = await pubClient.call("JSON.GET", `${roomId}`)
+      const receiverObj = await Chat.findOne({
+        roomId: roomId,
+      });
+      
+      const message = JSON.parse(res1)
+      for(let i=0;i<message.length;i++) {
+        if(message[i].flag) {
+          receiverObj.chat.push(message[i])
+          console.log(message[i])
+        }
+      }
+
+      try {
+        const t = await receiverObj.save();
+      } catch(err) {
+        console.log('rece - save', err)
+      }
+
+      const expire = await pubClient.expire(roomId, ttl);
+      cacheHistoryObj[roomId] = false;
+      console.log("expire", roomId, expire);
       console.log("exists", exists);
     }
   }, 5000);
-
-  // store message in DB
-
-  // const res1 = await pubClient.call("JSON.GET", `${}`)
-
-  //   const receiverObj = await Chat.findOne({
-  //   roomId: parsedMessage.roomId,
-  // });
-  // receiverObj.chat.push(obj);
-  // const t = await receiverObj.save();
+  
   console.log('All data stored successfully')
 };

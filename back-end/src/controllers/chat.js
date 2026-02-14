@@ -55,6 +55,7 @@ export const getEndpoint = async (token) => {
         const lastMessage = await Chat.findOne({
           roomId: element.chatId,
         });
+        // console.log('lastMessage', lastMessage.chat[lastMessage.chat.length - 1])
         const msg =
           lastMessage.chat.length !== 0
             ? lastMessage.chat[lastMessage.chat.length - 1]
