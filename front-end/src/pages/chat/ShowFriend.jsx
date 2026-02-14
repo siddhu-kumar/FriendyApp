@@ -11,7 +11,6 @@ export const ShowFriend = (props) => {
   useEffect(() => {
     props.getData(friendData, chatHistory, listClicked);
   }, [chatHistory]);
-
   const handleClick = (event, friendData) => {
     event.preventDefault();
     // console.log('show ',friendData)
@@ -20,6 +19,7 @@ export const ShowFriend = (props) => {
       listClicked.style.backgroundColor = "";
     }
     socket.emit("joinsRoom", friendData, (val, err) => {
+      console.log('joinsRoom',val)
       if (val) {
         console.log('room', val)
       } else {
@@ -59,7 +59,7 @@ export const ShowFriend = (props) => {
                 <span className={style.friend_name}>{data.username}</span>
                 <span className={style.recent_msg_time}>{}</span>
                 <span className={style.friend_recent_msg}>
-                  {data.recentMessage.message}
+                  {data.recentMessage !== null ? data.recentMessage.message : ""}
                 </span>
               </li>
             ))

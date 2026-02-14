@@ -31,6 +31,7 @@ const ChatProvider = ({ children }) => {
     socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, authHeader)
     socket.on('friendlist',(data) => {
       setFriendList(data)
+      console.log(data)
     })
     return (()=> {
       socket.off('friendlist');
