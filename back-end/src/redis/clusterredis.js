@@ -1,6 +1,5 @@
 import { Redis, Cluster } from "ioredis";
 import { Chat } from "../models/models.js";
-import { cacheHistoryObj } from "../websocket/chat.js";
 
 const Redis_URL = process.env.REDIS_URL;
 
@@ -42,7 +41,7 @@ subClient
   .catch((err) => console.log("subscribe err", err));
 
 subClient.on("message", async (channel, message) => {
-  // console.log("subscribe cahnnel - ", channel, message);
+  console.log("subscribe cahnnel - \n");
 
   const parsedMessage = JSON.parse(message);
   const obj = {
@@ -50,31 +49,39 @@ subClient.on("message", async (channel, message) => {
     receiver: parsedMessage.receiver,
     time: new Date(parsedMessage.time),
     message: parsedMessage.message,
-    flag:true
   };
 
-  if (cacheHistoryObj[parsedMessage.roomId]) {
     const res2 = await pubClient.call(
       "JSON.GET",
       `new${parsedMessage.roomId}`,
-      "$",
     );
     const prevMsg = JSON.parse(res2);
-    // console.log("prevMsg", prevMsg);
-    const res3 = await pubClient.call(
-      "JSON.ARRAPPEND",
-      `${parsedMessage.roomId}`,
-      "$",
-      JSON.stringify(obj),
-    );
-    console.log("res3 - ", res3);
+
+    console.log("prevMsg", prevMsg, typeof obj);
+    if(res2) {
+      const res3 = await pubClient.call(
+        "JSON.ARRAPPEND",
+        `new${parsedMessage.roomId}`,
+        "$",
+        JSON.stringify(obj),
+      );
+      console.log("res3 - ", res3);
+    } else { 
+      const res3 = await pubClient.call(
+        "JSON.SET",
+        `new${parsedMessage.roomId}`,
+        "$",
+        JSON.stringify([obj]),
+      );
+      console.log("res3 - ", res3);
+    }
     const res4 = await pubClient.call(
       "JSON.GET",
       `new${parsedMessage.roomId}`,
       "$",
     );
-  }
-
+    console.log(res4)
+    
 });
 
 export { pubClient, subClient };

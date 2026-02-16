@@ -33,6 +33,7 @@ export const ShowFriend = (props) => {
     setOffSet(10);
     socket.on(friendData.roomId, (data) => {
       setChatHistory(data);
+      console.log(data)
     });
   };
   return (

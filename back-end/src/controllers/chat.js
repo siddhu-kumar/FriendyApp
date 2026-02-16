@@ -2,10 +2,11 @@ import { Namespace } from "../class/Namespace.js";
 import { Room } from "../class/Room.js";
 import { authToken } from "../middleware/token.js";
 import { Chat, User } from "../models/models.js";
+import { pubClient } from "../redis/clusterredis.js";
 // import { Image } from "../models/models.js";
 
 export const generateRoomId = (user1, user2) => {
-  const roomString = `roomId-${user1.slice(0, user1.length / 2)}-${user2.slice( 0,user2.length / 2)}`;
+  const roomString = `roomId-${user1.slice(0, user1.length / 2)}-${user2.slice(0, user2.length / 2)}`;
   return roomString;
 };
 
@@ -21,6 +22,7 @@ export const generateEndpoint = async (inputString) => {
 };
 
 export const getEndpoint = async (token) => {
+  console.log("// get Endpoint");
   const id = authToken(token);
   if (id === null) {
     // console.log("invalid token");
@@ -39,10 +41,6 @@ export const getEndpoint = async (token) => {
       const friendData = await User.findOne({
         id: element.friendId,
       });
-      // const findImage = await Image.findOne({
-      //   id: element.friendId,
-      // });
-
       if (friendData !== null) {
         let image = "";
         let contentType = "";
@@ -56,8 +54,11 @@ export const getEndpoint = async (token) => {
           roomId: element.chatId,
         });
         // console.log('lastMessage', lastMessage.chat[lastMessage.chat.length - 1])
-        const msg =
-          lastMessage.chat.length !== 0
+
+        const res1 = await pubClient.call("JSON.GET", `new${element.chatId}`);
+        const msg = res1
+          ? JSON.parse(res1)[JSON.parse(res1).length - 1]
+          : lastMessage.chat.length !== 0
             ? lastMessage.chat[lastMessage.chat.length - 1]
             : {
                 message: "No message sent",
@@ -73,7 +74,7 @@ export const getEndpoint = async (token) => {
           contentType,
           friendData.endpoint,
           msg,
-          0
+          0,
         );
         // console.log(roomObj)
         namespace[user.id].addRoom(roomObj);
