@@ -127,7 +127,7 @@ export const loginUser = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, 
+      secure: process.env.NODE_ENV === "production"?true:false, 
       sameSite: "lax",
       path: "/refresh-token",
       MaxKeyAge: 7 * 24 * 60 * 60 * 1000,
@@ -135,7 +135,7 @@ export const loginUser = async (req, res) => {
 
     res.cookie("accessToken", token, {
       httpOnly: true,
-      secure: false, 
+      secure: process.env.NODE_ENV === "production"?true:false, 
       sameSite: "lax",
       MaxKeyAge: 30 * 1000,
     });

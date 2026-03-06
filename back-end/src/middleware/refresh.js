@@ -33,9 +33,9 @@ export async function referenshTokenValidation(req, res) {
     });
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: false, // Set to false for development environment
+      secure: process.env.NODE_ENV === "production"?true:false, 
       sameSite: "lax",
-      maxAge: 30 * 1000 // 30 seconds
+      maxAge: 30 * 1000 
     });
     return res.status(200).json({ token: newAccessToken });
   } catch (err) {
