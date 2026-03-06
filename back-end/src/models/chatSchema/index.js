@@ -22,7 +22,7 @@ export const chatSchemas = new mongoose.Schema({
           required: true,
       },
       time: {
-          type: Date,
+          type: String,
       }
 
   }],

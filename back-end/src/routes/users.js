@@ -13,7 +13,7 @@ import { getReceivedRequest } from "../controllers/friends/getReceivedReq/index.
 import { deleteReceivedRequest } from "../controllers/friends/deletePendingReq/index.js"
 import { deleteSentRequest } from "../controllers/friends/deletePendingReq/index.js"
 import { pagination } from "../controllers/user/pagination/index.js"
-
+import { logoutUser } from "../controllers/user/logout/index.js"
 import multer from "multer"
 
 import {
@@ -46,5 +46,6 @@ router
     .delete('/delete/received_request', verifyToken, deleteReceivedRequest)
     .delete('/delete/sent_request', verifyToken, deleteSentRequest)
     .post('/pagination',verifyToken,pagination)
+    .post('/logout', verifyToken, logoutUser)
 
 export const routes = router

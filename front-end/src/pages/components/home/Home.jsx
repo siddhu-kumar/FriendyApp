@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import style from "./home.module.css";
 import { createRequest, pagination } from "../../../services/user-service";
-// import { createFriend } from '../../../services/friends-service';
 import { UserContext } from "../../../context/userContext";
 import { doLogout, isLoggedIn } from "../../../auth";
 import "../../css/index.css"
@@ -40,6 +39,7 @@ const Home = () => {
     }
   }
 
+
   const initializedRef = useRef(false);
   useEffect(()=> {
     setTimeout(()=> {
@@ -73,15 +73,15 @@ const Home = () => {
 
   const addFriend = (data) => {
     const updatedList = userList.filter(
-      (element) => element.email !== data.email
+      (element) => element.userId !== data.userId
     );
     setSentRequestList(prevList => [...prevList, data])
     console.log(updatedList)
     setUserList(updatedList);
-    const index = userList.find((element) => element.email === data.email);
+    const index = userList.find((element) => element.userId === data.userId);
     console.log("add friend ", index);
     console.log(data)
-    createRequest({ email: data.email })
+    createRequest({ requestsId: data.userId })
       .then((data) => {
         console.log(data);
       })
@@ -91,7 +91,7 @@ const Home = () => {
         setAuth(isLoggedIn);
       });
   };
-
+  useEffect(()=> {}, [userList])
   return (
     <>
       <div className="Users1">
@@ -106,13 +106,13 @@ const Home = () => {
                 data.image? 
                 <img 
                 className="userImage"
-                src={`data:${data.image.contentType};base64,${data.image.data}`} alt="ftyjhvjh" />
+                src={`data:${data.image.contentType};base64,${data.image.data}`} alt="User 'Image'" />
                 : 
                 <img className="userImage"
                  src="./logo192.png" 
-                 alt=""/>
+                 alt="User Icon"/>
               }
-              <div className="userInfo">{data.name}</div>
+              <div className="userInfo">{data.username}</div>
               <div className="userInfo">{data.contact}</div>
               <button
                 className="btn"

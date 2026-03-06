@@ -1,3 +1,4 @@
+
 export class Namespace {
     constructor(userId, name, endpoint) {
         this.userId = userId,

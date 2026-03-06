@@ -5,6 +5,7 @@ import {
   resetPasswordSchema,
   requestSchemas,
   tempUserSchema,
+  refreshTokenSchemas,
 } from "./schema.js";
 
 // models
@@ -13,3 +14,4 @@ export const Chat = mongoose.model('Chat', chatSchema)
 export const Resetpwd = mongoose.model('ResetPwd', resetPasswordSchema)
 export const RequestSchema = mongoose.model('RequestUser', requestSchemas)
 export const TempUser = mongoose.model('TempUserData', tempUserSchema)
+export const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchemas)

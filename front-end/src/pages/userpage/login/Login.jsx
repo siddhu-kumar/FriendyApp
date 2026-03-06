@@ -31,22 +31,16 @@ const Login = () => {
     <Loader />;
     loginUser(userInput)
       .then((data) => {
-        console.log(data);
+        console.log('login', data);
         doLogin(data);
         setUserDetails(getUserData);
         getAllUser()
           .then((data) => {
+            console.log('get all user', data);
             setUserList(data);
           })
           .catch((error) => {
-            if (error.response.data.expire) {
-              doLogout();
-              setUserList("");
-              setUserDetails("");
-              setAuth(isLoggedIn);
-              navigate("/login");
-            }
-            console.log(error.response.data);
+            console.log(error);
             console.log(localStorage.clear("data"));
             window.location.href = "/login";
           });
@@ -58,9 +52,6 @@ const Login = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status === 401) {
-          setResponse(err.response.data.message);
-        }
       });
   };
 

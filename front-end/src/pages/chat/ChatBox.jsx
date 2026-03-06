@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import style from "./chat.module.css";
 import { ChatContext, socket } from "../../context/chatContext";
 import MessageCard from "./MessageCard";
-
+import '../css/index.css'
 export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const {
     namespace,
@@ -21,9 +21,10 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const [message, setMessage] = useState({
     sender: friendData.namespaceId,
     receiver: friendData.userId,
-    date: Date.now(),
+    time: Date.now(),
     message: "",
   });
+  const [flag,setFlag] = useState(true);
 
   const limit = 10;
 
@@ -78,6 +79,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
     }
     return () => observer.disconnect();
   }, [offSet, hasMore]);
+
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -111,13 +113,18 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(message)
+    if(message.message.trim().length === 0) {
+      setFlag(false);
+      return;
+    }
     const response = await socket.emitWithAck("newMessageToRoom", message);
-    console.log(response);
+    console.log(message);
     setMessage({
       sender: friendData.namespaceId,
       receiver: friendData.userId,
       message: "",
-      date: Date.now(),
+      time: Date.now(),
     });
 
     setChatHistory((prevChatHistory) => [...prevChatHistory, message]);
@@ -128,7 +135,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
           : ele
       )
     );
-    // console.log(friendList)
+    console.log(chatHistory)
   };
   return (
     <>
@@ -140,6 +147,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
                 chat.sender === friendData.namespaceId ? (
                   <MessageCard
                     message={chat.message}
+                    time={chat.time}
                     index={index}
                     chatEndRef={chatEndRef}
                     chatLength={chatHistory.length}
@@ -149,6 +157,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
                 ) : (
                   <MessageCard
                     message={chat.message}
+                    time={chat.time}
                     index={index}
                     chatEndRef={chatEndRef}
                     chatLength={chatHistory.length}
@@ -157,10 +166,13 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
                   />
                 )
               )
-            : ""}
+            : "Start message"}
           <div ref={chatEndRef} />
         </div>
         <form onSubmit={handleSubmit} className={style.chat_forms}>
+          <span className="emptyMessage">
+            {flag?'':'Type some text'}
+          </span>
           <input
             type="text"
             placeholder="Message"

@@ -5,15 +5,13 @@ import {
 } from "react";
 import {
     getUserData,
-    isLoggedIn
+    isLoggedIn,
+    doLogout
 } from "../auth";
 import {
     getAllUser,
     getAllUserImages
 } from "../services/user-service";
-import {
-    doLogout
-} from "../auth";
 import {
     redirect
 } from "react-router-dom";
@@ -26,21 +24,15 @@ const DataProvider = ({children}) => {
     const [userList, setUserList] = useState('');
     const [reg, setReg] = useState(false);
     const [sentRequestList, setSentRequestList] = useState("");
+    const [receivedRequestList, setReceivedRequestList] = useState("");
+
     
     useEffect(() => {
         if (auth) {
             getAllUser().then(data => {
                 setUserList(data);
             }).catch(error => {
-                if (error.response.data.expire) {
-                    doLogout();
-                    setUserList('');    
-                    setUserDetails('');
-                    setAuth(isLoggedIn);
-                }
-                console.log(error.response.data)
-                console.log(localStorage.clear("data"))
-                window.location.href = "/login"
+                console.log(error);
             })
         } else {
             redirect("/login")
@@ -58,7 +50,9 @@ const DataProvider = ({children}) => {
             reg,
             setReg,
             sentRequestList,
-            setSentRequestList
+            setSentRequestList,
+            receivedRequestList,
+            setReceivedRequestList,
         }
     } > {
             children

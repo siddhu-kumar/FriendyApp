@@ -8,15 +8,15 @@ import { RequestSchemaUser } from "../../../class/usersSharedData.js";
 
 export const createRequest = async (req, res) => {
   console.log("// create new friend");
-  const { email } = req.body;
+  const { requestsId } = req.body;
   const userId = req.userId;
-  // console.log(userId, email)
+  console.log(userId, requestsId);
   try {
     const userData = await User.findOne({
       id: userId,
     });
     const friendData = await User.findOne({
-      email: email,
+      id: requestsId,
     });
 
     const request = new RequestSchema({
@@ -34,15 +34,69 @@ export const createRequest = async (req, res) => {
       },
     });
 
-    const requestObj1 = new RequestSchemaUser(userId, userData.name, friendData.id, friendData.name, friendData.image.data.toString("base64"), friendData.image.contentType, request.createdAt)
-    const requestObj2 = new RequestSchemaUser(friendData.id, friendData.name, userId, userData.name, userData.image.data.toString("base64"), userData.image.contentType, request.createdAt)
+    const sentReqObj = {
+      userId:userId,
+      username:userData.name,
+      friendId:friendData.id,
+      friendname:friendData.name,
+      friendImage:friendData.image.data ? friendData.image.data.toString("base64") : null,
+      contentType:friendData.image.contentType ? friendData.image.contentType : null,
+      createdAt:request.createdAt,
+    }
+    const ReceivedReqObj ={
+      userId:friendData.id,
+      username:friendData.name,
+      friendId:userId,
+      friendname:userData.name,
+      friendImage:userData.image.data ? userData.image.data.toString("base64") : null,
+      contentType:userData.image.contentType ? userData.image.contentType : null,
+      createdAt:request.createdAt,
+  };
+    const res1 = await pubClient.call("JSON.GET", `SENT-${userId}`, "$");
+    const res2 = await pubClient.call("JSON.GET", `RECEIVED-${friendData.id}`, "$");
+    console.log("res1", res1, res2);
 
-    const res2 = await pubClient.call("JSON.ARRAPPEND", `SENT-${userId}`, "$", JSON.stringify(requestObj1))
-    const res4 = await pubClient.call("JSON.ARRAPPEND", `RECEIVED-${friendData.id}`, "$", JSON.stringify(requestObj2))
 
-    console.log("new friend added - ",res2, res4);
-    const res3 = await pubClient.call("JSON.GET", `SENT-${userId}`, "$")
-    // console.log(JSON.parse(res3))
+    if (res1!==null ) {
+      const res3 = await pubClient.call(
+        "JSON.ARRAPPEND",
+        `SENT-${userId}`,
+        "$",
+        JSON.stringify(sentReqObj),
+      );
+      console.log("send req append - ", res3);
+    } else {
+      const res3 = await pubClient.call(
+        "JSON.SET",
+        `SENT-${userId}`,
+        "$",
+        JSON.stringify(sentReqObj),
+      );
+      console.log("send req add - ", res3);
+    }
+    
+    if(res2!==null ) {
+      const res3 = await pubClient.call(
+        "JSON.ARRAPPEND",
+        `RECEIVED-${friendData.id}`,
+        "$",
+        JSON.stringify(ReceivedReqObj),
+      );
+      console.log("received req append - ", res3);
+    } else {
+        const res3 = await pubClient.call(
+        "JSON.SET",
+        `RECEIVED-${friendData.id}`,
+        "$",
+        JSON.stringify(ReceivedReqObj),
+      );
+      console.log("received req add - ", res3);
+    }
+
+    const res4 = await pubClient.call("JSON.GET", `SENT-${userId}`, "$");
+    const res5 = await pubClient.call("JSON.GET", `RECEIVED-${friendData.id}`, "$");
+    console.log("check", JSON.parse(res4))
+    console.log("and", JSON.parse(res5))
     const r = await request.save();
     res.status(200).json({
       message: `Request has been sent to`,

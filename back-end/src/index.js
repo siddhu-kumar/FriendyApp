@@ -7,13 +7,20 @@ import { verifyToken } from "./middleware/authMiddleware.js";
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./redis/clusterredis.js";
-import { chantNamespaceFun } from "./websocket/chat.js";
+import { chatNamespaceFun } from "./websocket/chat.js";
+import cookieParser from "cookie-parser";
 
 const allowed_origin = process.env.ORIGIN || "*";
 const PORT = process.env.PORT || 8000;
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: allowed_origin,
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+app.use(cookieParser());
 app.use(express.json());
 await connectDB();
 
@@ -37,4 +44,4 @@ export const io = new Server(expressServer, {
   adapter: createAdapter(pubClient, subClient),
 });
 
-chantNamespaceFun(io);
+chatNamespaceFun(io);

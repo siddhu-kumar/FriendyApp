@@ -1,29 +1,32 @@
-import { Chat } from "../models/models.js";
+import { Chat, User } from "../models/models.js";
 import { getEndpoint } from "../controllers/chat.js";
 import { Message } from "../class/Message.js";
 import { pubClient } from "../redis/clusterredis.js";
 export let namespace = {};
 // records for specific chat group message exists in redis cache in true/false
-export let cacheHistoryObj = {};
-let roomIdList = {};
+export let roomIdList = {};
 const roomTimeouts = new Map();
 // let arr = []
-export const chantNamespaceFun = (io) => {
+export const chatNamespaceFun = (io) => {
   io.of("/chatns").on("connection", async (socket) => {
+    console.log("// chatns");
     try {
       const [namespaceuser, id] = await getEndpoint(
         socket.handshake.auth.token,
       );
-      namespace[id] = namespaceuser;
-      roomIdList[id] = new Set();
 
-      socket.emit("friendlist", namespace[id].room);
-      
-      if (roomTimeouts.has(id)) {
-        clearTimeout(roomTimeouts.get(id));
-        console.log('clearTimeout')
-        roomTimeouts.delete(id)
-      } 
+      if (id === 0) {
+        socket.emit("friendlist", []);
+      } else {
+        namespace[id] = namespaceuser;
+        roomIdList[id] = new Set();
+        socket.emit("friendlist", namespace[id].room);
+        if (roomTimeouts.has(id)) {
+          clearTimeout(roomTimeouts.get(id));
+          console.log("clearTimeout");
+          roomTimeouts.delete(id);
+        }
+      }
 
       const roomNameList = [];
       socket.on("joinsRoom", async (roomObj, callback) => {
@@ -39,14 +42,16 @@ export const chantNamespaceFun = (io) => {
           }
         }
         await socket.join(roomName);
-        // console.log(roomName)
         await pubClient.sadd(`socket:${roomName}:rooms`, roomName);
         const thisRoom = [...socket.rooms][1];
-
-        if (cacheHistoryObj[roomName]) {
-          const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          const parseHistory = JSON.parse(res2);
-          socket.emit(thisRoom, parseHistory[0]);
+        const res5 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
+        if (res5) {
+          const res2 = await pubClient.call("JSON.GET", `new${thisRoom}`, "$");
+          const parseHistory = JSON.parse(res5)[0];
+          const newMessage = res2
+            ? parseHistory.concat(JSON.parse(res2)[0])
+            : parseHistory;
+          socket.emit(thisRoom, newMessage);
         } else {
           // Retrieve chat history of a room from Database with argument roomId
           const chatMessage = await Chat.findOne({
@@ -71,10 +76,8 @@ export const chantNamespaceFun = (io) => {
           );
 
           const res2 = await pubClient.call("JSON.GET", `${thisRoom}`, "$");
-          // console.log("res3", JSON.parse(res2)[0]);
 
           socket.emit(thisRoom, thisNs.history);
-          cacheHistoryObj[roomName] = true;
         }
         callback({
           message: "ok",
@@ -104,9 +107,10 @@ export const chantNamespaceFun = (io) => {
           socket.emit("getNextMessage", messageLimit);
           if (messageLimit.length > 0) {
             const res4 = await pubClient.call(
-              "JSON.ARRAPPEND",
+              "JSON.ARRINSERT",
               `${currentRoom}`,
               "$",
+              "0",
               ...messageLimit.map((ele) => JSON.stringify(ele)),
             );
             // console.log("res1", res4);
@@ -125,7 +129,7 @@ export const chantNamespaceFun = (io) => {
           const messageAdded = new Message(
             messageObj.sender,
             messageObj.receiver,
-            messageObj.date,
+            messageObj.time,
             messageObj.message,
             senderRoomObj.roomId,
           );
@@ -148,12 +152,12 @@ export const chantNamespaceFun = (io) => {
       });
 
       socket.on("disconnect", () => {
+        console.log("expire room setTimeout()");
         const timer = setTimeout(() => {
-          expireRoom(roomIdList[id], 5);
+          expireRoom(roomIdList[id], id, 5);
           roomTimeouts.delete(id);
         }, 30000);
         roomTimeouts.set(id, timer);
-        // arr.push(timer)
       });
     } catch (error) {
       console.error("socket connection error", error);
@@ -161,18 +165,55 @@ export const chantNamespaceFun = (io) => {
   });
 };
 
-const expireRoom = async (roomIdList, ttl = 0) => {
-  console.log("expire room");
-
-  for (const roomId of roomIdList) {
-    const expire = await pubClient.expire(roomId, ttl);
-    console.log("expire", expire);
-  }
-
+export const expireRoom = async (roomIdList, userId, ttl = 0) => {
+  console.log("expire room Executing");
   setTimeout(async () => {
-    for (const roomId of roomIdList) {
-      const exists = await pubClient.exists(roomId);
-      console.log("exists", exists);
+    console.log("settimeout");
+
+    const friendlist = await User.findOne({ id: userId });
+    console.log(userId, "\n", roomIdList);
+    console.log(friendlist.friends);
+
+    for (const friends of friendlist.friends) {
+      if (roomIdList[friends.friendId]) {
+        console.log(
+          roomIdList[friends.friendId],
+          " - ",
+          roomIdList[friends.friendId].has(friends.chatId),
+        );
+
+        if (roomIdList[friends.friendId].has(friends.chatId)) {
+          roomIdList[friends.friendId] = null;
+          continue;
+        }
+        const res1 = await pubClient.call("JSON.GET", `${friends.chatId}`);
+
+        const res2 = await pubClient.call("JSON.GET", `new${friends.chatId}`);
+        console.log("new chat - ", typeof res2, JSON.parse(res2));
+        const receiverObj = await Chat.findOne({
+          roomId: friends.chatId,
+        });
+
+        const message = JSON.parse(res2) === null ? 0 : JSON.parse(res2);
+        for (let i = 0; i < message.length; i++) {
+          receiverObj.chat.push(message[i]);
+          console.log(message[i]);
+        }
+        try {
+          const t = await receiverObj.save();
+        } catch (err) {
+          console.log("rece - save", err);
+        }
+
+        const expire = await pubClient.expire(friends.chatId, ttl);
+        const expire2 = await pubClient.expire(`new${friends.chatId}`, ttl);
+        console.log("expire", expire, expire2);
+        const exists = await pubClient.exists(friends.chatId);
+        const exists2 = await pubClient.exists(`new${friends.chatId}`);
+
+        console.log("exists", exists, exists2);
+      }
     }
+    console.log("All data stored successfully");
   }, 5000);
 };
