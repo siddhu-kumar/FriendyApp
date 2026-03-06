@@ -1,30 +1,35 @@
+// token validation for api routes
+
 import jwt from "jsonwebtoken"
-import express from "express"
 
 const secret_key = process.env.AUTH_SECRET_KEY
 
 export const verifyToken = (req, res, next) => {
-    const authHeader = req.header('Authorization');
-    // console.log('verifyToken',req)
-    if (!authHeader) {
+    console.log("// verify token");
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        console.log("no access token")
         return res.status(401).json({
-            error: 'Access denied!'
+            error: 'No token provided!'
         })
     }
     try {
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, secret_key)
+        const decoded = jwt.verify(accessToken, secret_key)
         req.userId = decoded.userId;
-        // console.log(req.userId)
         next()
     } catch (err) {
         if (err.name == "TokenExpiredError") {
             return res.status(401).json({
-                expire: 'Token has Expired!'
+                message: 'Token has Expired!'
+            })
+        }
+        if(err.name == "JsonWebTokenError") {
+            return res.status(401).json({
+                message: 'Invalid token!'
             })
         }
         res.status(401).json({
-            error: 'Invalid token!'
+            message: 'Authentication failed!'
         })
     }
 }

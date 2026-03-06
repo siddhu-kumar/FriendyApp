@@ -9,6 +9,7 @@ export const getAllUser = async (req, res) => {
   console.log('// get all user list')
   let requestsListID = [];
   const id = req.userId;
+  console.log('user id', id);
   requestsListID.push(id);
   try {
     const userData = await User.findOne({

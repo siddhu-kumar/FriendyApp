@@ -1,3 +1,4 @@
+
 export const isLoggedIn = () => {
   let data = localStorage.getItem("data");
   if (data === null) {
@@ -12,7 +13,6 @@ export const doLogin = (data) => {
 };
 
 export const doLogout = () => {
-  
   localStorage.removeItem("data");
 };
 

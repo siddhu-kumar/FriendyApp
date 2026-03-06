@@ -32,15 +32,7 @@ const DataProvider = ({children}) => {
             getAllUser().then(data => {
                 setUserList(data);
             }).catch(error => {
-                if (error.response.data.expire) {
-                    doLogout();
-                    setUserList('');    
-                    setUserDetails('');
-                    setAuth(isLoggedIn);
-                }
-                console.log(error.response.data)
-                console.log(localStorage.clear("data"))
-                window.location.href = "/login"
+                console.log(error);
             })
         } else {
             redirect("/login")

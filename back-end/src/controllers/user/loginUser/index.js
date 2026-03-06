@@ -1,4 +1,4 @@
-import { RequestSchema, User } from "../../../models/models.js";
+import { RefreshToken, User } from "../../../models/models.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { namespace } from "../../../websocket/chat.js";
 import { allUsers } from "../../../index.js";
@@ -7,9 +7,9 @@ import bcrypt from "bcrypt";
 import { LoginUser, UserDetails } from "../../../class/userRespectiveData.js";
 import { UserSharedData, RequestSchemaUser } from "../../../class/usersSharedData.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import JSONTransport from "nodemailer/lib/json-transport/index.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
+const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
 
 export const loginUser = async (req, res) => {
   console.log("// login user");
@@ -49,9 +49,25 @@ export const loginUser = async (req, res) => {
       },
       secret_key,
       {
-        expiresIn: "100h",
+        expiresIn: "30s",
       }
     );
+
+    const refreshToken = jwt.sign(
+      {
+        userId: userData.id,
+      },
+      refresh_secret_key,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    const newRefreshToken = new RefreshToken({
+      userId: userData.id,
+      token: refreshToken,
+    });
+    await newRefreshToken.save();
 
     //  UserDetails (LogIN user) class instance
     allUsers[userData.id] = new UserDetails(
@@ -108,9 +124,24 @@ export const loginUser = async (req, res) => {
       userData.endpoint
     );
     // console.log("namspace", namespace);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, 
+      sameSite: "lax",
+      path: "/refresh-token",
+      MaxKeyAge: 7 * 24 * 60 * 60 * 1000,
+    }); 
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: false, 
+      sameSite: "lax",
+      MaxKeyAge: 30 * 1000,
+    });
+
     res.status(200).json({
       data,
-      token,
       userObj: allUsers[userData.id],
     });
   } catch (error) {
