@@ -9,17 +9,22 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./redis/clusterredis.js";
 import { chatNamespaceFun } from "./websocket/chat.js";
 import cookieParser from "cookie-parser";
+import cookie from "cookie";
+import jwt from "jsonwebtoken";
 
-const allowed_origin = process.env.ORIGIN || "*";
+const allowed_origin = process.env.ORIGIN;
+console.log("allowed_origin", allowed_origin);
 const PORT = process.env.PORT || 8000;
 
 const app = express();
-app.use(cors({
-  origin: allowed_origin,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: allowed_origin,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 await connectDB();
@@ -37,11 +42,29 @@ const expressServer = app.listen(PORT);
 export let allUsers = {};
 
 export const io = new Server(expressServer, {
-  cors: allowed_origin,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  },
   adapter: createAdapter(pubClient, subClient),
 });
 
-chatNamespaceFun(io);
+const chatNs = io.of("/chatns");
+
+chatNs.use((socket, next) => {
+  const cookies = socket.handshake.headers.cookie;
+  if (!cookies) {
+    return next(new Error("Authentication error"));
+  }
+  const parsedCookies = cookie.parse(cookies);
+  socket.userToken = parsedCookies.accessToken;
+  const decodedToken = jwt.decode(socket.userToken);
+  if (decodedToken && decodedToken.userId) {
+    socket.userId = decodedToken.userId;
+  }
+  next();
+});
+
+chatNamespaceFun(chatNs);

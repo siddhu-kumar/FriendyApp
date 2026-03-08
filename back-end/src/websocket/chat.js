@@ -2,18 +2,18 @@ import { Chat, User } from "../models/models.js";
 import { getEndpoint } from "../controllers/chat.js";
 import { Message } from "../class/Message.js";
 import { pubClient } from "../redis/clusterredis.js";
+import cookieParser from "cookie-parser";
+
 export let namespace = {};
 // records for specific chat group message exists in redis cache in true/false
 export let roomIdList = {};
 const roomTimeouts = new Map();
 // let arr = []
-export const chatNamespaceFun = (io) => {
-  io.of("/chatns").on("connection", async (socket) => {
+export const chatNamespaceFun = (chatNs) => {
+  chatNs.on("connection", async (socket) => {
     console.log("// chatns");
     try {
-      const [namespaceuser, id] = await getEndpoint(
-        socket.handshake.auth.token,
-      );
+      const [namespaceuser, id] = await getEndpoint(socket.userId);
 
       if (id === 0) {
         socket.emit("friendlist", []);

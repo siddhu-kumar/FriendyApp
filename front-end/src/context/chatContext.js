@@ -14,11 +14,12 @@ const ChatProvider = ({ children }) => {
 
   const token = localStorage.getItem('data')
   const parse = JSON.parse(token)
-  const authHeader = {
-    auth: {
-      token: `Bearer ${parse.token}`
-    }
-  }
+  
+  // const authHeader = {
+  //   auth: {
+  //     token: `Bearer ${parse.token}`
+  //   }
+  // }
 
   const [namespace, setNamespace] = useState('')
   const [endPoint, setEndPoint] = useState('')
@@ -28,7 +29,7 @@ const ChatProvider = ({ children }) => {
   const [offSet, setOffSet] = useState(30);
 
   useEffect(() => {
-    socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, authHeader)
+    socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, {withCredentials: true})
     socket.on('friendlist',(data) => {
       setFriendList(data)
       console.log(data)
