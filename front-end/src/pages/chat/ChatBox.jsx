@@ -1,10 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import style from "./chat.module.css";
-import { ChatContext, socket } from "../../context/chatContext";
+import { ChatContext } from "../../context/chatContext";
 import MessageCard from "./MessageCard";
 import '../css/index.css'
 export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   const {
+    socket,
     namespace,
     setFriendList,
     endPoint,
@@ -24,12 +25,21 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
     time: Date.now(),
     message: "",
   });
+
+  useEffect(() => {
+    setMessage(prev => ({
+      ...prev,
+      sender: friendData.namespaceId,
+      receiver: friendData.userId,
+    }));
+  }, [friendData]);
+
   const [flag,setFlag] = useState(true);
 
   const limit = 10;
 
   useEffect(() => {
-    
+    if (!socket) return;
     if (hasMore) {
       socket.on("getNextMessage", (data) => {
         console.log(data);
@@ -51,11 +61,11 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
     return () => {
       socket.off("getNextMessage");
     };
-  }, [hasMore, offSet, setChatHistory, setHasMore, setOffSet]);
+  }, [socket, hasMore, offSet, setChatHistory, setHasMore, setOffSet]);
 
   useEffect(() => {
     const loadMoreMessages = () => {
-      if (!hasMore || !messagesRef.current) return;
+      if (!socket || !hasMore || !messagesRef.current) return;
 
       prevScrollHeightRef.current = messagesRef.current.scrollHeight;
 
@@ -78,7 +88,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
       observer.observe(chatTopRef.current);
     }
     return () => observer.disconnect();
-  }, [offSet, hasMore]);
+  }, [socket, offSet, hasMore]);
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -87,6 +97,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
   }, [chatHistory.length]);
 
   useEffect(() => {
+    if (!socket) return;
     socket.off("listenMessage");
     socket.on("listenMessage", (messageObj) => {
       socket.emit("listenMessageAck", { message: "received" });
@@ -103,7 +114,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
       });
       // callback({ message: "received" });
     });
-  }, [endPoint, setChatHistory, setFriendList, namespace]);
+  }, [socket, endPoint, setChatHistory, setFriendList, namespace]);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -113,6 +124,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!socket) return;
     console.log(message)
     if(message.message.trim().length === 0) {
       setFlag(false);

@@ -65,7 +65,7 @@ const Register = () => {
             type="text"
             placeholder="Username must be atleast 4 letter."
             name="name"
-            value={userInput.username}
+            value={userInput.name}
             onChange={handleChange}
           />
           <label htmlFor="email">User Email</label>
