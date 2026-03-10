@@ -28,6 +28,7 @@ function OTPValidate() {
     userOTPValidate(otp)
       .then((data) => {
         console.log(data.data);
+        localStorage.setItem("login", true);
         setUserDetails(data.data);
         doLogin(data);
         setAuth(isLoggedIn);

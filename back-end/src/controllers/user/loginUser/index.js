@@ -129,7 +129,7 @@ export const loginUser = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production"?true:false, 
-      sameSite: "none",
+      sameSite: node_env === "production"? "none" : "lax",
       path: "/refresh-token",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     }); 
@@ -137,7 +137,7 @@ export const loginUser = async (req, res) => {
     res.cookie("accessToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production"?true:false, 
-      sameSite: "none",
+      sameSite: node_env === "production"? "none" : "lax",
       maxAge: 30 * 1000,
     });
 

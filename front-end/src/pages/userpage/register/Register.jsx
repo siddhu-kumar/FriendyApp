@@ -29,17 +29,15 @@ const Register = () => {
 
       await validateUserData(userInput)
         .then(async (data) => {
-          console.log(data);
           if (data.flag) {
             setUserDetails(userInput);
             navigate("/email_sent");
-            await emailValidate({ email: userInput.email }).then(data => {
-              console.log(data);
-            })
+            // await emailValidate({ email: userInput.email }).then(data => {
+            //   console.log(data);
+            // })
           }
         })
         .catch((err) => {
-          console.log(err.response);
           if (!err.response.data.flag) {
             // console.log(err)
             setData("Contact/Email already exists.");

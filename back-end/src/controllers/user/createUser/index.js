@@ -11,7 +11,7 @@ import { promises } from "fs";
 import bcrypt from "bcrypt"
 
 const secret_key = process.env.AUTH_SECRET_KEY;
-const refresh_secrect_key = process.env.REFRESH_SECRECT_KEY;
+const refresh_secrect_key = process.env.REFRESH_SECRET_KEY;
 const node_env = process.env.NODE_ENV;
 
 const readFile = async () => {
@@ -114,14 +114,14 @@ export const createUser = async (otp, res) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: node_env === "production"?true:false,
-        sameSite: "none",
+        sameSite: node_env === "production"? "none" : "lax",
         path: "/refresh-token",
         maxAge: 7*24*60*60*1000,
       })
       res.cookie("accessToken", token, {
         httpOnly: true,
         secure: node_env === "production"?true:false,
-        sameSite: "none",
+        sameSite: node_env === "production"? "none" : "lax",
         maxAge: 30*60*1000,
       })
       res.status(status.CREATED).json({
