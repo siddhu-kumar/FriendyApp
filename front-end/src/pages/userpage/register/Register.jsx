@@ -26,23 +26,20 @@ const Register = () => {
  
 
     if (isValidated.length === 0) {
-
       await validateUserData(userInput)
-        .then(async (data) => {
+        .then((data) => {
           if (data.flag) {
             setUserDetails(userInput);
-            navigate("/email_sent");
-            // await emailValidate({ email: userInput.email }).then(data => {
-            //   console.log(data);
-            // })
+            navigate("/otp-validate");
           }
         })
         .catch((err) => {
-          if (!err.response.data.flag) {
-            // console.log(err)
+          if (err.response && err.response.data && !err.response.data.flag) {
             setData("Contact/Email already exists.");
-            return;
+          } else {
+            setData("Something went wrong. Please try again.");
           }
+          return;
         });
     } else {
       isValidated.forEach((element) => {

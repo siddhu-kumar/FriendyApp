@@ -10,7 +10,8 @@ export const validation = (input) => {
     }
 
     if (input.name.trim() === "" || input.email.trim() === "" || input.contact.trim() === "" || input.password.trim() === "") {
-        return message.push('Please enter valid user credential.');
+        message.push('Please enter valid user credential.');
+        return message;
     }
     if (input.name.length < 4) {
         message.push('User name must be atleast 4 letter.');

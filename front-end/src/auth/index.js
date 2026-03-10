@@ -18,7 +18,7 @@ export const doLogout = () => {
 };
 
 export const getUserData = () => {
-  if (isLoggedIn) {
+  if (isLoggedIn()) {
     const data = localStorage.getItem("data");
     const parsedData = JSON.parse(data);
     // console.log(data.token)
