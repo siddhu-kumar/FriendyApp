@@ -3,6 +3,7 @@ import { RefreshToken } from "../models/models.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
+const node_env = process.env.NODE_ENV;
 
 export async function referenshTokenValidation(req, res) {
   console.log("// refresh token validation");
