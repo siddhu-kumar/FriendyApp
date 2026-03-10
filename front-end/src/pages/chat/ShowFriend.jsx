@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import style from "./chat.module.css";
-import { ChatContext , socket} from "../../context/chatContext";
+import { ChatContext } from "../../context/chatContext";
 
 export const ShowFriend = (props) => {
-  const { friendList, setHasMore, setOffSet } = useContext(ChatContext);
+  const { socket, friendList, setHasMore, setOffSet } = useContext(ChatContext);
   const [listClicked, setListClicked] = useState("");
   const [friendData, setFriendData] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
     props.getData(friendData, chatHistory, listClicked);
-  }, [chatHistory]);
+  }, [chatHistory, friendData, listClicked, props]);
+
   const handleClick = (event, friendData) => {
     event.preventDefault();
-    // console.log('show ',friendData)
+    if (!socket) return;
     if (listClicked && listClicked !== event.currentTarget) {
-      // console.log(listClicked)
       listClicked.style.backgroundColor = "";
     }
     socket.emit("joinsRoom", friendData, (val, err) => {

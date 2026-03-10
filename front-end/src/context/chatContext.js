@@ -5,22 +5,13 @@ import {
 } from "react";
 import {
   io
-} from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js"
+} from "socket.io-client";
 
-export const ChatContext = createContext(null)
-export let socket = null
+export const ChatContext = createContext(null);
 
 const ChatProvider = ({ children }) => {
 
-  const token = localStorage.getItem('data')
-  const parse = JSON.parse(token)
-  
-  // const authHeader = {
-  //   auth: {
-  //     token: `Bearer ${parse.token}`
-  //   }
-  // }
-
+  const [socket, setSocket] = useState(null);
   const [namespace, setNamespace] = useState('')
   const [endPoint, setEndPoint] = useState('')
   const [friendList, setFriendList] = useState([])
@@ -29,19 +20,21 @@ const ChatProvider = ({ children }) => {
   const [offSet, setOffSet] = useState(30);
 
   useEffect(() => {
-    socket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, {withCredentials: true})
-    socket.on('friendlist',(data) => {
+    const newSocket = io(`${process.env.REACT_APP_BACKEND_HOST}/chatns`, {withCredentials: true})
+    setSocket(newSocket);
+    newSocket.on('friendlist',(data) => {
       setFriendList(data)
       console.log(data)
     })
     return (()=> {
-      socket.off('friendlist');
+      newSocket.off('friendlist');
+      newSocket.disconnect();
     })
   }, [])
 
-  // console.log(userDetails.token)
   return (<ChatContext.Provider value={
     {
+      socket,
       namespace,
       setNamespace,
       endPoint,
