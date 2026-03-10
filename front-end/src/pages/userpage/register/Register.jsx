@@ -26,20 +26,26 @@ const Register = () => {
  
 
     if (isValidated.length === 0) {
+      console.log("Submitting user data:", userInput);
       await validateUserData(userInput)
         .then((data) => {
+          console.log("Response from server:", data);
           if (data.flag) {
             setUserDetails(userInput);
-            navigate("/otp-validate");
+            console.log("Navigating to /email_sent");
+            navigate("/email_sent");
+          } else {
+            console.error("Flag was false:", data);
+            setData("Registration failed. Please check your details.");
           }
         })
         .catch((err) => {
+          console.error("Error during registration:", err);
           if (err.response && err.response.data && !err.response.data.flag) {
             setData("Contact/Email already exists.");
           } else {
             setData("Something went wrong. Please try again.");
           }
-          return;
         });
     } else {
       isValidated.forEach((element) => {
