@@ -17,12 +17,12 @@ export const logoutUser = async (req,res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production"?true:false, 
-    sameSite: "lax",
+    sameSite: "none",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production"?true:false,  
-    sameSite: "lax",
+    sameSite: "none",
     path: "/refresh-token",
   });
 

@@ -114,14 +114,14 @@ export const createUser = async (otp, res) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: node_env === "production"?true:false,
-        sameSite: "lax",
+        sameSite: "none",
         path: "/refresh-token",
         maxAge: 7*24*60*60*1000,
       })
       res.cookie("accessToken", token, {
         httpOnly: true,
         secure: node_env === "production"?true:false,
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 30*60*1000,
       })
       res.status(status.CREATED).json({
