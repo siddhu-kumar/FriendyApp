@@ -36,7 +36,7 @@ export let allUsers = {};
 
 export const io = new Server(expressServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: allowed_origin,
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
