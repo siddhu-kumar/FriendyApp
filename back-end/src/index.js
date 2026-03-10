@@ -12,16 +12,16 @@ import cookieParser from "cookie-parser";
 import { authToken } from "./middleware/token.js";
 
 const allowed_origin = process.env.ORIGIN;
-console.log("allowed_origin", allowed_origin);
 const PORT = process.env.PORT || 8000;
 
 const app = express();
 app.use(
   cors({
     origin: allowed_origin,
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     credentials: true,
+    optionsSuccessStatus: 200
   }),
 );
 app.use(cookieParser());

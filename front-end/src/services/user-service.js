@@ -61,7 +61,16 @@ export const userProfile = (userData) => {
 }
 
 export const validateUserData = (userData) => {
-    return myAxios.post(`/user/validate_data`, userData).then(res => res.data)
+    console.log("Calling API to validate user data...");
+    return myAxios.post(`/user/validate_data`, userData)
+        .then(res => {
+            console.log("Response data from API:", res.data);
+            return res.data;
+        })
+        .catch(err => {
+            console.error("Network or API Error in validateUserData:", err);
+            throw err;
+        })
 }
 
 export const editProfile = (userData) => {
