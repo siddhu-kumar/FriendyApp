@@ -15,15 +15,21 @@ const allowed_origin = process.env.ORIGIN;
 const PORT = process.env.PORT || 8000;
 
 const app = express();
-app.use(
-  cors({
-    origin: allowed_origin,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-    credentials: true,
-    optionsSuccessStatus: 200
-  }),
-);
+
+// Explicit CORS handling for Cookies on Render
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", allowed_origin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+  
+  // Handle Preflight (OPTIONS)
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(cookieParser());
 app.use(express.json());
 await connectDB();

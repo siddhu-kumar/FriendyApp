@@ -39,12 +39,14 @@ export const validateUserData = async (req, res) => {
         password: password,
       });
       await tempUser.save();
+      console.log("Temp user saved, sending email...");
       await sendEmail(email, otp);
+      console.log("Email sent successfully to:", email);
       res.status(200).json({
         message: "doesNotExists",
         flag: true,
       });
-
+      console.log("Backend response sent to client.");
       return;
     }
     // flag = false, it dose not allow to create new user
