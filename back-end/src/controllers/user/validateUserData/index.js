@@ -54,6 +54,10 @@ export const validateUserData = async (req, res) => {
     });
     return;
   } catch (error) {
-    console.log(error);
+    console.error("Validation Error:", error);
+    res.status(500).json({
+      message: "Server error during validation",
+      flag: false,
+    });
   }
 };
