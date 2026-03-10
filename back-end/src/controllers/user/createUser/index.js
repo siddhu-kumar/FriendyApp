@@ -1,4 +1,4 @@
-import { TempUser, User,  } from "../../../models/models.js";
+import { RefreshToken, TempUser, User,  } from "../../../models/models.js";
 import { generateEndpoint } from "../../chat.js";
 import { status } from "../../../utils/error.js";
 import { namespace } from "../../../websocket/chat.js";
@@ -11,6 +11,8 @@ import { promises } from "fs";
 import bcrypt from "bcrypt"
 
 const secret_key = process.env.AUTH_SECRET_KEY;
+const refresh_secrect_key = process.env.REFRESH_SECRECT_KEY;
+const node_env = process.env.NODE_ENV;
 
 const readFile = async () => {
   const __filename = fileURLToPath(import.meta.url);
@@ -85,20 +87,49 @@ export const createUser = async (otp, res) => {
               expiresIn: "100h",
           }
       );
+
+      const refreshToken = jwt.sign(
+        {
+            userId: uuid,
+        },
+        refresh_secrect_key,
+        {
+            expiresIn: "7d",
+        }
+      );
+
+      const newRefreshToken = new RefreshToken({
+        userId: uuid,
+        token: refreshToken,
+      })
+
+      await newRefreshToken.save();
+
       const data = {
           name,
           email,
           contact,
       };
 
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: node_env === "production"?true:false,
+        sameSite: "lax",
+        path: "/refresh-token",
+        maxAge: 7*24*60*60*1000,
+      })
+      res.cookie("accessToken", token, {
+        httpOnly: true,
+        secure: node_env === "production"?true:false,
+        sameSite: "lax",
+        maxAge: 30*60*1000,
+      })
       res.status(status.CREATED).json({
           data,
-          token,
       });
       const deleteTempUser = await TempUser.findOneAndDelete({
           otp: otp,
       });
-    //   console.log(deleteTempUser);
   } catch (error) {
       console.log("c", error);
       if (error.code === 11000) {

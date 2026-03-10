@@ -9,8 +9,7 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./redis/clusterredis.js";
 import { chatNamespaceFun } from "./websocket/chat.js";
 import cookieParser from "cookie-parser";
-import cookie from "cookie";
-import jwt from "jsonwebtoken";
+import { authToken } from "./middleware/token.js";
 
 const allowed_origin = process.env.ORIGIN;
 console.log("allowed_origin", allowed_origin);
@@ -28,12 +27,6 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 await connectDB();
-
-app.get("/token", verifyToken, (req, res) => {
-  res.status(200).json({
-    message: "message",
-  });
-});
 
 app.use("/user", userRouters);
 app.use("/", userPasswordResetRouters);
@@ -53,18 +46,6 @@ export const io = new Server(expressServer, {
 
 const chatNs = io.of("/chatns");
 
-chatNs.use((socket, next) => {
-  const cookies = socket.handshake.headers.cookie;
-  if (!cookies) {
-    return next(new Error("Authentication error"));
-  }
-  const parsedCookies = cookie.parse(cookies);
-  socket.userToken = parsedCookies.accessToken;
-  const decodedToken = jwt.decode(socket.userToken);
-  if (decodedToken && decodedToken.userId) {
-    socket.userId = decodedToken.userId;
-  }
-  next();
-});
+chatNs.use(authToken); 
 
 chatNamespaceFun(chatNs);
