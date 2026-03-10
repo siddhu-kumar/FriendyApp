@@ -11,9 +11,9 @@ export const loginUser = (loginUser) => {
         })
 }
 
-export const emailValidate = (data) => {
-    return myAxios.post("/user/validate_email", data).then(res => res.data);
-}
+// export const emailValidate = (data) => {
+//     return myAxios.post("/user/validate_email", data).then(res => res.data);
+// }
 
 export const getAllUser = () => {
     return privateAxios.get('/user/all_user')

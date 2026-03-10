@@ -30,7 +30,7 @@ privateAxios.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    if (error.response && error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response?.status === 401 && !originalRequest._retry && !originalRequest.url !== "/refresh-token") {
       console.log("401 error intercepted, refreshing token...");
       originalRequest._retry = true;
       try {

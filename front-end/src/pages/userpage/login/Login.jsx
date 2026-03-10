@@ -32,6 +32,7 @@ const Login = () => {
     loginUser(userInput)
       .then((data) => {
         console.log('login', data);
+        localStorage.setItem("login", true);
         doLogin(data);
         setUserDetails(getUserData);
         getAllUser()

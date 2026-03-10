@@ -10,6 +10,7 @@ import { pubClient } from "../../../redis/clusterredis.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
+const node_env = process.env.NODE_ENV;
 
 export const loginUser = async (req, res) => {
   console.log("// login user");
@@ -128,16 +129,16 @@ export const loginUser = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production"?true:false, 
-      sameSite: "lax",
+      sameSite: node_env === "production"? "none" : "lax",
       path: "/refresh-token",
-      MaxKeyAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     }); 
 
     res.cookie("accessToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production"?true:false, 
-      sameSite: "lax",
-      MaxKeyAge: 30 * 1000,
+      sameSite: node_env === "production"? "none" : "lax",
+      maxAge: 30 * 1000,
     });
 
     res.status(200).json({

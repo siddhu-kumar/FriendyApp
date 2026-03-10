@@ -1,10 +1,10 @@
 
 export const isLoggedIn = () => {
-  let data = localStorage.getItem("data");
-  if (data === null) {
-    return false;
-  } else {
+  let data = localStorage.getItem("login");
+  if (data === true || data === "true") {
     return true;
+  } else {
+    return false;
   }
 };
 
@@ -14,6 +14,7 @@ export const doLogin = (data) => {
 
 export const doLogout = () => {
   localStorage.removeItem("data");
+  localStorage.removeItem("login");
 };
 
 export const getUserData = () => {
@@ -31,13 +32,6 @@ export const getUserData = () => {
   }
 };
 
-export const getToken = () => {
-  if (isLoggedIn()) {
-    return JSON.parse(localStorage.getItem("data"));
-  } else {
-    return null;
-  }
-};
 
 export const editStorage = (user) => {
   if (isLoggedIn()) {

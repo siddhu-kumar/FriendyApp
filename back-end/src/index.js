@@ -9,26 +9,24 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import { pubClient, subClient } from "./redis/clusterredis.js";
 import { chatNamespaceFun } from "./websocket/chat.js";
 import cookieParser from "cookie-parser";
+import { authToken } from "./middleware/token.js";
 
-const allowed_origin = process.env.ORIGIN || "*";
+const allowed_origin = process.env.ORIGIN;
+console.log("allowed_origin", allowed_origin);
 const PORT = process.env.PORT || 8000;
 
 const app = express();
-app.use(cors({
-  origin: allowed_origin,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: allowed_origin,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 await connectDB();
-
-app.get("/token", verifyToken, (req, res) => {
-  res.status(200).json({
-    message: "message",
-  });
-});
 
 app.use("/user", userRouters);
 app.use("/", userPasswordResetRouters);
@@ -37,11 +35,17 @@ const expressServer = app.listen(PORT);
 export let allUsers = {};
 
 export const io = new Server(expressServer, {
-  cors: allowed_origin,
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-  credentials: true,
+  cors: {
+    origin: allowed_origin,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  },
   adapter: createAdapter(pubClient, subClient),
 });
 
-chatNamespaceFun(io);
+const chatNs = io.of("/chatns");
+
+chatNs.use(authToken); 
+
+chatNamespaceFun(chatNs);

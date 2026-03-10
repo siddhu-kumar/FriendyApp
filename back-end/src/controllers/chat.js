@@ -21,16 +21,11 @@ export const generateEndpoint = async (inputString) => {
   return hashKey;
 };
 
-export const getEndpoint = async (token) => {
+export const getEndpoint = async (userId) => {
   console.log("// get Endpoint");
-  const id = authToken(token);
-  if (id === null) {
-    // console.log("invalid token");
-    return [null, null];
-  }
   const namespace = {};
   const user = await User.findOne({
-    id: id,
+    id: userId,
   });
   const friendList = user.friends;
 

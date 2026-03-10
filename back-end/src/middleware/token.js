@@ -1,19 +1,23 @@
 // token validation for socket connection
 import jwt from "jsonwebtoken";
+import cookie from "cookie";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 
-export const authToken = (token) => {
-  token = token.split(" ")[1];
+export const authToken = (socket, next) => {
   try {
-    const decoded = jwt.verify(token, secret_key);
-    // console.log('verified',decoded)
-    return decoded.userId;
-  } catch (err) {
-    if (err.name == "TokenExpiredError") {
-      // console.log('got it')
+    const cookies = socket.handshake.headers.cookie;
+    if (!cookies) {
+      return next(new Error("NO cookies provided"));
     }
-    // console.log('err',err)
-    return null;
+    const parsedCookies = cookie.parse(cookies);
+    socket.userToken = parsedCookies.accessToken;
+    const decodedToken = jwt.decode(socket.userToken);
+    if (decodedToken && decodedToken.userId) {
+      socket.userId = decodedToken.userId;
+    }
+    next();
+  } catch (err) {
+    next(new Error("Authentication error"));
   }
 };

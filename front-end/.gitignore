@@ -24,3 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 /frontend.zip
 /packagelockbackup
+/tests
+setupTests.js
+jest.resolver.js
