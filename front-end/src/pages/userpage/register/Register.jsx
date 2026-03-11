@@ -15,7 +15,6 @@ const Register = () => {
     password: "",
   });
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setUserInput({ ...userInput, [name]: value });
@@ -27,25 +26,20 @@ const Register = () => {
  
 
     if (isValidated.length === 0) {
-      setLoading(true);
       console.log("Submitting user data:", userInput);
       await validateUserData(userInput)
         .then((data) => {
-          setLoading(false);
           console.log("Response from server:", data);
           if (data.flag) {
             setUserDetails(userInput);
             console.log("Navigating to /email_sent");
-            setTimeout(() => {
-              navigate("/email_sent");
-            }, 100);
+            navigate("/email_sent");
           } else {
             console.error("Flag was false:", data);
             setData("Registration failed. Please check your details.");
           }
         })
         .catch((err) => {
-          setLoading(false);
           console.error("Error during registration:", err);
           if (err.response && err.response.data && !err.response.data.flag) {
             setData("Contact/Email already exists.");
@@ -104,8 +98,8 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-          <button className={style.RegisterBtn} type="submit" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
+          <button className={style.RegisterBtn} type="submit">
+            Register
           </button>
           <span>
             Already have an account? <Link to="/login">Log-In here</Link> !

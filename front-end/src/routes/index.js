@@ -38,31 +38,31 @@ export const router = createBrowserRouter([
         element: <RestrictedRoute />,
         children: [
           {
-            path: "login",
+            path: "/login",
             element: <Login />
           },
           {
-            path: "register",
+            path: "/register",
             element: <Register />
           },
           {
-            path: "email_sent",
+            path: "/email_sent",
             element: <EmailSent />
           },
           {
-            path: "email-verify",
+            path: "/email-verify",
             element: <EmailVerify />
           },
           {
-            path: "otp-verify",
+            path: "/otp-verify",
             element: <OTPVerify />
           },
           {
-            path: "otp-validate",
+            path: "/otp-validate",
             element: <OTPValidate />
           },
           {
-            path: "reset-password",
+            path: "/reset-password",
             element: <Password />
           }
         ]
