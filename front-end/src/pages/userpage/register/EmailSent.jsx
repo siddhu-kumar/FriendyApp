@@ -5,6 +5,16 @@ import { Link } from "react-router-dom";
 
 export const EmailSent = () => {
   const { userDetails } = useContext(UserContext);
+
+  if (!userDetails) {
+    return (
+      <div className={style.EmailSentMessage}>
+        <p>User details missing. Please register again.</p>
+        <Link to="/register">Go to Register</Link>
+      </div>
+    );
+  }
+
   return (
     <div className={style.EmailSentMessage}>
       <p>

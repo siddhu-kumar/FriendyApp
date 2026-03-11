@@ -35,8 +35,7 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
-        element: <ProtectedRoute ></ProtectedRoute>,
+        element: <ProtectedRoute />,
         children: [
           {
             index: true,
@@ -47,64 +46,64 @@ export const router = createBrowserRouter([
             element: <Home />
           },
           {
-            path: "/sent_request",
+            path: "sent_request",
             element: <Pending />
           },
           {
-            path: "/received_request",
+            path: "received_request",
             element: <Request />
           },
           {
-            path: "/profile",
+            path: "profile",
             element: <Profile />
           },
           {
-            path: "/chats",
-            element: (<ChatProvider>
-              <Chat />
-            </ChatProvider>)
-          },
+            path: "chats",
+            element: (
+              <ChatProvider>
+                <Chat />
+              </ChatProvider>
+            )
+          }
         ]
       },
-
       {
-        path: "/",
         element: <RestrictedRoute />,
         children: [
           {
-            path: "/login",
+            path: "login",
             element: <Login />
           },
           {
-            path: "/register",
+            path: "register",
             element: <Register />
           },
           {
-            path: "/email_sent",
+            path: "email_sent",
             element: <EmailSent />
           },
           {
-            path: "/email-verify",
+            path: "email-verify",
             element: <EmailVerify />
           },
           {
-            path: "/otp-verify",
+            path: "otp-verify",
             element: <OTPVerify />
           },
           {
-            path: "/otp-validate",
+            path: "otp-validate",
             element: <OTPValidate />
           },
           {
-            path: "/reset-password",
+            path: "reset-password",
             element: <Password />
-          },
+          }
         ]
       },
       {
-        path: "/*",
+        path: "*",
         element: <PageNotFound />
-      },
+      }
     ]
   }
-])
+]);
