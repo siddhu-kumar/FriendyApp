@@ -35,39 +35,6 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        element: <ProtectedRoute />,
-        children: [
-          {
-            index: true,
-            element: <Home />
-          },
-          {
-            path: "home",
-            element: <Home />
-          },
-          {
-            path: "sent_request",
-            element: <Pending />
-          },
-          {
-            path: "received_request",
-            element: <Request />
-          },
-          {
-            path: "profile",
-            element: <Profile />
-          },
-          {
-            path: "chats",
-            element: (
-              <ChatProvider>
-                <Chat />
-              </ChatProvider>
-            )
-          }
-        ]
-      },
-      {
         element: <RestrictedRoute />,
         children: [
           {
@@ -97,6 +64,39 @@ export const router = createBrowserRouter([
           {
             path: "reset-password",
             element: <Password />
+          }
+        ]
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            index: true,
+            element: <Home />
+          },
+          {
+            path: "home",
+            element: <Home />
+          },
+          {
+            path: "sent_request",
+            element: <Pending />
+          },
+          {
+            path: "received_request",
+            element: <Request />
+          },
+          {
+            path: "profile",
+            element: <Profile />
+          },
+          {
+            path: "chats",
+            element: (
+              <ChatProvider>
+                <Chat />
+              </ChatProvider>
+            )
           }
         ]
       },

@@ -36,7 +36,9 @@ const Register = () => {
           if (data.flag) {
             setUserDetails(userInput);
             console.log("Navigating to /email_sent");
-            navigate("/email_sent");
+            setTimeout(() => {
+              navigate("/email_sent");
+            }, 100);
           } else {
             console.error("Flag was false:", data);
             setData("Registration failed. Please check your details.");
