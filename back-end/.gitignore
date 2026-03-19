@@ -7,7 +7,7 @@ test.js
 ./test/
 migrations/
 products.json
-filestructure.js
+filestructure.txt
 .env
 src/controllers/friends.js
 src/controllers/user/users.js
@@ -17,3 +17,8 @@ src/routes/temproute.js
 /node-redis.js
 /backend.zip
 docker-compose.yml
+localhost-key.pem
+localhost.pem
+.gitignore
+
+test.js

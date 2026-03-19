@@ -1,24 +1,27 @@
 import mongoose from "mongoose";
 
-export const refreshTokenSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-        unique: true,
+export const refreshTokenSchema = new mongoose.Schema(
+  {
+    tokenHash: {
+      type: String,
+      required: true,
     },
-    token: {
-        type: String,
-        required: true,
+    createdAt: {
+      type: Date,
     },
-},
-{timestamps: true})
-
-// export const generateHashKey = (userId) => {
-//   const timestamp = Date.now().toString();
-//   const randomString = Math.random().toString(36).substring(2, 15);
-//   const hashKey = [userId, timestamp, randomString]
-//     .map((part) => part.toString())
-//     .map((byte) => byte.toString(16).padStart(2, "0"))
-//     .join("");
-//   return hashKey;
-// }
+    expiresAt: {
+      type: Date,
+    },
+    status: {
+      type: String,
+      enum: ["active", "invalid"],
+      default: "active",
+    },
+    parentToken: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RefreshToken",
+      default: null,
+    },
+  },
+  { timestamps: true },
+);
