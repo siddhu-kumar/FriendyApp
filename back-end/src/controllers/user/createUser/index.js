@@ -1,5 +1,4 @@
 import { RefreshToken, TempUser, User,  } from "../../../models/models.js";
-import { generateEndpoint } from "../../chat.js";
 import { status } from "../../../utils/error.js";
 import { namespace } from "../../../websocket/chat.js";
 import { v4 as uuidv4 } from "uuid";
@@ -22,6 +21,16 @@ const readFile = async () => {
   return fileTxt;
 };
 
+const generateEndpoint = async (inputString) => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(inputString);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashKey = hashArray
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+  return hashKey;
+};
 
 export const createUser = async (otp, res) => {
   console.log("// creating new user");

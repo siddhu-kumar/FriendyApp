@@ -1,7 +1,4 @@
 import { User, RequestSchema } from "../../../models/models.js";
-import { status } from "../../../utils/error.js";
-import { allUsers } from "../../../index.js";
-import { UserDetails } from "../../../class/userRespectiveData.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const getAllUser = async (req, res) => {

@@ -2,7 +2,6 @@ import { Chat, User } from "../models/models.js";
 import { getEndpoint } from "../controllers/chat.js";
 import { Message } from "../class/Message.js";
 import { pubClient } from "../redis/clusterredis.js";
-import cookieParser from "cookie-parser";
 
 export let namespace = {};
 // records for specific chat group message exists in redis cache in true/false

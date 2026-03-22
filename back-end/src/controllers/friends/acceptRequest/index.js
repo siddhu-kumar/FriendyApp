@@ -1,9 +1,7 @@
 
 
 import { User, Chat, RequestSchema } from "../../../models/models.js";
-import { namespace } from "../../../websocket/chat.js";
 import { generateRoomId } from "../../chat.js";
-import { Room } from "../../../class/Room.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
 export const acceptRequest = async (req, res) => {

@@ -1,6 +1,4 @@
 
-
-
 import { User } from "../../../models/models.js";
 
 export const getFriends = async (req, res) => {

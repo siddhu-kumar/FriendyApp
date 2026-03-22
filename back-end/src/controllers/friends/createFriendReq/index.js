@@ -4,10 +4,9 @@ import fs from "node:fs/promises";
 import path from "path";
 import { fileURLToPath } from "node:url";
 import { pubClient } from "../../../redis/clusterredis.js";
-import { RequestSchemaUser } from "../../../class/usersSharedData.js";
 
 export const createRequest = async (req, res) => {
-  console.log("// create new friend");
+  console.log("// create request");
   const { requestsId } = req.body;
   const userId = req.userId;
   console.log(userId, requestsId);

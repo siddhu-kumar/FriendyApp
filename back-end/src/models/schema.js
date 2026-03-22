@@ -1,5 +1,3 @@
-import mongoose, {mongo } from "mongoose"
-import uniqueValidator from "mongoose-unique-validator"
 
 import { chatSchemas } from "./chatSchema/index.js"
 import { requestSchema } from "./requestSchema/index.js"

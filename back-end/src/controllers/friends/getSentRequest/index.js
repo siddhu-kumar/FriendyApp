@@ -1,7 +1,5 @@
 import { RequestSchema } from "../../../models/models.js";
-import { RequestSchemaUser } from "../../../class/usersSharedData.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import { allUsers } from "../../../index.js";
 
 export const getSentRequest = async (req, res) => {
   console.log("// get Sent Request");
