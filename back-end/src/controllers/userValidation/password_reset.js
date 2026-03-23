@@ -124,7 +124,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000";
+const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://192.168.1.60:3000";
 
 const sendEmail = async (email, otp) => {
   try {
@@ -146,6 +146,9 @@ const sendEmail = async (email, otp) => {
       replyTo: "abc@gmail.com",
       text: `Hello ${email}`,
       html: html,
+      headers: {
+        "X-Custom-Headers": "my Custom value"
+      }
     };
     const mailsent = await transporter.sendMail(message);
     // console.log(mailsent);

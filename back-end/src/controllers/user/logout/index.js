@@ -2,6 +2,7 @@ import { roomIdList, expireRoom } from "../../../websocket/chat.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 import { RefreshToken } from "../../../models/models.js";
 
+const node_env = process.env.NODE_ENV;
 
 export const logoutUser = async (req,res) => {
   console.log('// logout user')
@@ -16,12 +17,12 @@ export const logoutUser = async (req,res) => {
 
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production"?true:false, 
+    secure: node_env === "production"?true:false, 
     sameSite: node_env === "production"? "none" : "lax",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production"?true:false,  
+    secure: node_env === "production"?true:false,  
     sameSite: node_env === "production"? "none" : "lax",
     path: "/refresh-token",
   });

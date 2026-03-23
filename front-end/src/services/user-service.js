@@ -72,8 +72,8 @@ export const createUser = (userData) => {
     return myAxios.post('/user/register', userData).then(res => res.data)
 }
 
-export const userOTPValidate = (data) => {
-    return myAxios.post('/user/validate_otp', data).then(res => res.data)
+export const userOTPValidate = (data,id) => {
+    return myAxios.post(`/user/validate_otp?id=${id}`, data).then(res => res.data)
 }
 
 export const pagination = (data) => {

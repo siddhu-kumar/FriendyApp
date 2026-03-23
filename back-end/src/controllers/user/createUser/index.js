@@ -1,13 +1,15 @@
-import { RefreshToken, TempUser, User,  } from "../../../models/models.js";
+import jwt from "jsonwebtoken";
+import path from "node:path"
+import bcrypt from "bcrypt"
+import { fileURLToPath } from "node:url";
+import { promises } from "fs";
+import { v4 as uuidv4 } from "uuid";
+
 import { status } from "../../../utils/error.js";
 import { namespace } from "../../../websocket/chat.js";
-import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 import { Namespace } from "../../../class/Namespace.js";
-import { fileURLToPath } from "node:url";
-import path from "node:path"
-import { promises } from "fs";
-import bcrypt from "bcrypt"
+import { pubClient } from "../../../redis/clusterredis.js";
+import { RefreshToken, TempUser, User,  } from "../../../models/models.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 const refresh_secrect_key = process.env.REFRESH_SECRET_KEY;
@@ -32,11 +34,11 @@ const generateEndpoint = async (inputString) => {
   return hashKey;
 };
 
-export const createUser = async (otp, res) => {
+export const createUser = async (tempId, res) => {
   console.log("// creating new user");
   try {
       const getUser = await TempUser.findOne({
-          otp,
+          otp:tempId,
       });
 
       const { name, email, contact, password } = getUser.toObject();
@@ -136,8 +138,8 @@ export const createUser = async (otp, res) => {
       res.status(status.CREATED).json({
           data,
       });
-      const deleteTempUser = await TempUser.findOneAndDelete({
-          otp: otp,
+      await TempUser.findOneAndDelete({
+          otp: tempId,
       });
   } catch (error) {
       console.log("c", error);

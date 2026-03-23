@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { doLogin, isLoggedIn } from "../../../auth";
 import { userOTPValidate } from "../../../services/user-service";
+import { useLocation } from "react-router-dom";
 
 function OTPValidate() {
   const { setAuth, setUserDetails } = useContext(UserContext);
@@ -11,7 +12,9 @@ function OTPValidate() {
   const [otp, setOtp] = useState({
     otp: "",
   });
-
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id')
   const [count, setCount] = useState(0);
 
   const [otpExpire, setOTPExpire] = useState(null);
@@ -25,7 +28,7 @@ function OTPValidate() {
     e.preventDefault();
     console.log(otp, "yui");
 
-    userOTPValidate(otp)
+    userOTPValidate(otp,id)
       .then((data) => {
         console.log(data.data);
         localStorage.setItem("login", true);

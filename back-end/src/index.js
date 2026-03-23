@@ -12,6 +12,7 @@ import { chatNamespaceFun } from "./websocket/chat.js";
 import { authToken } from "./middleware/token.js";
 
 const allowed_origin = process.env.ORIGIN;
+// const allowed_origin = "192.168.1.60"
 console.log("allowed_origin", allowed_origin);
 const PORT = process.env.PORT || 8000;
 

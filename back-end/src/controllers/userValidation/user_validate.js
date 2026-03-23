@@ -5,10 +5,12 @@ import { totp } from "otplib";
 
 export const userOTPValidate = async (req, res) => {
   try {
+    const id = req.query.id;
+    console.log('id', req.query)
     const { otp } = req.body;
     console.log(otp);
     const validate = await TempUser.findOne({
-      otp,
+      otp: id,
     });
     console.log("validate", validate);
     if (!validate) {
@@ -27,7 +29,7 @@ export const userOTPValidate = async (req, res) => {
       });
       return;
     }
-    await createUser(otp, res);
+    await createUser(id, res);
 
     // await TempUser.findOneAndDelete({ 'otp': otp })
   } catch (err) {
@@ -51,16 +53,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000";
+const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://192.168.1.60:3000";
 
-export const sendEmail = async (email, otp) => {
+export const sendEmail = async (email, otp, tempId) => {
   console.log(email, otp);
   const html = `<html lang="en">
                     <body style="background-color: white;">
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP - <h3 style="color: black;">${otp}</h3></h5>
-                        <span>Click here <a href="${FRONTENDRUNNINGPORT}/otp-validate">FriendyApp</a> </span>
+                        <span>Click here <a href="${FRONTENDRUNNINGPORT}/otp-validate?id=${tempId}">FriendyApp</a> </span>
                         
                     </body>
                 </html>`;
