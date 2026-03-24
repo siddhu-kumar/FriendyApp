@@ -2,14 +2,13 @@ import React, { useContext, useState } from "react";
 import style from "./login.module.css";
 import { Link } from "react-router-dom";
 import { loginUser, getAllUser } from "../../../services/user-service";
-import { doLogin, doLogout, getUserData, isLoggedIn } from "../../../auth";
+import { doLogin, getUserData, isLoggedIn } from "../../../auth";
 import { UserContext } from "../../../context/userContext";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 const Login = () => {
   const navigate = useNavigate();
   const { setAuth, setUserDetails, setUserList } = useContext(UserContext);
-  const [response, setResponse] = useState(null);
   const [userInput, setUserInput] = useState({
     email: "",
     user_password: "",
@@ -58,7 +57,6 @@ const Login = () => {
 
   return (
     <div className={style.Login}>
-      <div>{response}</div>
       <div className={style.loginHead}>
         <span>FriendyApp</span>
       </div>

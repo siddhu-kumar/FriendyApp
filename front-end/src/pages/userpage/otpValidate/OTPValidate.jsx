@@ -4,21 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/userContext";
 import { doLogin, isLoggedIn } from "../../../auth";
 import { userOTPValidate } from "../../../services/user-service";
-import { useLocation } from "react-router-dom";
 
-function OTPValidate() {
+function OTPValidate({id}) {
   const { setAuth, setUserDetails } = useContext(UserContext);
   const navigate = useNavigate();
   const [otp, setOtp] = useState({
     otp: "",
   });
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id')
+
   const [count, setCount] = useState(0);
 
   const [otpExpire, setOTPExpire] = useState(null);
-
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setOtp({ ...otp, [name]: value });
@@ -36,16 +32,6 @@ function OTPValidate() {
         doLogin(data);
         setAuth(isLoggedIn);
         navigate("/");
-        // createUser(userDetails).then(data => {
-        // }).catch(err=> {
-        //   console.log(err.response.data)
-        //   if(!err.response.data.valid && err.response.data.object === "contact")
-        //   setError({
-        //     valid: err.response.data.isValid,
-        //     object: err.response.data.object,
-        //     message:"Contact already exists: "+err.response.data.message})
-        // })
-        // console.log(data)
       })
       .catch((error) => {
         console.log(error);

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import style from "./home.module.css";
 import { createRequest, pagination } from "../../../services/user-service";
 import { UserContext } from "../../../context/userContext";
 import { doLogout, isLoggedIn } from "../../../auth";

@@ -130,7 +130,7 @@ export const ChatBox = ({ friendData, chatHistory, setChatHistory }) => {
       setFlag(false);
       return;
     }
-    const response = await socket.emitWithAck("newMessageToRoom", message);
+    await socket.emitWithAck("newMessageToRoom", message);
     console.log(message);
     setMessage({
       sender: friendData.namespaceId,

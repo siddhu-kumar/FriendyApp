@@ -5,7 +5,7 @@ import {
   getAllUser,
   createUser,
   pagination,
-  validateUserData,
+  newUserRegistration,
   logoutUser,
   getUser,
   loginUser,
@@ -37,7 +37,7 @@ router
   .post("/login", loginUser)
   .get("/all_user", verifyToken, getAllUser)
   .post("/register", createUser)
-  .post("/validate_data", validateUserData)
+  .post("/validate_data", newUserRegistration)
   .post("/validate_otp", userOTPValidate)
   .patch("/update", verifyToken, updateUser)
   .patch("/profile", verifyToken, upload.single("imageFile"), updateProfile)

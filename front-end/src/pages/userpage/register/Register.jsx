@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import style from "./register.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { emailValidate, validateUserData } from "../../../services/user-service";
+import { newRegistration } from "../../../services/user-service";
 import { UserContext } from "../../../context/userContext";
 import { validation } from "../../../auth/validation";
 
@@ -27,13 +27,12 @@ const Register = () => {
 
     if (isValidated.length === 0) {
       console.log("Submitting user data:", userInput);
-      await validateUserData(userInput)
+      await newRegistration(userInput)
         .then((data) => {
           console.log("Response from server:", data);
           if (data.flag) {
             setUserDetails(userInput);
-            console.log("Navigating to /email_sent");
-            navigate("/email_sent");
+            navigate("/email_sent", { state: {id: data.id}});
           } else {
             console.error("Flag was false:", data);
             setData("Registration failed. Please check your details.");

@@ -4,7 +4,7 @@ import { User, TempUser } from "../../../models/models.js";
 import { sendEmail } from "../../userValidation/user_validate.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
-export const validateUserData = async (req, res) => {
+export const newUserRegistration = async (req, res) => {
   console.log("does user data exissts");
   try {
     const { name, email, contact, password } = req.body;
@@ -42,8 +42,14 @@ export const validateUserData = async (req, res) => {
         password: password,
       }
 
-      const res1 = await pubClient.multi().call('JSON.SET', `TempUser-${email}`, '$', JSON.stringify(tempUserObj)).expire(`TempUser-${email}`, 300).exec();
+      const res1 = await pubClient.multi().call('JSON.SET', `TempUser-${tempId}`, '$', JSON.stringify(tempUserObj)).expire(`TempUser-${email}`, 300).exec();
       console.log('Temp user saved in redis - ', res1 )
+      const res2 = await pubClient.call("JSON.GET",`TempUser-${tempId}`, '$')
+      console.log('RES2', res2)
+      setTimeout(async () => {
+        const res2 = await pubClient.call("JSON.GET",`TempUser-${tempId}`, '$')
+        console.log('Trying to fetch user data from redis',res2)
+      },330*1000)
       const tempUser = new TempUser({
         name: name,
         email: email,
@@ -57,6 +63,7 @@ export const validateUserData = async (req, res) => {
       await sendEmail(email, otp, tempId);
       res.status(200).json({
         message: "doesNotExists",
+        id: tempId,
         flag: true,
       });
 

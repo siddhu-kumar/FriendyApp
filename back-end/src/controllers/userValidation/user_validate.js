@@ -1,18 +1,24 @@
-import { TempUser } from "../../models/models.js";
 import nodemailer from "nodemailer";
-import { createUser } from "../user/createUser/index.js";
 import { totp } from "otplib";
+
+import { TempUser } from "../../models/models.js";
+import { createUser } from "../user/createUser/index.js";
+import { pubClient } from "../../redis/clusterredis.js";
 
 export const userOTPValidate = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log('id', req.query)
+    console.log('id',id)
     const { otp } = req.body;
     console.log(otp);
     const validate = await TempUser.findOne({
       otp: id,
     });
-    console.log("validate", validate);
+    
+    const res2 = await pubClient.call("JSON.GET", `TempUser-${id}`, "$");
+    const parsedData = JSON.parse(res2);
+    
+    console.log("validate", parsedData);
     if (!validate) {
       res.status(400).json({
         message: "Invalid OTP",
@@ -53,7 +59,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://192.168.1.60:3000";
 
 export const sendEmail = async (email, otp, tempId) => {
   console.log(email, otp);
@@ -62,7 +67,6 @@ export const sendEmail = async (email, otp, tempId) => {
                         <h2 style="color: violet">FriendyApp<h2>
                         <span style="color: red;">To unlock your account ${email}</span>
                         <h5 style="color: blueviolet;">Your One time OTP - <h3 style="color: black;">${otp}</h3></h5>
-                        <span>Click here <a href="${FRONTENDRUNNINGPORT}/otp-validate?id=${tempId}">FriendyApp</a> </span>
                         
                     </body>
                 </html>`;

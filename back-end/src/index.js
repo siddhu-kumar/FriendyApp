@@ -12,14 +12,17 @@ import { chatNamespaceFun } from "./websocket/chat.js";
 import { authToken } from "./middleware/token.js";
 
 const allowed_origin = process.env.ORIGIN;
-// const allowed_origin = "192.168.1.60"
 console.log("allowed_origin", allowed_origin);
 const PORT = process.env.PORT || 8000;
 
 const app = express();
 app.use(
   cors({
-    origin: allowed_origin,
+    origin: [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://100.81.81.20:3000',
+    ],
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -37,7 +40,11 @@ export let allUsers = {};
 
 export const io = new Server(expressServer, {
   cors: {
-    origin: allowed_origin,
+    origin: [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://100.81.81.20:3000',
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,

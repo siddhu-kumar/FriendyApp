@@ -1,5 +1,3 @@
-import React, { useRef, useEffect, useState } from "react";
-import style from "./chat.module.css";
 import "../css/index.css";
 
 function MessageCard({ message, time, index, chatEndRef, chatLength, order }) {

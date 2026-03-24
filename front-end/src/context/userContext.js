@@ -24,7 +24,7 @@ const DataProvider = ({ children }) => {
     } else {
       redirect("/login");
     }
-  }, []);
+  }, [auth]);
 
   return (
     <UserContext.Provider
