@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 import { totp } from "otplib";
 
-import { TempUser } from "../../models/models.js";
 import { createUser } from "../user/createUser/index.js";
 import { pubClient } from "../../redis/clusterredis.js";
 
@@ -11,9 +10,6 @@ export const userOTPValidate = async (req, res) => {
     console.log('id',id)
     const { otp } = req.body;
     console.log(otp);
-    const validate = await TempUser.findOne({
-      otp: id,
-    });
     
     const res2 = await pubClient.call("JSON.GET", `TempUser-${id}`, "$");
     const parsedData = JSON.parse(res2);
@@ -37,7 +33,6 @@ export const userOTPValidate = async (req, res) => {
     }
     await createUser(id, res);
 
-    // await TempUser.findOneAndDelete({ 'otp': otp })
   } catch (err) {
     console.log(err);
     res.status(401).json({

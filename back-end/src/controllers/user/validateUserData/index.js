@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { totp } from "otplib";
-import { User, TempUser } from "../../../models/models.js";
+import { User } from "../../../models/models.js";
 import { sendEmail } from "../../userValidation/user_validate.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
@@ -50,16 +50,7 @@ export const newUserRegistration = async (req, res) => {
         const res2 = await pubClient.call("JSON.GET",`TempUser-${tempId}`, '$')
         console.log('Trying to fetch user data from redis',res2)
       },330*1000)
-      const tempUser = new TempUser({
-        name: name,
-        email: email,
-        contact: contact,
-        sskey: sskey,
-        otp: tempId,
-        password: password,
-      });
-      
-      await tempUser.save();
+
       await sendEmail(email, otp, tempId);
       res.status(200).json({
         message: "doesNotExists",

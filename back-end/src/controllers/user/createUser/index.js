@@ -9,7 +9,7 @@ import { status } from "../../../utils/error.js";
 import { namespace } from "../../../websocket/chat.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import { RefreshToken, TempUser, User } from "../../../models/models.js";
+import { RefreshToken, User } from "../../../models/models.js";
 
 const secret_key = process.env.AUTH_SECRET_KEY;
 const refresh_secrect_key = process.env.REFRESH_SECRET_KEY;
@@ -37,32 +37,18 @@ const generateEndpoint = async (inputString) => {
 export const createUser = async (tempId, res) => {
   console.log("// creating new user");
   try {
-    const getUser = await TempUser.findOne({
-      otp: tempId,
-    });
 
     const res2 = await pubClient.call("JSON.GET", `TempUser-${tempId}`, "$");
     const parsedData = JSON.parse(res2);
-    
-    // const sskey = parsedData[0].sskey;
-    // const mail = parsedData[0].email;
-    // const contacts = parsedData[0].email;
-    // const passwords = parsedData[0].email;
+    const name = parsedData[0].name;
+    const email = parsedData[0].email;
+    const contact = parsedData[0].email;
+    const password = parsedData[0].password;
 
-    // console.log('')
-
-    const { name, email, contact, password } = getUser.toObject();
-    //   console.log(req.body)
-    //   const doesExists = await User.findOne({contact:req.body.contact,email:req.body.email});
-    //   if(doesExists !== null) {
-    //       res.status(409).json({message:'user already exists!'})
-    //       return;
-    //   }
+    // const { name, email, contact, password } = getUser.toObject();
     const hashedPassword = await bcrypt.hash(password, 10);
-    //   console.log("h", hashedPassword);
     const endPoint = await generateEndpoint(contact);
     const uuid = uuidv4();
-    //   console.log(uuid);
     try {
       const newUser = new User({
         id: uuid,
@@ -74,6 +60,10 @@ export const createUser = async (tempId, res) => {
       });
       const saveUser = await newUser.save();
       //   console.log(saveUser);
+
+    const expire = await pubClient.expire(`TempUser-${tempId}`, 0);
+    console.log(expire)
+
     } catch (error) {
       console.log("ct", error);
       if (error.code === 11000) {
@@ -148,9 +138,7 @@ export const createUser = async (tempId, res) => {
     res.status(status.CREATED).json({
       data,
     });
-    await TempUser.findOneAndDelete({
-      otp: tempId,
-    });
+
   } catch (error) {
     console.log("c", error);
     if (error.code === 11000) {

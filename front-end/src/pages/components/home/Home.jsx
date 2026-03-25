@@ -90,7 +90,6 @@ const Home = () => {
         setAuth(isLoggedIn);
       });
   };
-  useEffect(()=> {}, [userList])
   return (
     <>
       <div className="Users1">

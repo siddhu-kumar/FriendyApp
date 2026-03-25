@@ -110,7 +110,7 @@ const Profile = () => {
         `data:${parsedImage.data.image.contentType};base64,${parsedImage.data.image.data}`
       );
     }
-  }, []);
+  }, [setFile]);
 
 
   const handleLogout = async (e) => {
