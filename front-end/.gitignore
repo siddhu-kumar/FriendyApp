@@ -25,5 +25,7 @@ yarn-error.log*
 /frontend.zip
 /packagelockbackup
 /tests
+/src/setupTests.js
+/tests
 setupTests.js
 jest.resolver.js
