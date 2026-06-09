@@ -1,17 +1,10 @@
 import mongoose from "mongoose";
-import {
-  userSchema,
-  chatSchema,
-  resetPasswordSchema,
-  requestSchemas,
-  tempUserSchema,
-  refreshTokenSchemas,
-} from "./schema.js";
+import * as Schema from "./schema.js";
 
 // models
-export const User = mongoose.model('User', userSchema);
-export const Chat = mongoose.model('Chat', chatSchema)
-export const Resetpwd = mongoose.model('ResetPwd', resetPasswordSchema)
-export const RequestSchema = mongoose.model('RequestUser', requestSchemas)
-export const TempUser = mongoose.model('TempUserData', tempUserSchema)
-export const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchemas)
+export const User = mongoose.model('User', Schema.userSchemas);
+export const Chat = mongoose.model('Chat', Schema.chatSchemas)
+export const ResetPassword = mongoose.model('ResetPwd', Schema.resetPassword)
+export const CreateFriendRequests = mongoose.model('RequestUser', Schema.requestSchema)
+export const TempUser = mongoose.model('TempUserData', Schema.tempUserSchemas)
+export const RefreshToken = mongoose.model('RefreshToken', Schema.refreshTokenSchema)

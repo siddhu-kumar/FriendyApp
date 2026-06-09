@@ -1,9 +1,10 @@
 import { Redis, Cluster } from "ioredis";
-import { Chat } from "../models/models.js";
+import { Models } from "../models/index.js";
 
-const Redis_URL = process.env.REDIS_URL;
+import { PORT } from "../config/index.js";
 
-const pubClient = new Redis(Redis_URL, {
+
+const pubClient = new Redis(PORT.Redis_URL, {
   connectTimeout: 10000,
 });
 

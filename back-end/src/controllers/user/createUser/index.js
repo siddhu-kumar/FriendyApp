@@ -5,15 +5,14 @@ import { fileURLToPath } from "node:url";
 import { promises } from "fs";
 import { v4 as uuidv4 } from "uuid";
 
-import { status } from "../../../utils/error.js";
+import { StatusCode } from "../../../utils/error.js";
 import { namespace } from "../../../websocket/chat.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import { RefreshToken, User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 
-const secret_key = process.env.AUTH_SECRET_KEY;
-const refresh_secrect_key = process.env.REFRESH_SECRET_KEY;
-const node_env = process.env.NODE_ENV;
+import { KEYS, node_env } from "../../../config/index.js";
+
 
 const readFile = async () => {
   const __filename = fileURLToPath(import.meta.url);
@@ -50,7 +49,7 @@ export const createUser = async (tempId, res) => {
     const endPoint = await generateEndpoint(contact);
     const uuid = uuidv4();
     try {
-      const newUser = new User({
+      const newUser = new Models.User({
         id: uuid,
         name: name,
         email: email,
@@ -69,7 +68,7 @@ export const createUser = async (tempId, res) => {
       if (error.code === 11000) {
         if (error.keyValue.email) {
           console.log("Email already exists");
-          res.status(400).json({
+          res.status(StatusCode.BAD_REQUEST).json({
             message: error.keyValue.email,
             isValid: false,
             object: "mail",
@@ -78,7 +77,7 @@ export const createUser = async (tempId, res) => {
         }
         if (error.keyValue.contact) {
           console.log("Contact already exists");
-          res.status(400).json({
+          res.status(StatusCode.BAD_REQUEST).json({
             message: error.keyValue.contact,
             isValid: false,
             object: "contact",
@@ -93,7 +92,7 @@ export const createUser = async (tempId, res) => {
       {
         userId: uuid,
       },
-      secret_key,
+      KEYS.secret_key,
       {
         expiresIn: "100h",
       },
@@ -103,7 +102,7 @@ export const createUser = async (tempId, res) => {
       {
         userId: uuid,
       },
-      refresh_secrect_key,
+      KEYS.refresh_secrect_key,
       {
         expiresIn: "7d",
       },
@@ -135,7 +134,7 @@ export const createUser = async (tempId, res) => {
       sameSite: node_env === "production" ? "none" : "lax",
       maxAge: 30 * 60 * 1000,
     });
-    res.status(status.CREATED).json({
+    res.status(StatusCode.CREATED).json({
       data,
     });
 
@@ -152,18 +151,18 @@ export const createUser = async (tempId, res) => {
     if (error.code === 11000) {
       if (error.keyValue.email) {
         console.log("Email already exists");
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           message: `Email already exists: ${error.keyValue.email}`,
         });
       }
       if (error.keyValue.contact) {
         console.log("Contact already exists");
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           message: `Contact already exists: ${error.keyValue.contact}`,
         });
       }
     }
-    res.status(500).json({
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       message: "Sorry it's us!!",
     });
   }

@@ -1,4 +1,4 @@
-import { Resetpwd, User } from "../../models/models.js";
+import { Models } from "../../models/index.js";
 import nodemailer from "nodemailer";
 import { totp } from "otplib";
 import crypto from "crypto";
@@ -9,10 +9,12 @@ import { fileURLToPath } from "node:url";
 
 let otp;
 
+import { KEYS } from "../../config/index.js";
+
 export const verifyEmail = async (req, res) => {
   const { email } = req.body;
   console.log(email);
-  const findEmail = await User.findOne({
+  const findEmail = await Models.User.findOne({
     email: email,
   });
   if (!findEmail) {
@@ -44,12 +46,12 @@ const generateOTP = async (useremail) => {
   };
   const otp = totp.generate(sskey);
 
-  const userotp = new Resetpwd({
+  const userotp = new Models.ResetPassword({
     sskey: sskey,
     otp: otp,
   });
   await userotp.save();
-  // await Resetpwd.findOneAndDelete({ 'otp': otp })
+  // await Models.ResetPassword.findOneAndDelete({ 'otp': otp })
   return otp;
 };
 
@@ -57,7 +59,7 @@ export const userOTPVerify = async (req, res) => {
   try {
     const { otp } = req.body;
     // console.log(otp);
-    const validate = await Resetpwd.findOne({
+    const validate = await Models.ResetPassword.findOne({
       otp,
     });
     // console.log("validate", validate);
@@ -91,7 +93,7 @@ export const userPasswordReset = async (req, res) => {
   const { email, password } = req.body;
   //   console.log(email, password);
   const hashedPassword = await bcrypt.hash(password, 10);
-  const updatePassword = await User.findOneAndUpdate(
+  const updatePassword = await Models.User.findOneAndUpdate(
     {
       email: email,
     },
@@ -100,10 +102,10 @@ export const userPasswordReset = async (req, res) => {
     },
     {
       new: true,
-    }
+    },
   );
   //   console.log(updatePassword);
-  const deleteOTP = await Resetpwd.findOneAndDelete({
+  const deleteOTP = await Models.ResetPassword.findOneAndDelete({
     otp: otp,
   });
   res.status(201).json({
@@ -111,19 +113,15 @@ export const userPasswordReset = async (req, res) => {
   });
 };
 
-const pass_key = process.env.NODEMAIL_PASS_KEY;
-const nodemail_user_id = process.env.NODEMAIL_USER_ID;
-
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: process.env.NODE_ENV === "production"?true:false,
+  secure: process.env.NODE_ENV === "production" ? true : false,
   auth: {
-    user: nodemail_user_id,
-    pass: pass_key,
+    user: KEYS.nodemail_user_id,
+    pass: KEYS.pass_key,
   },
 });
-
 
 const sendEmail = async (email, otp) => {
   try {
@@ -134,7 +132,7 @@ const sendEmail = async (email, otp) => {
 
     const html = htmlContent
       .replace(/{{email}}/g, email)
-      .replace(/{{otp}}/g, otp)
+      .replace(/{{otp}}/g, otp);
 
     const message = {
       from: "browsers.192@gmail.com",

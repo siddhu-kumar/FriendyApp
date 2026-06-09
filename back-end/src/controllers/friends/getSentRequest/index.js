@@ -1,4 +1,4 @@
-import { RequestSchema } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
 export const getSentRequest = async (req, res) => {
@@ -14,7 +14,7 @@ export const getSentRequest = async (req, res) => {
     } else {
       console.log('no redis data')
       // UserDetails (LogIN user) friend class instance & update sent request list
-      const sentRequests = await RequestSchema.find({ userId: userId });
+      const sentRequests = await Models.CreateFriendRequests.find({ userId: userId });
       for (let element of sentRequests) {
         sentReqList.push(
           {

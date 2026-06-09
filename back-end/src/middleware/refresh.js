@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
-import { RefreshToken } from "../models/models.js";
+import { Models } from "../models/index.js";
 
-const secret_key = process.env.AUTH_SECRET_KEY;
-const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
-const node_env = process.env.NODE_ENV;
+import { KEYS, node_env } from "../config/index.js";
 
 export async function referenshTokenValidation(req, res) {
   console.log("// refresh token validation");
@@ -14,22 +12,22 @@ export async function referenshTokenValidation(req, res) {
         message: "No refresh token provided!",
       });
     }
-    const refreshToken = await RefreshToken.findOne({ token: refresh });
+    const refreshToken = await Models.RefreshToken.findOne({ token: refresh });
     if (!refreshToken) {
       return res.status(401).json({
         message: "Invalid refresh token!",
       });
     }
 
-    const decoded = jwt.verify(refresh, refresh_secret_key);
+    const decoded = jwt.verify(refresh, KEYS.refresh_secret_key);
     if (decoded.exp < Date.now() / 1000) {
-      await RefreshToken.deleteOne({ token: refresh });
+      await Models.RefreshToken.deleteOne({ token: refresh });
       return res.status(401).json({
         message: "Invalid refresh token!",
       });
     }
 
-    const newAccessToken = jwt.sign({ userId: decoded.userId }, secret_key, {
+    const newAccessToken = jwt.sign({ userId: decoded.userId }, KEYS.secret_key, {
       expiresIn: "30s",
     });
     res.cookie("accessToken", newAccessToken, {

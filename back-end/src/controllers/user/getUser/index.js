@@ -1,12 +1,12 @@
 
-import { User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 
 export const getUser = async (req, res) => {
     console.log("// get user data or profile");
     try {
         const id = req.userId;
         // console.log(id);
-        const data = await User.findOne({
+        const data = await Models.User.findOne({
             id: id,
         });
         const { _id, friends, password, ...userData } = data.toObject();

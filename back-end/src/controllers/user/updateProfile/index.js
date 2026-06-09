@@ -1,10 +1,10 @@
-import { User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 
 export const updateUser = async (req, res) => {
   console.log("// update user profile");
   const userId = req.userId;
   try {
-    const userData = await User.findOneAndUpdate(
+    const userData = await Models.User.findOneAndUpdate(
       {
         id: userId,
       },

@@ -1,15 +1,15 @@
 import { roomIdList, expireRoom } from "../../../websocket/chat.js";
 import { pubClient } from "../../../redis/clusterredis.js";
-import { RefreshToken } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 
-const node_env = process.env.NODE_ENV;
+import { node_env } from "../../../config/index.js";
 
 export const logoutUser = async (req,res) => {
   console.log('// logout user')
   const userId = req.userId;
   await expireRoom(roomIdList, userId);
 
-  const deleteToken = await RefreshToken.deleteOne({userId: userId});
+  const deleteToken = await Models.RefreshToken.deleteOne({userId: userId});
 
   const res1 = await pubClient.call("JSON.DEL",`SENT-${userId}`, `$`)
   const res2 = await pubClient.call("JSON.DEL", `RECEIVED-${userId}`, `$`)

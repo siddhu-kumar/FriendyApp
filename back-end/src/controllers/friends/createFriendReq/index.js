@@ -1,9 +1,13 @@
-import { User, RequestSchema } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import nodemailer from "nodemailer";
 import fs from "node:fs/promises";
 import path from "path";
 import { fileURLToPath } from "node:url";
 import { pubClient } from "../../../redis/clusterredis.js";
+import { StatusCode } from "../../../utils/error.js";
+
+import { KEYS, PORT } from "../../../config/index.js";
+
 
 export const createRequest = async (req, res) => {
   console.log("// create request");
@@ -11,14 +15,14 @@ export const createRequest = async (req, res) => {
   const userId = req.userId;
   console.log(userId, requestsId);
   try {
-    const userData = await User.findOne({
+    const userData = await Models.User.findOne({
       id: userId,
     });
-    const friendData = await User.findOne({
+    const friendData = await Models.User.findOne({
       id: requestsId,
     });
 
-    const request = new RequestSchema({
+    const request = new Models.CreateFriendRequests({
       userId: userId,
       name: userData.name,
       userImage: {
@@ -97,7 +101,7 @@ export const createRequest = async (req, res) => {
     console.log("check", JSON.parse(res4))
     console.log("and", JSON.parse(res5))
     const r = await request.save();
-    res.status(200).json({
+    res.status(StatusCode.OK).json({
       message: `Request has been sent to`,
     });
     sendEmail(friendData.email);
@@ -109,20 +113,19 @@ export const createRequest = async (req, res) => {
   }
 };
 
-const pass_key = process.env.NODEMAIL_PASS_KEY;
-const nodemail_user_id = process.env.NODEMAIL_USER_ID;
+
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
   auth: {
-    user: nodemail_user_id,
-    pass: pass_key,
+    user: KEYS.nodemail_user_id,
+    pass: KEYS.pass_key,
   },
 });
 
-const FRONTENDRUNNINGPORT = process.env.FRONTEND || "http://localhost:3000";
+
 
 const sendEmail = async (email) => {
   try {
@@ -133,7 +136,7 @@ const sendEmail = async (email) => {
 
     const html = htmlContent
       .replace(/{{email}}/g, email)
-      .replace(/{{frontendUrl}}/g, FRONTENDRUNNINGPORT);
+      .replace(/{{frontendUrl}}/g, PORT.FRONTENDRUNNINGPORT);
 
     const message = {
       from: "browsers.192@gmail.com",

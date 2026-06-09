@@ -1,4 +1,4 @@
-import { RequestSchema } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
 export const getReceivedRequest = async (req, res) => {
@@ -15,11 +15,11 @@ export const getReceivedRequest = async (req, res) => {
     } else {
 
       // UserDetails (LogIN user) friend class instance & update received request list
-      const receivedRequests = await RequestSchema.find({
+      const receivedRequests = await Models.CreateFriendRequests.find({
         friendId: userId,
       });
       for (let element of receivedRequests) {
-        // const data = await User.findOne({ id: element.userId });
+        // const data = await Models.User.findOne({ id: element.userId });
       receivedReqList.push({
           userId:element.friendId,
           username:element.friendName,

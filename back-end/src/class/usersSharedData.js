@@ -9,7 +9,7 @@ export class UserSharedData {
   }
 }
 
-export class RequestSchemaUser {
+export class CreateFriendRequestsUser {
   constructor(userId, username, friendId, friendname, friendImage, contentType, createdAt) {
     this.userId = userId
     this.username = username

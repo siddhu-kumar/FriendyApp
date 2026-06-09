@@ -1,8 +1,10 @@
 
 
-import { User, Chat, RequestSchema } from "../../../models/models.js";
+import { Models} from "../../../models/index.js";
 import { generateRoomId } from "../../chat.js";
 import { pubClient } from "../../../redis/clusterredis.js";
+import { StatusCode } from "../../../utils/error.js";
+import { SuccessResponse, ErrorReponse } from "../../../utils/common/index.js";
 
 export const acceptRequest = async (req, res) => {
   console.log('// accept request')
@@ -10,20 +12,20 @@ export const acceptRequest = async (req, res) => {
   const { requestId:friendId } = req.body;
   console.log(userId, friendId);
   try {
-    const userData = await User.findOne({
+    const userData = await Models.User.findOne({
       id: userId,
     });
-    const friendData = await User.findOne({
+    const friendData = await Models.User.findOne({
       id: friendId,
     });
 
     // Chat Room & Chat Room Id has been created in DB model "chat"
     const roomId = generateRoomId(userData.id, friendData.id);
-    const chat = new Chat({
+    const chat = new Models.Chat({
       roomId: roomId,
     });
     const chatData = await chat.save();
-    const request = await RequestSchema.findOneAndDelete({
+    const request = await Models.CreateFriendRequests.findOneAndDelete({
       friendId: userId
     });
     const u = userData.friends.push({
@@ -52,7 +54,7 @@ export const acceptRequest = async (req, res) => {
     const updateUser = await userData.save();
     const updateFriend = await friendData.save();
     // console.log(updateUser, updateFriend);
-    const friend = await User.findOne(
+    const friend = await Models.User.findOne(
       {
         "friends.friendId": userId,
       },
@@ -76,13 +78,14 @@ export const acceptRequest = async (req, res) => {
     // } catch (err) {
     //   console.log("Error from Friend", err);
     // }
-    res.status(201).json({
-      message: "friend added",
-    });
+
+    SuccessResponse.message = "Friend Added."
+    res.status(StatusCode.CREATED).json(SuccessResponse);
   } catch (err) {
     console.log(err);
-    res.status(400).json({
-      message: "request not completed",
-    });
+    ErrorReponse.error = {
+      explanation: "Request not completed",
+    }
+    res.status(StatusCode.BAD_REQUEST).json(ErrorReponse);
   }
 };

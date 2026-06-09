@@ -1,4 +1,4 @@
-import { Chat, User } from "../models/models.js";
+import { Models } from "../models/index.js";
 import { getEndpoint } from "../controllers/chat.js";
 import { Message } from "../class/Message.js";
 import { pubClient } from "../redis/clusterredis.js";
@@ -53,7 +53,7 @@ export const chatNamespaceFun = (chatNs) => {
           socket.emit(thisRoom, newMessage);
         } else {
           // Retrieve chat history of a room from Database with argument roomId
-          const chatMessage = await Chat.findOne({
+          const chatMessage = await Models.Chat.findOne({
             roomId: thisRoom,
           });
           // get subarray of chat history of length 30
@@ -91,7 +91,7 @@ export const chatNamespaceFun = (chatNs) => {
         const res1 = await pubClient.call("JSON.GET", `${currentRoom}`, "$");
         offSet = JSON.parse(res1)[0].length;
         // console.log('chunk length',JSON.parse(res1)[0].length)
-        const messageChunk = await Chat.findOne({ roomId: currentRoom });
+        const messageChunk = await Models.Chat.findOne({ roomId: currentRoom });
         if (messageChunk.chat.length < offSet || prevOffset === offSet) {
           socket.emit("getNextMessage", []);
           // socket.on('disconnect')
@@ -169,7 +169,7 @@ export const expireRoom = async (roomIdList, userId, ttl = 0) => {
   setTimeout(async () => {
     console.log("settimeout");
 
-    const friendlist = await User.findOne({ id: userId });
+    const friendlist = await Models.User.findOne({ id: userId });
     console.log(userId, "\n", roomIdList);
     console.log(friendlist.friends);
 
@@ -189,7 +189,7 @@ export const expireRoom = async (roomIdList, userId, ttl = 0) => {
 
         const res2 = await pubClient.call("JSON.GET", `new${friends.chatId}`);
         console.log("new chat - ", typeof res2, JSON.parse(res2));
-        const receiverObj = await Chat.findOne({
+        const receiverObj = await Models.Chat.findOne({
           roomId: friends.chatId,
         });
 

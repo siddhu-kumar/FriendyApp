@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { totp } from "otplib";
-import { User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import { sendEmail } from "../../userValidation/user_validate.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
@@ -8,7 +8,7 @@ export const newUserRegistration = async (req, res) => {
   console.log("does user data exissts");
   try {
     const { name, email, contact, password } = req.body;
-    const doesExists = await User.findOne({
+    const doesExists = await Models.User.findOne({
       $or: [
         {
           contact: req.body.contact,

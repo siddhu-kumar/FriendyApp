@@ -2,7 +2,6 @@
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 
-const secret_key = process.env.AUTH_SECRET_KEY;
 
 export const authToken = (socket, next) => {
   try {

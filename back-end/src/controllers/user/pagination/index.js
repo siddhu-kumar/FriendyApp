@@ -1,4 +1,4 @@
-import { User, RequestSchema } from "../../../models/models.js";
+import { Models} from "../../../models/index.js";
 
 export const pagination = async (req, res) => {
   console.log("// pagination");
@@ -9,14 +9,14 @@ export const pagination = async (req, res) => {
   try {
     let friendId = [];
     friendId.push(id);
-    const userData = await User.findOne({ id: id });
+    const userData = await Models.User.findOne({ id: id });
 
     for (let element of userData.friends) {
       friendId.push(element.friendId);
       // console.log(element)
     }
 
-    const requestList = await RequestSchema.find({
+    const requestList = await Models.CreateFriendRequests.find({
       $or: [{ userId: id }, { friendId: id }],
     });
     for (let element of requestList) {

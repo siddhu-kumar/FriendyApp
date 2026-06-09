@@ -1,11 +1,11 @@
 
-import { User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 
 export const getFriends = async (req, res) => {
   console.log("// get particular user friends or connections");
   try {
     const userId = req.userId;
-    const userData = await User.findById({
+    const userData = await Models.User.findById({
       _id: userId,
     });
     const friendsArray = [];

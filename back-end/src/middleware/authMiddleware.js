@@ -2,7 +2,7 @@
 
 import jwt from "jsonwebtoken"
 
-const secret_key = process.env.AUTH_SECRET_KEY
+import { KEYS } from "../config/index.js";
 
 export const verifyToken = (req, res, next) => {
     console.log("// verify token");
@@ -14,7 +14,7 @@ export const verifyToken = (req, res, next) => {
         })
     }
     try {
-        const decoded = jwt.verify(accessToken, secret_key)
+        const decoded = jwt.verify(accessToken, KEYS.secret_key)
         req.userId = decoded.userId;
         next()
     } catch (err) {

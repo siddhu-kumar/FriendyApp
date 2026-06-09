@@ -1,4 +1,4 @@
-import { User, RequestSchema } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import { UserSharedData } from "../../../class/usersSharedData.js";
 
 export const getAllUser = async (req, res) => {
@@ -9,11 +9,11 @@ export const getAllUser = async (req, res) => {
   console.log('user id', id);
   requestsListID.push(id);
   try {
-    const userData = await User.findOne({
+    const userData = await Models.User.findOne({
       id: id,
     });
 
-    const requestList = await RequestSchema.find({
+    const requestList = await Models.CreateFriendRequests.find({
       $or: [
         {friendId: id},
         {userId: id}
@@ -36,7 +36,7 @@ export const getAllUser = async (req, res) => {
 
     // console.log(requestsListID);
 
-    const userList = await User.find({
+    const userList = await Models.User.find({
       id: {
         $nin: requestsListID,
       },

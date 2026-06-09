@@ -1,22 +1,21 @@
-import { RefreshToken, User } from "../../../models/models.js";
+import { Models } from "../../../models/index.js";
 import { Namespace } from "../../../class/Namespace.js";
 import { namespace } from "../../../websocket/chat.js";
 import { allUsers } from "../../../index.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginUser, UserDetails } from "../../../class/userRespectiveData.js";
-import { UserSharedData, RequestSchemaUser } from "../../../class/usersSharedData.js";
+import { UserSharedData, CreateFriendRequestsUser } from "../../../class/usersSharedData.js";
 import { pubClient } from "../../../redis/clusterredis.js";
 
-const secret_key = process.env.AUTH_SECRET_KEY;
-const refresh_secret_key = process.env.REFRESH_SECRET_KEY;
-const node_env = process.env.NODE_ENV;
+import { KEYS, node_env } from "../../../config/index.js";
+
 
 export const loginUser = async (req, res) => {
   console.log("// login user");
   try {
     const { email, user_password } = req.body;
-    const userData = await User.findOne({
+    const userData = await Models.User.findOne({
       email,
     });
     // console.log(userData)
@@ -48,7 +47,7 @@ export const loginUser = async (req, res) => {
       {
         userId: userData.id,
       },
-      secret_key,
+      KEYS.secret_key,
       {
         expiresIn: "30s",
       }
@@ -58,13 +57,13 @@ export const loginUser = async (req, res) => {
       {
         userId: userData.id,
       },
-      refresh_secret_key,
+      KEYS.refresh_secret_key,
       {
         expiresIn: "7d",
       }
     );
 
-    const newRefreshToken = new RefreshToken({
+    const newRefreshToken = new Models.RefreshToken({
       userId: userData.id,
       token: refreshToken,
     });
@@ -86,7 +85,7 @@ export const loginUser = async (req, res) => {
     // console.log('login user instance ', allUsers[userData.id])
     // UserDetails (LogIN user) friend class instance & update friend list
     for (let element of userData.friends) {
-      const data = await User.findOne({ id: element.friendId });
+      const data = await Models.User.findOne({ id: element.friendId });
       allUsers[userData.id].addUserFriend(
         new UserSharedData(
           data.id,

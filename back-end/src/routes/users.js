@@ -1,26 +1,9 @@
 import multer from "multer";
 import express from "express";
 
-import {
-  getAllUser,
-  createUser,
-  pagination,
-  newUserRegistration,
-  logoutUser,
-  getUser,
-  loginUser,
-  updateProfile,
-  updateUser,
-} from "../controllers/user/index.js";
+import { Users } from "../controllers/user/index.js";
 
-import {
-  acceptRequest,
-  createRequest,
-  deleteReceivedRequest,
-  deleteSentRequest,
-  getSentRequest,
-  getReceivedRequest,
-} from "../controllers/friends/index.js";
+import { Friends } from "../controllers/friends/index.js";
 
 import { verifyToken } from "../middleware/authMiddleware.js";
 
@@ -33,19 +16,20 @@ var upload = multer({
 export const router = express.Router();
 
 router
-  .get("/", verifyToken, getUser)
-  .post("/login", loginUser)
-  .get("/all_user", verifyToken, getAllUser)
-  .post("/register", createUser)
-  .post("/validate_data", newUserRegistration)
+  .get("/", verifyToken, Users.getUser)
+  .post("/login", Users.loginUser)
+  .get("/all_user", verifyToken, Users.getAllUser)
+  .post("/register", Users.createUser)
+  .post("/validate_data", Users.newUserRegistration)
   .post("/validate_otp", userOTPValidate)
-  .patch("/update", verifyToken, updateUser)
-  .patch("/profile", verifyToken, upload.single("imageFile"), updateProfile)
-  .post("/create_request", verifyToken, createRequest)
-  .get("/pending_request", verifyToken, getSentRequest)
-  .get("/received_request", verifyToken, getReceivedRequest)
-  .post("/accept_request", verifyToken, acceptRequest)
-  .delete("/delete/received_request", verifyToken, deleteReceivedRequest)
-  .delete("/delete/sent_request", verifyToken, deleteSentRequest)
-  .post("/pagination", verifyToken, pagination)
-  .post("/logout", verifyToken, logoutUser);
+  .patch("/update", verifyToken, Users.updateUser)
+  .patch("/profile", verifyToken, upload.single("imageFile"), Users.updateProfile)
+  .post("/pagination", verifyToken, Users.pagination)
+  .post("/logout", verifyToken, Users.logoutUser)
+  
+  .post("/create_request", verifyToken, Friends.createRequest)
+  .get("/pending_request", verifyToken, Friends.getSentRequest)
+  .get("/received_request", verifyToken, Friends.getReceivedRequest)
+  .post("/accept_request", verifyToken, Friends.acceptRequest)
+  .delete("/delete/received_request", verifyToken, Friends.deleteReceivedRequest)
+  .delete("/delete/sent_request", verifyToken, Friends.deleteSentRequest)

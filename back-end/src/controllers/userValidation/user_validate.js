@@ -3,17 +3,18 @@ import { totp } from "otplib";
 
 import { createUser } from "../user/createUser/index.js";
 import { pubClient } from "../../redis/clusterredis.js";
+import { KEYS } from "../../config/index.js";
 
 export const userOTPValidate = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log('id',id)
+    console.log("id", id);
     const { otp } = req.body;
     console.log(otp);
-    
+
     const res2 = await pubClient.call("JSON.GET", `TempUser-${id}`, "$");
     const parsedData = JSON.parse(res2);
-    
+
     console.log("validate", parsedData);
     if (!validate) {
       res.status(400).json({
@@ -32,7 +33,6 @@ export const userOTPValidate = async (req, res) => {
       return;
     }
     await createUser(id, res);
-
   } catch (err) {
     console.log(err);
     res.status(401).json({
@@ -41,19 +41,15 @@ export const userOTPValidate = async (req, res) => {
   }
 };
 
-const pass_key = process.env.NODEMAIL_PASS_KEY;
-const nodemail_user_id = process.env.NODEMAIL_USER_ID;
-
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
-    user: nodemail_user_id,
-    pass: pass_key,
+    user: KEYS.nodemail_user_id,
+    pass: KEYS.pass_key,
   },
 });
-
 
 export const sendEmail = async (email, otp, tempId) => {
   console.log(email, otp);
